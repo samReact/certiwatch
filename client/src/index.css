@@ -6,3 +6,7 @@ body {
 .container {
   padding: 80px;
 }
+
+.container-content {
+  padding: 80px 0;
+}
