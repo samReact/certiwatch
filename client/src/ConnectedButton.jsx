@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Avatar, Button, Popover, Stack, Typography } from '@mui/material';
 import { useAccount, useDisconnect } from 'wagmi';
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { Button, Avatar, Space, Dropdown, Divider, Typography } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+
 import { formattedAddress } from './utils';
+const { Text } = Typography;
 
 export function ConnectedButton() {
   const { address, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const [anchorEl, setAnchorEl] = useState(null);
   const [formatted, setFormatted] = useState('');
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  function handleClose() {
-    setAnchorEl(null);
-  }
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
 
   const avatar = address && jsNumberForAddress(address);
   useEffect(() => {
@@ -30,45 +23,45 @@ export function ConnectedButton() {
   }, [address]);
 
   return (
-    <div>
-      <>
-        <Button
-          variant="outlined"
-          onClick={handleClick}
-          endIcon={open ? <ArrowDropUp /> : <ArrowDropDown />}
-        >
-          <Stack direction={'row'} alignItems="center" spacing={1}>
-            <Avatar sx={{ width: 24, height: 24 }}>
-              <Jazzicon diameter={24} seed={avatar} />
-            </Avatar>
-            <Typography sx={{ lineHeight: 1.75 }} variant="body2">
-              {formatted}
-            </Typography>
-          </Stack>
-        </Button>
-        <Popover
-          open={open}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
+    <Dropdown
+      trigger={['click']}
+      onOpenChange={setOpen}
+      dropdownRender={() => (
+        <div
+          style={{
+            padding: 12,
+            backgroundColor: '#fff'
           }}
         >
-          <Stack padding={2}>
-            <Stack direction={'row'} alignItems={'center'} spacing={1}>
-              <Avatar sx={{ width: 36, height: 36 }}>
-                <Jazzicon diameter={36} seed={avatar} />
-              </Avatar>
-              <Typography variant="body1">{formatted}</Typography>
-            </Stack>
+          <Space>
+            <Avatar size={36} icon={<Jazzicon diameter={36} seed={avatar} />} />
+            <Text>{formatted}</Text>
+          </Space>
+          <Divider />
+          <Button size="small" onClick={disconnect}>
+            log out
+          </Button>
+        </div>
+      )}
+    >
+      <Button type="primary" value={'small'} ghost>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Avatar
+            style={{ marginRight: 6 }}
+            size={24}
+            icon={<Jazzicon seed={avatar} />}
+          />
 
-            <Button size="small" onClick={disconnect}>
-              log out
-            </Button>
-          </Stack>
-        </Popover>
-      </>
-    </div>
+          {formatted}
+          {open ? <CaretUpOutlined /> : <CaretDownOutlined />}
+        </div>
+      </Button>
+    </Dropdown>
   );
 }

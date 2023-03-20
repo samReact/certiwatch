@@ -1,20 +1,17 @@
-import * as React from 'react';
-import { Toolbar, AppBar, Box } from '@mui/material';
+import { Row } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
 
 export default function ResponsiveAppBar() {
+  const navigate = useNavigate();
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{ backgroundColor: 'white' }}>
-        <Toolbar>
-          <Box variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <img src={logo} alt="logo" width={200} />
-          </Box>
-          <LogIn />
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <Row justify={'space-between'} align="middle" style={{ padding: 12 }}>
+      <div sx={{ flexGrow: 1 }}>
+        <img src={logo} alt="logo" width={200} onClick={() => navigate('/')} />
+      </div>
+      <LogIn />
+    </Row>
   );
 }

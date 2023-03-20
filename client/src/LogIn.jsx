@@ -1,5 +1,6 @@
-import { Button } from '@mui/material';
+import { Button } from 'antd';
 import { useAccount, useConnect } from 'wagmi';
+
 import { ConnectedButton } from './ConnectedButton';
 
 export function LogIn() {
@@ -16,7 +17,8 @@ export function LogIn() {
       {isDisconnected ? (
         connectors.map((connector) => (
           <Button
-            variant="outlined"
+            type="primary"
+            value={'small'}
             disabled={!connector.ready}
             key={connector.id}
             onClick={() => connect({ connector })}

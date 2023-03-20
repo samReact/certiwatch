@@ -1,15 +1,14 @@
+import { ConfigProvider } from 'antd';
+import { Route, Routes } from 'react-router-dom';
 import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import ResponsiveAppBar from './AppBar';
-import { green, purple } from '@mui/material/colors';
+import { magenta } from '@ant-design/colors';
 
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import { createTheme, ThemeProvider } from '@mui/material';
-import HomePage from './HomePage';
+import ResponsiveAppBar from './AppBar';
+import HomePage from './routes/HomePage';
+import './index.css';
+import SellPage from './routes/SellPage';
 
 const { provider, webSocketProvider } = configureChains(
   [hardhat],
@@ -22,24 +21,22 @@ const client = createClient({
   webSocketProvider
 });
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: purple[300]
-    },
-    secondary: {
-      main: green[500]
-    }
+const theme = {
+  token: {
+    colorPrimary: magenta[5]
   }
-});
+};
 
 function App() {
   return (
     <WagmiConfig client={client}>
-      <ThemeProvider theme={theme}>
+      <ConfigProvider theme={theme}>
         <ResponsiveAppBar />
-        <HomePage />
-      </ThemeProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/sell" element={<SellPage />} />
+        </Routes>
+      </ConfigProvider>
     </WagmiConfig>
   );
 }
