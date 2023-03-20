@@ -1,4 +1,5 @@
-import { WagmiConfig, createClient, configureChains, goerli } from 'wagmi';
+import { WagmiConfig, createClient, configureChains } from 'wagmi';
+import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import ResponsiveAppBar from './AppBar';
 import { green, purple } from '@mui/material/colors';
@@ -8,9 +9,11 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { createTheme, ThemeProvider } from '@mui/material';
+import HomePage from './HomePage';
+import { Container } from '@mui/system';
 
 const { provider, webSocketProvider } = configureChains(
-  [goerli],
+  [hardhat],
   [publicProvider()]
 );
 
@@ -36,6 +39,9 @@ function App() {
     <WagmiConfig client={client}>
       <ThemeProvider theme={theme}>
         <ResponsiveAppBar />
+        <Container>
+          <HomePage />
+        </Container>
       </ThemeProvider>
     </WagmiConfig>
   );

@@ -14,6 +14,7 @@
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.13",
+    "@react-pdf/renderer": "^3.1.8",
     "@wagmi/core": "^0.10.2",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
