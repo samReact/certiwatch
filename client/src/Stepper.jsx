@@ -5,11 +5,11 @@ import {
   SendOutlined
 } from '@ant-design/icons';
 
-export default function Stepper() {
+export default function Stepper({ step }) {
   return (
     <Steps
       labelPlacement="vertical"
-      current={0}
+      current={step}
       items={[
         {
           title: 'Détails',
