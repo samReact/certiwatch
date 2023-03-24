@@ -5,6 +5,7 @@ coverage.json
 typechain
 typechain-types
 client/abi
+server/.env
 
 # Hardhat files
 cache
