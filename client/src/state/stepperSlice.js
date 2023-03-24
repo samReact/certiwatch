@@ -16,11 +16,15 @@ export const stepperSlice = createSlice({
     },
     incrementByAmount: (state, action) => {
       state.value += action.payload;
+    },
+    resetStep: (state) => {
+      state.value = 0;
     }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = stepperSlice.actions;
+export const { increment, decrement, incrementByAmount, resetStep } =
+  stepperSlice.actions;
 
 export default stepperSlice.reducer;

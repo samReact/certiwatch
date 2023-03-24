@@ -7,12 +7,12 @@
 const hre = require('hardhat');
 
 async function main() {
-  const SimpleStorage = await hre.ethers.getContractFactory('SimpleStorage');
-  const simpleStorage = await SimpleStorage.deploy();
+  const Watches = await hre.ethers.getContractFactory('Watches');
+  const watches = await Watches.deploy();
 
-  await simpleStorage.deployed();
+  await watches.deployed();
 
-  console.log(`SimpleStorage deployed to ${simpleStorage.address}`);
+  console.log(`Watches deployed to ${watches.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

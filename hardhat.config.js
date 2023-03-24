@@ -12,7 +12,7 @@ module.exports = {
   },
   solidity: '0.8.19',
   abiExporter: {
-    path: '../client/abi',
+    path: './client/abi',
     runOnCompile: true,
     clear: true,
     flat: true

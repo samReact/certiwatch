@@ -1,20 +1,37 @@
-import { Form, Input, Select, Row, Col, DatePicker, Space, Button } from 'antd';
+import { useState } from 'react';
+import {
+  Form,
+  Input,
+  Select,
+  Row,
+  Col,
+  DatePicker,
+  Space,
+  Button,
+  InputNumber
+} from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
+import axios from 'axios';
+
 import ImageUploader from '../ImageUploader';
 import { update } from '../state/formSlice';
-import { decrement, increment } from '../state/stepperSlice';
+import { decrement, increment, resetStep } from '../state/stepperSlice';
+import { add } from '../state/watchesSlice';
 import Stepper from '../Stepper';
-import ToPng from '../ToPng';
 import { WATCH_BRANDS } from '../utils';
 
 const { Item } = Form;
 
 export default function SellPage() {
+  const [fileList, setFileList] = useState([]);
+  const { address, isConnecting, isDisconnected } = useAccount();
+
   const step = useSelector((state) => state.stepper.value);
   const sellForm = useSelector((state) => state.sellForm);
+  const watches = useSelector((state) => state.watches.watches);
   const dispatch = useDispatch();
-
   const [form] = Form.useForm();
 
   const navigate = useNavigate();
@@ -41,87 +58,163 @@ export default function SellPage() {
         console.log(error);
       }
     } else if (step == 1) {
+      const toto = fileList.map((elt) => elt.thumbUrl);
+      dispatch(update({ photos: toto }));
       dispatch(increment());
     } else if (step == 2) {
-      return navigate('/');
+      try {
+        // const res = await axios.post('/api/message', {
+        //   brand: sellForm.brand,
+        //   model: sellForm.model
+        // });
+        // const data = await res.data;
+        let ipfs = 'Qme3KpseSSB3WyBzbWxT1L3tvVoQnxYUwrVLKqGydM486o';
+        dispatch(
+          add({
+            ...sellForm,
+            // ipfsHash: data.IpfsHash,
+            ipfsHash: ipfs,
+            address,
+            id: watches.length
+          })
+        );
+        dispatch(resetStep());
+        return navigate('/');
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
-  console.log(step);
+
+  const layout = {
+    // labelCol: {
+    //   span: 8
+    // },
+    wrapperCol: {
+      span: 18
+    }
+  };
+
   return (
     <div className="container">
       <Stepper step={step} />
-      <div className="container-content">
-        <Row style={{ height: '40vh' }}>
-          <Col xs={8}>
-            {step == 0 && (
-              <Form name="form_item_path" layout="vertical" form={form}>
-                <Item
-                  name="brand"
-                  label="Brand"
-                  rules={[
-                    { required: true, message: 'Please fill watch brand !' }
-                  ]}
+
+      {isDisconnected ? (
+        <div>Please connect your wallet</div>
+      ) : (
+        <div className="container-content">
+          <Row style={{ height: '50vh' }}>
+            <Col xs={24}>
+              {step == 0 && (
+                <Form
+                  name="form_item_path"
+                  layout="vertical"
+                  form={form}
+                  {...layout}
                 >
-                  <Select>
-                    {WATCH_BRANDS.map((brand) => (
-                      <Select.Option key={brand} value={brand}>
-                        {brand}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Item>
-                <Item
-                  name="model"
-                  label="Model"
-                  rules={[
-                    { required: true, message: 'Please fill watch model !' }
-                  ]}
-                >
-                  <Input />
-                </Item>
-                <Item
-                  name="year"
-                  label="Year"
-                  rules={[
-                    { required: true, message: 'Please fill watch year !' }
-                  ]}
-                >
-                  <DatePicker picker="year" />
-                </Item>
-                <Item
-                  name="serial"
-                  label="Serial No"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please fill watch serial number !'
-                    }
-                  ]}
-                >
-                  <Input />
-                </Item>
-              </Form>
-            )}
-            {step === 1 && <ImageUploader />}
-            {step === 2 && <div>Are you sure ?</div>}
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={24}>
-            <Space>
-              {step !== 0 && (
-                <Button type="primary" onClick={() => handlePrevious()}>
-                  Previous
-                </Button>
+                  <Row>
+                    <Col xs={24} md={12}>
+                      <Item
+                        name="brand"
+                        label="Brand"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch brand !'
+                          }
+                        ]}
+                      >
+                        <Select>
+                          {WATCH_BRANDS.map((brand) => (
+                            <Select.Option key={brand} value={brand}>
+                              {brand}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Item>
+                      <Item
+                        name="model"
+                        label="Model"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch model !'
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Item>
+                      <Item
+                        name="year"
+                        label="Year"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch year !'
+                          }
+                        ]}
+                      >
+                        <DatePicker picker="year" />
+                      </Item>
+                      <Item
+                        name="serial"
+                        label="Serial No"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch serial number !'
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Item>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Item
+                        name="price"
+                        label="Selling price"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill selling price !'
+                          }
+                        ]}
+                      >
+                        <InputNumber />
+                      </Item>
+                      <Form.Item name="description" label="Description">
+                        <Input.TextArea />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form>
               )}
-              <Button type="primary" onClick={() => handleNext()}>
-                {step == 2 ? 'Submit' : 'Next'}
-              </Button>
-            </Space>
-          </Col>
-        </Row>
-      </div>
-      {/* <ToPng /> */}
+              {step === 1 && (
+                <ImageUploader fileList={fileList} setFileList={setFileList} />
+              )}
+              {step === 2 && <div>Are you sure ?</div>}
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={24}>
+              <Space>
+                {step !== 0 && (
+                  <Button type="primary" onClick={() => handlePrevious()}>
+                    Previous
+                  </Button>
+                )}
+                <Button
+                  type="primary"
+                  onClick={() => handleNext()}
+                  disabled={step == 1 && fileList.length < 3}
+                >
+                  {step == 2 ? 'Submit' : 'Next'}
+                </Button>
+              </Space>
+            </Col>
+          </Row>
+        </div>
+      )}
     </div>
   );
 }

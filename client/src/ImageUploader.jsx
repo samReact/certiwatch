@@ -10,8 +10,7 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function ImageUploader() {
-  const [fileList, setFileList] = useState([]);
+export default function ImageUploader({ fileList, setFileList }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
 
@@ -23,36 +22,27 @@ export default function ImageUploader() {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    console.log(file.preview);
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
   };
-
-  const beforeUpload = (file) => {
-    console.log(file.type);
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      return Upload.LIST_IGNORE;
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return false;
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess('ok');
+    }, 0);
   };
-  console.log(previewOpen);
+
   const handleCancel = () => setPreviewOpen(false);
   return (
     <>
-      <ImgCrop rotationSlider>
+      <ImgCrop>
         <Upload
           listType="picture-card"
           fileList={fileList}
           onChange={onChange}
           onPreview={handlePreview}
-          beforeUpload={beforeUpload}
+          customRequest={dummyRequest}
         >
-          {fileList.length < 2 && '+ Upload'}
+          {fileList.length < 3 && '+ Upload'}
         </Upload>
       </ImgCrop>
       <Modal open={previewOpen} footer={null} onCancel={handleCancel}>

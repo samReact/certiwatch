@@ -1,39 +1,29 @@
 import React from 'react';
 import { Col, Row, Button } from 'antd';
-import { useContractRead, useContractWrite } from 'wagmi';
-import abi from '../../abi/SimpleStorage.json';
 import { useNavigate } from 'react-router-dom';
-import { Space, Typography } from 'antd';
+import { Typography } from 'antd';
+import { purple } from '@ant-design/colors';
+
+import image1 from '../assets/rolex_ai.png';
+import image2 from '../assets/rolex_ai-2.png';
 
 const { Text, Title } = Typography;
 
 export default function HomePage() {
   const navigate = useNavigate();
-  // const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
-  // const { data, isLoading, isSuccess, write } = useContractWrite({
-  //   mode: 'recklesslyUnprepared',
-  //   address: contractAddress,
-  //   abi: abi,
-  //   functionName: 'setNumber',
-  //   args: [10]
-  // });
-
-  // const result = useContractRead({
-  //   address: contractAddress,
-  //   abi: abi,
-  //   functionName: 'getNumber',
-  //   watch: true
-  // });
   return (
-    // <div>
-    //   {parseInt(result.data)}
-    //   <button onClick={() => write()}>Feed</button>
-    // </div>
     <>
-      <div style={{ height: '50vh', position: 'relative' }}>
+      <div
+        style={{
+          height: '50vh',
+          position: 'relative',
+          background:
+            'radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(244,70,252,1) 100%)'
+        }}
+      >
         <Title
-          level={2}
+          level={1}
           style={{
             textAlign: 'center',
             position: 'absolute',
@@ -60,29 +50,29 @@ export default function HomePage() {
         >
           <Row justify={'space-between'}>
             <Button type="primary" value="small">
-              Je suis acheteur
+              I buy a watch
             </Button>
             <Button
               type="primary"
               value="small"
               onClick={() => navigate('/sell')}
             >
-              Je suis vendeur
+              I sell a watch
             </Button>
           </Row>
         </div>
-        <img
-          src="https://placehold.co/600x400"
+        {/* <img
+          src={logo}
           alt=""
           style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-        />
+        /> */}
       </div>
       <div className="container">
-        <Row gutter={16} align="middle">
-          <Col xs={24} md={12}>
-            <img src="https://placehold.co/500x300" alt="" width={'100%'} />
+        <Row gutter={16} align="middle" justify={'space-between'}>
+          <Col xs={24} md={10}>
+            <img src={image1} alt="" width={'100%'} />
           </Col>
-          <Col xs={24} md={12}>
+          <Col xs={24} md={10}>
             <Title level={4}>A Certified Watch portfolio</Title>
             <Text>
               Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
@@ -94,8 +84,8 @@ export default function HomePage() {
       </div>
       <div style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
-          <Row gutter={16} align="middle">
-            <Col xs={24} md={12}>
+          <Row gutter={16} align="middle" justify={'space-between'}>
+            <Col xs={24} md={10}>
               <Title level={4}>BLOCKCHAIN ENABLED PLATFORM</Title>
               <Text>
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
@@ -104,8 +94,8 @@ export default function HomePage() {
                 dolorem.
               </Text>
             </Col>
-            <Col xs={24} md={12}>
-              <img src="https://placehold.co/500x300" alt="" width={'100%'} />
+            <Col xs={24} md={10}>
+              <img src={image2} alt="" width={'100%'} />
             </Col>
           </Row>
         </div>
