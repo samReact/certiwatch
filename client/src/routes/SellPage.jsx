@@ -8,7 +8,8 @@ import {
   DatePicker,
   Space,
   Button,
-  InputNumber
+  InputNumber,
+  Typography
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -25,11 +26,12 @@ const { Item } = Form;
 
 export default function SellPage() {
   const [fileList, setFileList] = useState([]);
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address, isDisconnected } = useAccount();
 
   const step = useSelector((state) => state.stepper.value);
   const sellForm = useSelector((state) => state.sellForm);
   const watches = useSelector((state) => state.watches.watches);
+
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
@@ -180,7 +182,15 @@ export default function SellPage() {
               {step === 1 && (
                 <ImageUploader fileList={fileList} setFileList={setFileList} />
               )}
-              {step === 2 && <div>Are you sure ?</div>}
+              {step === 2 && (
+                <Row justify="center" style={{ fontSize: 32 }}>
+                  <Typography style={{ fontSize: 22, textAlign: 'center' }}>
+                    All details will be sent to our expert who will examine the
+                    watch. Once this step is over, you will be able to mint your
+                    certificate of authenticity in the create section.
+                  </Typography>
+                </Row>
+              )}
             </Col>
           </Row>
           <Row>

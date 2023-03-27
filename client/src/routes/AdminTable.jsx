@@ -1,10 +1,10 @@
-import { Button, Space, Table, Tag } from 'antd';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, Space, Table, Tag } from 'antd';
+import axios from 'axios';
+
 import { formattedAddress } from '../utils/index.js';
 import { update } from '../state/watchesSlice';
-import axios from 'axios';
 
 export default function AdminTable() {
   const watches = useSelector((state) => state.watches.watches);
@@ -70,15 +70,6 @@ export default function AdminTable() {
       )
     }
   ];
-
-  const rowSelection = {
-    onChange: (_, selectedRows) => {
-      setSelectedRow(selectedRows[0]);
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.certified // Column configuration not to be checked
-    })
-  };
 
   return <Table rowKey={'id'} columns={columns} dataSource={watches} />;
 }

@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react';
 const nativeNodeModulesPlugin = {
   name: 'native-node-modules',
   setup(build) {
-    console.log('coucouc');
     // If a ".node" file is imported within a module in the "file" namespace, resolve
     // it to an absolute path and put it into the "node-file" virtual namespace.
     build.onResolve({ filter: /\.node$/, namespace: 'file' }, (args) => ({
@@ -40,7 +39,7 @@ const nativeNodeModulesPlugin = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), nativeNodeModulesPlugin],
+  plugins: [react()],
   server: {
     proxy: {
       '/api': {
@@ -50,6 +49,8 @@ export default defineConfig({
       }
     }
   }
-
-  // optimizeDeps: { exclude: ['@nomicfoundation'] }
+  // optimizeDeps: { exclude: ['fsevents', '@nomicfoundation'] },
+  // define: {
+  //   'process.env': {}
+  // }
 });

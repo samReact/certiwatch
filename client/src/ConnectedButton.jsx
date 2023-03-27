@@ -8,7 +8,7 @@ import { formattedAddress } from './utils';
 const { Text } = Typography;
 
 export function ConnectedButton() {
-  const { address, isConnecting } = useAccount();
+  const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
   const [formatted, setFormatted] = useState('');

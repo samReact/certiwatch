@@ -4,9 +4,8 @@ import { useAccount, useConnect } from 'wagmi';
 import { ConnectedButton } from './ConnectedButton';
 
 export function LogIn() {
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect();
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { connect, connectors, isLoading } = useConnect();
+  const { isConnecting, isDisconnected } = useAccount();
 
   if (isLoading || isConnecting) {
     return;

@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",
-    "@pinata/sdk": "^2.1.0",
     "dotenv": "^16.0.3"
   }
 }

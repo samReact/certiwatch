@@ -1,41 +1,65 @@
+import { useEffect, useState, useCallback } from 'react';
 import { Card, List, Typography } from 'antd';
+import { ethers } from 'ethers';
 import Meta from 'antd/es/card/Meta';
-import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useContract, useSigner } from 'wagmi';
+import { useDispatch, useSelector } from 'react-redux';
 
-const data = [
-  {
-    title: 'Title 1'
-  },
-  {
-    title: 'Title 2'
-  },
-  {
-    title: 'Title 3'
-  },
-  {
-    title: 'Title 4'
-  }
-];
+import { initFull } from '../state/watchesSlice';
+import { abi as abiMarketplace } from '../../contractsData/Marketplace.json';
+import { abi as abiCertificate } from '../../contractsData/Certificate.json';
+import { address as certificateAddress } from '../../contractsData/Certificate-address.json';
+import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
 
-export default function ShopPage({ marketplace }) {
-  const [watches, setWatches] = useState([]);
-  // const watches = useSelector((state) => state.watches.watches);
+export default function ShopPage() {
+  const watches = useSelector((state) => state.watches.watches);
+  const fullWatches = useSelector((state) => state.watches.fullWatches);
+
+  const { data: signer } = useSigner();
+  const dispatch = useDispatch();
+
+  const marketplace = useContract({
+    address: marketplaceAddress,
+    abi: abiMarketplace,
+    signerOrProvider: signer
+  });
+
+  const certificate = useContract({
+    address: certificateAddress,
+    abi: abiCertificate,
+    signerOrProvider: signer
+  });
 
   const navigate = useNavigate();
 
-  async function loadMarketPlaceItems() {
+  const loadMarketPlaceItems = useCallback(async () => {
     const itemCount = await marketplace.itemCount();
     let items = [];
     for (let i = 1; i <= itemCount; i++) {
       let item = await marketplace.items(i);
-      items.push(item);
+      const uri = await certificate.tokenURI(item.tokenId);
+      const res = await fetch(uri);
+      const metada = await res.json();
+      const totalPrice = await marketplace.getTotalPrice(item.itemId);
+      const filtered = watches.filter(
+        (watch) => watch.tokenId === parseInt(item.tokenId)
+      )[0];
+
+      items.push({
+        ...filtered,
+        totalPrice: ethers.utils.formatEther(totalPrice),
+        image: metada.image,
+        itemId: parseInt(item.itemId),
+        seller: item.seller,
+        tokenId: parseInt(item.tokenId)
+      });
     }
-    setWatches(items);
-  }
+    dispatch(initFull(items));
+  }, [marketplace]);
 
   useEffect(() => {
-    if (marketplace) {
+    if (marketplace.signer) {
       loadMarketPlaceItems();
     }
   }, [marketplace]);
@@ -53,7 +77,7 @@ export default function ShopPage({ marketplace }) {
             xl: 3,
             xxl: 4
           }}
-          dataSource={watches}
+          dataSource={fullWatches}
           renderItem={(item) => (
             <List.Item>
               <Card
@@ -63,7 +87,10 @@ export default function ShopPage({ marketplace }) {
                 cover={<img alt="example" src={item.photos[0]} />}
               >
                 <Typography.Text strong>{item.model}</Typography.Text>
-                <Meta title={`${item.price} ETH`} description={item.brand} />
+                <Meta
+                  title={`${item.totalPrice} ETH`}
+                  description={item.brand}
+                />
                 <p>{item.description}</p>
               </Card>
             </List.Item>

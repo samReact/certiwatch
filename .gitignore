@@ -1,14 +1,15 @@
 node_modules
-.env
 coverage
 coverage.json
 typechain
 typechain-types
-client/abi
 client/contractsData
-server/.env
+
+.env
+api/.env
+backend/.env
 
 # Hardhat files
-cache
-artifacts
+backend/cache
+backend/artifacts
 

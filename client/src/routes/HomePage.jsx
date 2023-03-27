@@ -1,8 +1,6 @@
-import React from 'react';
 import { Col, Row, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from 'antd';
-import { purple } from '@ant-design/colors';
 
 import image1 from '../assets/rolex_ai.png';
 import image2 from '../assets/rolex_ai-2.png';
@@ -49,7 +47,11 @@ export default function HomePage() {
           }}
         >
           <Row justify={'space-between'}>
-            <Button type="primary" value="small">
+            <Button
+              type="primary"
+              value="small"
+              onClick={() => navigate('/shop')}
+            >
               I buy a watch
             </Button>
             <Button
@@ -61,11 +63,6 @@ export default function HomePage() {
             </Button>
           </Row>
         </div>
-        {/* <img
-          src={logo}
-          alt=""
-          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-        /> */}
       </div>
       <div className="container">
         <Row gutter={16} align="middle" justify={'space-between'}>

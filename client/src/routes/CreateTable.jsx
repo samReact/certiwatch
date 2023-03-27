@@ -1,8 +1,9 @@
 import { Button, Space, Table, Tag } from 'antd';
-import { ethers } from 'hardhat';
+import { ethers } from 'ethers';
 
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { update } from '../state/watchesSlice.js';
 import { formattedAddress } from '../utils/index.js';
 
 export default function CreateTable({ marketplace, certificate }) {
@@ -12,11 +13,13 @@ export default function CreateTable({ marketplace, certificate }) {
   async function handleMint(record) {
     try {
       const uri = `https://ipfs.io/ipfs/${record.ipfsHash}`;
-      const tokenId = await certificate.mintItem(uri);
+      await certificate.mintItem(uri);
       await certificate.setApprovalForAll(marketplace.address, true);
       const listingPrice = ethers.utils.parseEther(record.price.toString());
+      const tokenId = await certificate.tokenIds();
       await marketplace.addItem(certificate.address, tokenId, listingPrice);
-      const payload = { ...record, tokenId, minted: true };
+      const parsedId = parseInt(tokenId);
+      const payload = { ...record, tokenId: parsedId, minted: true };
       dispatch(update(payload));
     } catch (error) {
       console.log(error);
@@ -41,30 +44,30 @@ export default function CreateTable({ marketplace, certificate }) {
       title: 'Status',
       dataIndex: 'certified',
       render: (_, record) => {
-        record.certified ? (
-          <Tag color={'green'}>Approved</Tag>
-        ) : (
-          <Tag>Pending</Tag>
-        );
-        record.minted && <Tag color={'purple'}>Minted</Tag>;
+        if (record.certified && !record.minted) {
+          return <Tag color={'green'}>Approved</Tag>;
+        } else if (record.minted) {
+          return <Tag color={'purple'}>Minted</Tag>;
+        }
       }
     },
 
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            disabled={!record.certified}
-            onClick={() => {
-              handleMint(record);
-            }}
-          >
-            Mint
-          </Button>
-        </Space>
-      )
+      render: (_, record) =>
+        !record.minted && (
+          <Space size="middle">
+            <Button
+              disabled={!record.certified}
+              onClick={() => {
+                handleMint(record);
+              }}
+            >
+              Mint
+            </Button>
+          </Space>
+        )
     }
   ];
 

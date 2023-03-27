@@ -10,11 +10,11 @@ module.exports = {
       chainId: 31337
     }
   },
-  solidity: '0.8.19',
-  abiExporter: {
-    path: './client/abi',
-    runOnCompile: true,
-    clear: true,
-    flat: true
-  }
+  solidity: '0.8.19'
+  // abiExporter: {
+  //   path: './client/abi',
+  //   runOnCompile: true,
+  //   clear: true,
+  //   flat: true
+  // }
 };
