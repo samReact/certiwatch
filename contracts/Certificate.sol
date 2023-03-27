@@ -11,8 +11,6 @@ contract Certificate is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIds;
 
-    // uint public tokenCount = _tokenIds.current();
-
     constructor() ERC721("Certiwatch certificates", "CWT") {}
 
     function mintItem(string memory _tokenURI) public returns (uint256) {
