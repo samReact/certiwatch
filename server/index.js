@@ -26,7 +26,7 @@ async function fillPng(req) {
 
 async function pinFileToIPFS() {
   const pinata = new pinataSDK(key, secret);
-  const readableStreamForFile = fs.createReadStream('./filled.png');
+  const readableStreamForFile = fs.createReadStream('filled.png');
 
   const options = {
     pinataMetadata: {
@@ -48,10 +48,14 @@ async function pinFileToIPFS() {
   return response;
 }
 
-app.post('/api/message', async (req, res) => {
-  await fillPng(req.body, res);
-  const response = await pinFileToIPFS();
-  res.send(response);
+app.post('/api/uploadIpfs', async (req, res) => {
+  try {
+    await fillPng(req.body);
+    const hash = await pinFileToIPFS();
+    res.send(hash);
+  } catch (error) {
+    throw error;
+  }
 });
 
 app.listen(port, () => {

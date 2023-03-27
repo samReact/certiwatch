@@ -1,7 +1,6 @@
 import { Card, List, Typography } from 'antd';
 import Meta from 'antd/es/card/Meta';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const data = [
@@ -19,10 +18,28 @@ const data = [
   }
 ];
 
-export default function ShopPage() {
-  const watches = useSelector((state) => state.watches.watches);
+export default function ShopPage({ marketplace }) {
+  const [watches, setWatches] = useState([]);
+  // const watches = useSelector((state) => state.watches.watches);
+
   const navigate = useNavigate();
-  console.log(watches);
+
+  async function loadMarketPlaceItems() {
+    const itemCount = await marketplace.itemCount();
+    let items = [];
+    for (let i = 1; i <= itemCount; i++) {
+      let item = await marketplace.items(i);
+      items.push(item);
+    }
+    setWatches(items);
+  }
+
+  useEffect(() => {
+    if (marketplace) {
+      loadMarketPlaceItems();
+    }
+  }, [marketplace]);
+
   return (
     <div className="container">
       <div className="container-content">

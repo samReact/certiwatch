@@ -13,7 +13,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import axios from 'axios';
 
 import ImageUploader from '../ImageUploader';
 import { update } from '../state/formSlice';
@@ -63,17 +62,9 @@ export default function SellPage() {
       dispatch(increment());
     } else if (step == 2) {
       try {
-        // const res = await axios.post('/api/message', {
-        //   brand: sellForm.brand,
-        //   model: sellForm.model
-        // });
-        // const data = await res.data;
-        let ipfs = 'Qme3KpseSSB3WyBzbWxT1L3tvVoQnxYUwrVLKqGydM486o';
         dispatch(
           add({
             ...sellForm,
-            // ipfsHash: data.IpfsHash,
-            ipfsHash: ipfs,
             address,
             id: watches.length
           })
@@ -87,9 +78,6 @@ export default function SellPage() {
   }
 
   const layout = {
-    // labelCol: {
-    //   span: 8
-    // },
     wrapperCol: {
       span: 18
     }

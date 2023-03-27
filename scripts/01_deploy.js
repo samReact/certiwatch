@@ -9,13 +9,19 @@ const hre = require('hardhat');
 
 async function main() {
   const Certificate = await hre.ethers.getContractFactory('Certificate');
+  const Marketplace = await hre.ethers.getContractFactory('Marketplace');
+
   const certificate = await Certificate.deploy();
+  const marketplace = await Marketplace.deploy(1);
 
   await certificate.deployed();
+  await marketplace.deployed();
 
   saveClientFiles(certificate, 'Certificate');
+  saveClientFiles(marketplace, 'Marketplace');
 
   console.log(`Certificate deployed to ${certificate.address}`);
+  console.log(`Marketplace deployed to ${marketplace.address}`);
 }
 
 function saveClientFiles(contract, name) {
@@ -31,7 +37,7 @@ function saveClientFiles(contract, name) {
     JSON.stringify({ address: contract.address }, undefined, 2)
   );
 
-  const contractArtifact = artifacts.readArtifactSync('Certificate');
+  const contractArtifact = artifacts.readArtifactSync(name);
 
   fs.writeFileSync(
     contractsDir + `/${name}.json`,

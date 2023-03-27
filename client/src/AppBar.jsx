@@ -4,22 +4,25 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
-import abi from '../abi/Watches.json';
+import { abi } from '../contractsData/MarketPlace.json';
+import { address } from '../contractsData/Marketplace-address.json';
 
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const CONTRACT_ADDRESS = address;
 
 export default function ResponsiveAppBar() {
   const { address } = useAccount();
-  const result = useContractRead({
+
+  const { data } = useContractRead({
     address: CONTRACT_ADDRESS,
     abi: abi,
     functionName: 'owner',
-    watch: true
+    watch: true,
+    enabled: Boolean(address)
   });
 
-  const isOwner = result.data === address;
-
+  const isOwner = data && address && data === address;
   const navigate = useNavigate();
+
   return (
     <div style={{ boxShadow: '0px 1px 5px #a5a5a5' }}>
       <Row
@@ -40,6 +43,9 @@ export default function ResponsiveAppBar() {
             </Link>
             <Link to={'/sell'} style={{ color: '#B37FEB' }}>
               I Sell
+            </Link>
+            <Link to={'/create'} style={{ color: '#B37FEB' }}>
+              Create
             </Link>
             {isOwner && (
               <Link to={'/admin'} style={{ color: '#B37FEB' }}>
