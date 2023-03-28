@@ -10,13 +10,33 @@ export default function AdminTable() {
   const watches = useSelector((state) => state.watches.watches);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState();
 
   async function handleSubmit(record) {
+    setSelectedRow(record);
     setLoading(true);
+    const {
+      brand,
+      model,
+      gender,
+      year,
+      serial,
+      watch_case,
+      bracelet,
+      movement,
+      color
+    } = record;
     try {
       const res = await axios.post('/api/uploadIpfs', {
-        brand: record.brand,
-        model: record.model
+        brand,
+        model,
+        gender,
+        year,
+        serial,
+        watch_case,
+        bracelet,
+        movement,
+        color
       });
       const data = await res.data;
 
@@ -62,7 +82,7 @@ export default function AdminTable() {
           <Button
             disabled={record.certified}
             onClick={() => handleSubmit(record)}
-            loading={loading}
+            loading={selectedRow && selectedRow.id === record.id && loading}
           >
             Approve
           </Button>

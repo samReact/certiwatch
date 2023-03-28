@@ -4,6 +4,8 @@ import { Typography } from 'antd';
 
 import image1 from '../assets/rolex_ai.png';
 import image2 from '../assets/rolex_ai-2.png';
+import tokenImage from '../assets/token.png';
+import blockImage from '../assets/blockchain.png';
 
 const { Text, Title } = Typography;
 
@@ -64,26 +66,14 @@ export default function HomePage() {
           </Row>
         </div>
       </div>
-      <div className="container">
-        <Row gutter={16} align="middle" justify={'space-between'}>
-          <Col xs={24} md={10}>
-            <img src={image1} alt="" width={'100%'} />
-          </Col>
-          <Col xs={24} md={10}>
-            <Title level={4}>A Certified Watch portfolio</Title>
-            <Text>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut fugit, sed quia consequuntur magni dolores eos qui ratione
-              voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem.
-            </Text>
-          </Col>
-        </Row>
-      </div>
-      <div style={{ backgroundColor: '#F5F5F5' }}>
+      <div style={{ backgroundColor: '#fff' }}>
         <div className="container">
           <Row gutter={16} align="middle" justify={'space-between'}>
             <Col xs={24} md={10}>
-              <Title level={4}>BLOCKCHAIN ENABLED PLATFORM</Title>
+              <img src={image1} alt="" width={'100%'} />
+            </Col>
+            <Col xs={24} md={10}>
+              <Title level={4}>A Certified Watch portfolio</Title>
               <Text>
                 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
                 aut fugit, sed quia consequuntur magni dolores eos qui ratione
@@ -91,19 +81,35 @@ export default function HomePage() {
                 dolorem.
               </Text>
             </Col>
-            <Col xs={24} md={10}>
-              <img src={image2} alt="" width={'100%'} />
-            </Col>
           </Row>
         </div>
       </div>
-      <div height={300}>
+      <div className="container">
+        <Row gutter={16} align="middle" justify={'space-between'}>
+          <Col xs={24} md={10}>
+            <Title level={4}>BLOCKCHAIN ENABLED PLATFORM</Title>
+            <Text>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut fugit, sed quia consequuntur magni dolores eos qui ratione
+              voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem.
+            </Text>
+          </Col>
+          <Col xs={24} md={10}>
+            <img src={image2} alt="" width={'100%'} />
+          </Col>
+        </Row>
+      </div>
+      <div style={{ backgroundColor: '#fff' }}>
         <div className="container" style={{ textAlign: 'center' }}>
           <Title level={2}>BUY AND SELL SAFELY</Title>
           <Text>
             TextLorem ipsum dolor Titleipiscing elit, sed do eiusmod tempor it
             labore
           </Text>
+          <Row justify={'space-around'} style={{ marginTop: 50 }}>
+            <img src={tokenImage} alt="token" />
+            <img src={blockImage} alt="token" />
+          </Row>
         </div>
       </div>
     </>

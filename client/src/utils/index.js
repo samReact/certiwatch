@@ -12,5 +12,38 @@ export const WATCH_BRANDS = [
   'Omega',
   'Tudor',
   'Tag Heuer',
-  'Autre'
+  'Jaeger LeCoultre',
+  'Cartier',
+  'Hublot',
+  'IWS',
+  'Other'
 ];
+
+export const GENDER = ['Men', 'Woman', 'Unisex'];
+
+export const CASE_MATERIAL = [
+  'Gold',
+  'Stainless Steel',
+  'Titanium',
+  'Bronze',
+  'Ceramic',
+  'Other'
+];
+
+export const BRACELET_MATERIAL = [
+  'Gold',
+  'Stainless Steel',
+  'Titanium',
+  'Bronze',
+  'Ceramic',
+  'Leather',
+  'Rubber',
+  'Nylon',
+  'Other'
+];
+
+export const WATCH_MOVEMENTS = ['Quartz', 'Mechanical', 'Automatic', 'Other'];
+
+export function removeIpfs(url) {
+  return url.replace(/^ipfs?:\/\//, '');
+}

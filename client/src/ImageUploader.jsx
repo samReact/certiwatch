@@ -34,7 +34,7 @@ export default function ImageUploader({ fileList, setFileList }) {
   const handleCancel = () => setPreviewOpen(false);
   return (
     <>
-      <ImgCrop>
+      <ImgCrop quality={1}>
         <Upload
           listType="picture-card"
           fileList={fileList}

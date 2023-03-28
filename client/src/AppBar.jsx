@@ -1,6 +1,6 @@
 import { useAccount, useContractRead } from 'wagmi';
-import { Row, Space } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Row } from 'antd';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
@@ -22,40 +22,51 @@ export default function ResponsiveAppBar() {
 
   const isOwner = data && address && data === address;
   const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
 
   return (
-    <div style={{ boxShadow: '0px 1px 5px #a5a5a5' }}>
-      <Row
-        justify={'space-between'}
-        align="middle"
-        style={{ padding: 12, boxShadow: '10px' }}
-      >
-        <Row sx={{ flexGrow: 1 }} align="middle">
-          <Space size={'large'}>
-            <img
-              src={logo}
-              alt="logo"
-              width={200}
-              onClick={() => navigate('/')}
-            />
-            <Link to={'/shop'} style={{ color: '#B37FEB' }}>
-              I Buy
-            </Link>
-            <Link to={'/sell'} style={{ color: '#B37FEB' }}>
-              I Sell
-            </Link>
-            <Link to={'/create'} style={{ color: '#B37FEB' }}>
-              Create
-            </Link>
-            {isOwner && (
-              <Link to={'/admin'} style={{ color: '#B37FEB' }}>
-                Admin
-              </Link>
-            )}
-          </Space>
-        </Row>
-        <LogIn />
+    <Row align="middle" style={{ height: '100%' }} justify={'space-between'}>
+      <Row align="middle" style={{ height: '100%' }}>
+        <img
+          src={logo}
+          alt="logo"
+          width={200}
+          onClick={() => navigate('/')}
+          style={{ marginRight: 16 }}
+        />
+        <Link
+          to={'/shop'}
+          className={
+            pathname.startsWith('/shop') ? `menu-item -selected` : 'menu-item'
+          }
+        >
+          I Buy
+        </Link>
+        <Link
+          to={'/sell'}
+          className={pathname === '/sell' ? `menu-item -selected` : 'menu-item'}
+        >
+          I Sell
+        </Link>
+        <Link
+          to={'/mint'}
+          className={pathname === '/mint' ? `menu-item -selected` : 'menu-item'}
+        >
+          Mint
+        </Link>
+        {isOwner && (
+          <Link
+            to={'/admin'}
+            className={
+              pathname === '/admin' ? `menu-item -selected` : 'menu-item'
+            }
+          >
+            Admin
+          </Link>
+        )}
       </Row>
-    </div>
+      <LogIn />
+    </Row>
   );
 }
