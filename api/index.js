@@ -19,8 +19,28 @@ app.use(express.urlencoded({ extended: true }));
 async function fillPng(req) {
   const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
   const image = await Jimp.read('./nft_template.png');
-  image.print(font, 220, 120, req.brand);
-  image.print(font, 220, 140, req.model);
+  const {
+    brand,
+    model,
+    year,
+    gender,
+    serial,
+    watch_case,
+    bracelet,
+    movement,
+    color
+  } = req;
+  image.print(font, 220, 120, brand);
+  image.print(font, 220, 140, model);
+  image.print(font, 220, 160, watch_case);
+  image.print(font, 220, 180, bracelet);
+  image.print(font, 220, 200, movement);
+  image.print(font, 220, 220, color);
+  image.print(font, 220, 240, gender);
+  image.print(font, 220, 260, year);
+  image.print(font, 220, 280, serial);
+  image.print(font, 220, 300, 'VERIDESK LLC');
+  image.print(font, 220, 320, 'Pierre Dupont - x21233');
   await image.writeAsync('filled.png');
 }
 
