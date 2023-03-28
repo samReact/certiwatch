@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import { purple } from '@ant-design/colors';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+const { Header, Footer, Content } = Layout;
 
 import ResponsiveAppBar from './AppBar';
 import HomePage from './routes/HomePage';
@@ -18,6 +19,7 @@ import ShopPage from './routes/ShopPage';
 import WatchPage from './routes/WatchPage';
 import AdminPage from './routes/AdminPage';
 import CreatePage from './routes/CreatePage';
+import FooterComponent from './FooterComponent';
 
 const { provider, webSocketProvider } = configureChains(
   [hardhat],
@@ -34,7 +36,13 @@ const theme = {
   token: {
     colorPrimary: purple[3]
   },
-  components: {}
+  components: {
+    Layout: {
+      Header: {
+        backgroundColor: purple[3]
+      }
+    }
+  }
 };
 let persistor = persistStore(store);
 
@@ -44,15 +52,22 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <WagmiConfig client={client}>
           <ConfigProvider theme={theme}>
-            <ResponsiveAppBar />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/sell" element={<SellPage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/shop/:id" element={<WatchPage />} />
-              <Route path="/create" element={<CreatePage />} />
-              <Route path="/Admin" element={<AdminPage />} />
-            </Routes>
+            <Layout hasSider={false}>
+              <Header>
+                <ResponsiveAppBar />
+              </Header>
+              <Content>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/sell" element={<SellPage />} />
+                  <Route path="/shop" element={<ShopPage />} />
+                  <Route path="/shop/:id" element={<WatchPage />} />
+                  <Route path="/mint" element={<CreatePage />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                </Routes>
+              </Content>
+              <FooterComponent />
+            </Layout>
           </ConfigProvider>
         </WagmiConfig>
       </PersistGate>
