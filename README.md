@@ -1,37 +1,74 @@
 ![alt text](./client/src/assets/logo-main.png)
 
-Bienvenue sur le projet Web3! Ce projet est une application Web3 qui utilise React et Antd pour le front-end, Express.js pour l'API et Hardhat pour la blockchain. L'objectif de ce projet est de fournir une interface utilisateur pour interagir avec une application décentralisée sur la blockchain Ethereum.
+Welcome to the Web3 Project! This project is a Web3 application that uses React and Antd for the front-end, Express.js for the API, and Hardhat for the blockchain. The goal of this project is to provide a user interface for interacting with a decentralized application on the Ethereum blockchain.
 
 ## Installation
 
-1. Cloner le dépôt en local.
+1. Clone the repository locally.
 
-2. Dans chaque dossier (client, api et backend), exécuter la commande npm install pour installer les dépendances nécessaires.
-3. Configurer les variables d'environnement pour l'API et le backend (voir ci-dessous).
+```bash
+git clone
+```
+
+2. In each folder (client, api, and backend), run the command npm install to install the necessary dependencies.
+
+```bash
+npm install
+```
+
+3. Configure environment variables for the API and backend (see below).
 
 ## Configuration
 
 ### API
 
-Dans le dossier api, créer un fichier .env avec les variables d'environnement suivantes:
+In the api folder, create a .env file with the following environment variables:
 
 PORT=5000
 
 ### Backend
 
-Dans le dossier backend, créer un fichier .env avec les variables d'environnement suivantes:
+In the backend folder, create a .env file with the following environment variables:
 
 MNEMONIC=<mnemonic>
 INFURA_PROJECT_ID=<project_id>
-Remplacer <mnemonic> par votre mnémonique de compte Ethereum et <project_id> par votre ID de projet Infura.
+
+Replace <mnemonic> with your Ethereum account mnemonic and <project_id> with your Infura project ID.
 
 ## Utilisation
 
-1. Dans le dossier backend, exécuter la commande npx hardhat node pour lancer un nœud local Ethereum.
-2. Dans le dossier backend, exécuter la commande npx hardhat run scripts/deploy.js --network localhost pour déployer les contrats intelligents sur le nœud local.
-3. Dans le dossier api, exécuter la commande npm start pour démarrer l'API.
-4. Dans le dossier client, exécuter la commande npm start pour démarrer l'application Web3.
+1. In backend folder start a local Ethereum node.
 
-## Licence
+```bash
+npx hardhat node
+```
 
-Ce projet est sous licence MIT. Veuillez consulter le fichier LICENSE pour plus d'informations.
+2. In backend folder deploy the smart contracts to the local node
+
+```bash
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+3. In the api folder, start the API.
+
+```bash
+npm start
+```
+
+4. In the client folder, run the command below command to start the Web3 application.
+
+```bash
+npm run dev
+```
+
+## Tests
+
+1. In backend folder, run this command to run tests
+
+```bash
+npx hardhat test
+```
+
+## License
+
+This project is licensed under the MIT License. Please see the LICENSE file for more information.
