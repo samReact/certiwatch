@@ -8,19 +8,22 @@ const { artifacts } = require('hardhat');
 const hre = require('hardhat');
 
 async function main() {
-  const Certificate = await hre.ethers.getContractFactory('Certificate');
+  const NFTCollection = await hre.ethers.getContractFactory('NFTCollection');
   const Marketplace = await hre.ethers.getContractFactory('Marketplace');
 
-  const certificate = await Certificate.deploy();
+  const nftCollection = await NFTCollection.deploy(
+    'Certiwatch collection',
+    'CWT'
+  );
   const marketplace = await Marketplace.deploy(1);
 
-  await certificate.deployed();
+  await nftCollection.deployed();
   await marketplace.deployed();
 
-  saveClientFiles(certificate, 'Certificate');
+  saveClientFiles(nftCollection, 'NFTCollection');
   saveClientFiles(marketplace, 'Marketplace');
 
-  console.log(`Certificate deployed to ${certificate.address}`);
+  console.log(`NFTCollection deployed to ${nftCollection.address}`);
   console.log(`Marketplace deployed to ${marketplace.address}`);
 }
 

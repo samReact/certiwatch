@@ -8,8 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { initFull } from '../state/watchesSlice';
 import { abi as abiMarketplace } from '../../contractsData/Marketplace.json';
-import { abi as abiCertificate } from '../../contractsData/Certificate.json';
-import { address as certificateAddress } from '../../contractsData/Certificate-address.json';
+import { abi as abiCertificate } from '../../contractsData/NFTCollection.json';
+import { address as certificateAddress } from '../../contractsData/NFTCollection-address.json';
 import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
 
 export default function ShopPage() {

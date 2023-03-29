@@ -6,41 +6,94 @@ const { anyValue } = require('@nomicfoundation/hardhat-chai-matchers/withArgs');
 const { expect } = require('chai');
 
 describe('Marketplace', async () => {
-  let owner, addr1, addr2, certificate, marketplace;
-  let feePercent = 1;
+  let owner, addr1, addr2, factory, nftCollection, feeRate, NFTCollection;
   let URI = 'ipfs://fakeurl';
 
   beforeEach(async () => {
     const Marketplace = await ethers.getContractFactory('Marketplace');
-    const Certificate = await ethers.getContractFactory('Certificate');
+    NFTCollection = await ethers.getContractFactory('NFTCollection');
+    feeRate = 1;
 
     [owner, addr1, addr2] = await ethers.getSigners();
-    certificate = await Certificate.deploy();
-    marketplace = await Marketplace.deploy(feePercent);
+    marketplace = await Marketplace.deploy(feeRate);
+    nftCollection = await NFTCollection.deploy('Certiwatch', 'CWT');
   });
 
   describe('Deployment', () => {
-    it('Should return the correct name and symbol of nft collection', async () => {
-      expect(await certificate.name()).to.equal('Certiwatch certificates');
-      expect(await certificate.symbol()).to.equal('CWT');
-    });
-    it('Should return the initial feePercent and feeAccount of the marketplace', async () => {
+    it('Should return the initial feeAccount of the marketplace', async () => {
       expect(await marketplace.feeAccount()).to.equal(owner.address);
-      expect(await marketplace.feePercent()).to.equal(feePercent);
+    });
+    it('Should return the initial feeAccount of the marketplace', async () => {
+      expect(await marketplace.feeRate()).to.equal(feeRate);
+    });
+    it('Should return the correct name and symbol of inital collection', async () => {
+      expect(await nftCollection.name()).to.equal('Certiwatch');
+      expect(await nftCollection.symbol()).to.equal('CWT');
+    });
+  });
+
+  describe('Create new collections', () => {
+    let address1, newCollection, instance1;
+
+    beforeEach(async () => {
+      newCollection = await marketplace.createCollection('2pac', 'NWA');
+      address1 = await marketplace.NFTCollectionArray(0);
+      instance1 = await NFTCollection.attach(address1);
+    });
+
+    it('Should return the correct name and symbol of new collection 1', async () => {
+      expect(await instance1.name()).to.equal('2pac');
+      expect(await instance1.symbol()).to.equal('NWA');
+    });
+
+    it('Should emit NewCollection events', async () => {
+      await expect(newCollection)
+        .to.emit(marketplace, 'NewCollection')
+        .withArgs('2pac', address1, anyValue);
+    });
+  });
+
+  describe('Profit Rate', () => {
+    it('Should has an initial value', async () => {
+      expect(await marketplace.feeRate()).to.equal(feeRate);
+    });
+    describe('Setting a new value', async () => {
+      let newRate = 2;
+      let tx;
+
+      beforeEach(async () => {
+        tx = await marketplace.updateProfitRate(newRate);
+      });
+      it('Should revert if call by non owner', async () => {
+        let tx = marketplace.connect(addr1).updateProfitRate(newRate);
+        await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+      });
+      it('Should revert if rate is > 100', async () => {
+        let tx = marketplace.updateProfitRate(120);
+        await expect(tx).to.be.revertedWith('Incorrect rate number');
+      });
+      it('Should track the new setted value', async () => {
+        expect(await marketplace.feeRate()).to.equal(newRate);
+      });
+      it('Should emit an UpdatedProfitRate event', async () => {
+        expect(tx)
+          .to.emit(marketplace, 'UpdatedProfitRate')
+          .withArgs(feeRate, newRate);
+      });
     });
   });
 
   describe('Minting NFTs', () => {
     it('Should track each minted Certificate', async () => {
-      await certificate.connect(addr1).mintItem(URI);
-      expect(await certificate.tokenIds()).to.equal(1);
-      expect(await certificate.balanceOf(addr1.address)).to.equal(1);
-      expect(await certificate.tokenURI(1)).to.equal(URI);
+      await nftCollection.connect(addr1).mintItem(URI);
+      expect(await nftCollection.tokenIds()).to.equal(1);
+      expect(await nftCollection.balanceOf(addr1.address)).to.equal(1);
+      expect(await nftCollection.tokenURI(1)).to.equal(URI);
 
-      await certificate.connect(addr2).mintItem(URI);
-      expect(await certificate.tokenIds()).to.equal(2);
-      expect(await certificate.balanceOf(addr2.address)).to.equal(1);
-      expect(await certificate.tokenURI(2)).to.equal(URI);
+      await nftCollection.connect(addr2).mintItem(URI);
+      expect(await nftCollection.tokenIds()).to.equal(2);
+      expect(await nftCollection.balanceOf(addr2.address)).to.equal(1);
+      expect(await nftCollection.tokenURI(2)).to.equal(URI);
     });
   });
 

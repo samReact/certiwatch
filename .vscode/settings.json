@@ -1,0 +1,7 @@
+{
+  "solidity.defaultCompiler": "localNodeModule",
+  "solidity.compileUsingRemoteVersion": "latest",
+  "solidity.remappings": [
+    "@openzeppelin/=/Users/samir/Desktop/dev/alyra-dev/certiwatch/backend/node_modules/@openzeppelin"
+  ]
+}

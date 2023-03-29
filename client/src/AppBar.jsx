@@ -41,19 +41,19 @@ export default function ResponsiveAppBar() {
             pathname.startsWith('/shop') ? `menu-item -selected` : 'menu-item'
           }
         >
-          I Buy
+          BUY
         </Link>
         <Link
           to={'/sell'}
           className={pathname === '/sell' ? `menu-item -selected` : 'menu-item'}
         >
-          I Sell
+          SELL
         </Link>
         <Link
           to={'/mint'}
           className={pathname === '/mint' ? `menu-item -selected` : 'menu-item'}
         >
-          Mint
+          MINT
         </Link>
         {isOwner && (
           <Link

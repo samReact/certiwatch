@@ -54,14 +54,14 @@ export default function HomePage() {
               value="small"
               onClick={() => navigate('/shop')}
             >
-              I buy a watch
+              I BUY A WATCH
             </Button>
             <Button
               type="primary"
               value="small"
               onClick={() => navigate('/sell')}
             >
-              I sell a watch
+              I SELL A WATCH
             </Button>
           </Row>
         </div>

@@ -18,13 +18,18 @@ export default function CreateTable({ marketplace, certificate, address }) {
   const dispatch = useDispatch();
 
   async function handleMint(record) {
+    const listingPrice = ethers.utils.parseEther(record.price.toString());
+
     try {
       const uri = `https://ipfs.io/ipfs/${record.ipfsHash}`;
-      await certificate.mintItem(uri);
-      await certificate.setApprovalForAll(marketplace.address, true);
-      const listingPrice = ethers.utils.parseEther(record.price.toString());
+      await (await certificate.mintItem(uri)).wait();
+      await (
+        await certificate.setApprovalForAll(marketplace.address, true)
+      ).wait();
       const tokenId = await certificate.tokenIds();
-      await marketplace.addItem(certificate.address, tokenId, listingPrice);
+      await (
+        await marketplace.addItem(certificate.address, tokenId, listingPrice)
+      ).wait();
       const parsedId = parseInt(tokenId);
       const payload = { ...record, tokenId: parsedId, minted: true };
       dispatch(update(payload));

@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./NFTCollection.sol";
 
 contract Marketplace is ReentrancyGuard, Ownable {
-    address payable public immutable feeAccount;
-    uint public profitRate;
+    NFTCollection[] public NFTCollectionArray;
+    uint public feeRate;
     uint public itemCount;
+    address payable public immutable feeAccount;
 
     struct Item {
         uint itemId;
@@ -19,6 +21,14 @@ contract Marketplace is ReentrancyGuard, Ownable {
         bool sold;
     }
 
+    mapping(uint => Item) public items;
+
+    // EVENTS
+
+    event NewCollection(string _name, address _addr, uint timestamp);
+
+    event UpdatedProfitRate(uint prev, uint profitRate);
+
     event ItemAdded(
         uint itemId,
         address indexed certificate,
@@ -26,8 +36,6 @@ contract Marketplace is ReentrancyGuard, Ownable {
         uint price,
         address indexed seller
     );
-
-    event UpdatedProfitRate(uint prev, uint profitRate);
 
     event ItemBought(
         uint itemId,
@@ -38,17 +46,28 @@ contract Marketplace is ReentrancyGuard, Ownable {
         address indexed buyer
     );
 
-    mapping(uint => Item) public items;
+    // CONSTRUCTOR
 
-    constructor(uint _profitRate) {
+    constructor(uint _feeRate) {
         feeAccount = payable(msg.sender);
-        profitRate = _profitRate;
+        feeRate = _feeRate;
     }
 
-    function updateProfitRate(uint _profitRate) external onlyOwner {
-        require(_profitRate > 0 && _profitRate < 100);
-        profitRate = _profitRate;
-        emit UpdatedProfitRate(profitRate, _profitRate);
+    // FUNCTIONS
+
+    function createCollection(
+        string calldata _name,
+        string calldata _symbol
+    ) external {
+        NFTCollection newCollection = new NFTCollection(_name, _symbol);
+        NFTCollectionArray.push(newCollection);
+        emit NewCollection(_name, address(newCollection), block.timestamp);
+    }
+
+    function updateProfitRate(uint _feeRate) external onlyOwner {
+        require(_feeRate > 0 && _feeRate < 100, "Incorrect rate number");
+        feeRate = _feeRate;
+        emit UpdatedProfitRate(feeRate, _feeRate);
     }
 
     function addItem(
@@ -100,6 +119,6 @@ contract Marketplace is ReentrancyGuard, Ownable {
     }
 
     function getTotalPrice(uint _itemId) public view returns (uint) {
-        return ((items[_itemId].price * (100 + profitRate)) / 100);
+        return ((items[_itemId].price * (100 + feeRate)) / 100);
     }
 }
