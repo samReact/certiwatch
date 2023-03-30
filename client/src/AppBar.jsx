@@ -5,19 +5,17 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
 import { abi } from '../contractsData/MarketPlace.json';
-import { address } from '../contractsData/Marketplace-address.json';
-
-const CONTRACT_ADDRESS = address;
+import { address as contractAddress } from '../contractsData/Marketplace-address.json';
 
 export default function ResponsiveAppBar() {
   const { address } = useAccount();
 
   const { data } = useContractRead({
-    address: CONTRACT_ADDRESS,
+    address: contractAddress,
     abi: abi,
     functionName: 'owner',
     watch: true,
-    enabled: Boolean(address)
+    enabled: Boolean(address && contractAddress)
   });
 
   const isOwner = data && address && data === address;
