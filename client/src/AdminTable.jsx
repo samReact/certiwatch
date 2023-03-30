@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Space, Table, Tag } from 'antd';
 import axios from 'axios';
 
-import { formattedAddress } from '../utils/index.js';
-import { update } from '../state/watchesSlice';
+import { formattedAddress } from './utils/index.js';
+import { update } from './state/watchesSlice';
 
 export default function AdminTable() {
   const watches = useSelector((state) => state.watches.watches);

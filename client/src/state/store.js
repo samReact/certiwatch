@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import stepperReducer from './stepperSlice';
 import sellFormReducer from './formSlice';
 import watchesSlice from './watchesSlice';
+import ethSlice from './ethSlice';
 import storage from 'redux-persist/lib/storage';
 import { combineReducers } from 'redux';
 import {
@@ -23,7 +24,8 @@ const persistConfig = {
 let root = combineReducers({
   stepper: stepperReducer,
   sellForm: sellFormReducer,
-  watches: watchesSlice
+  watches: watchesSlice,
+  eth: ethSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, root);

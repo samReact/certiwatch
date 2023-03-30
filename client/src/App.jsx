@@ -20,6 +20,7 @@ import WatchPage from './routes/WatchPage';
 import AdminPage from './routes/AdminPage';
 import CreatePage from './routes/CreatePage';
 import FooterComponent from './FooterComponent';
+import ExpertPage from './routes/ExpertPage';
 
 const { provider, webSocketProvider } = configureChains(
   [hardhat],
@@ -64,6 +65,7 @@ function App() {
                   <Route path="/shop/:id" element={<WatchPage />} />
                   <Route path="/mint" element={<CreatePage />} />
                   <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/expert" element={<ExpertPage />} />
                 </Routes>
               </Content>
               <FooterComponent />

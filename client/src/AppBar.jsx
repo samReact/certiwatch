@@ -18,7 +18,17 @@ export default function ResponsiveAppBar() {
     enabled: Boolean(address && contractAddress)
   });
 
+  const expert = useContractRead({
+    address: contractAddress,
+    abi: abi,
+    functionName: 'getExpert',
+    watch: true,
+    enabled: Boolean(address && contractAddress),
+    args: [address]
+  });
+
   const isOwner = data && address && data === address;
+  const isExpert = expert && expert.data && expert.data.authorized;
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
@@ -61,6 +71,16 @@ export default function ResponsiveAppBar() {
             }
           >
             Admin
+          </Link>
+        )}
+        {isExpert && (
+          <Link
+            to={'/expert'}
+            className={
+              pathname === '/expert' ? `menu-item -selected` : 'menu-item'
+            }
+          >
+            Expert
           </Link>
         )}
       </Row>
