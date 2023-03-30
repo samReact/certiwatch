@@ -6,7 +6,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { address as contractAddress } from '../contractsData/Marketplace-address.json';
 import { abi } from '../contractsData/Marketplace.json';
 
-export default function ExpertForm() {
+export default function AddExpertForm() {
   const [form] = Form.useForm();
   const [fields, setFields] = useState({ address: '', name: '' });
 

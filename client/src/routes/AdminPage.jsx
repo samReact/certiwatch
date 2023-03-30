@@ -15,13 +15,13 @@ import { address as contractAddress } from '../../contractsData/Marketplace-addr
 import { abi } from '../../contractsData/MarketPlace.json';
 import { useEffect } from 'react';
 import AdminFee from '../AdminFee';
-import { Typography } from 'antd';
+import { Col, Row, Space, Typography } from 'antd';
 import ExpertTable from '../ExpertTable';
-import ExpertForm from '../ExpertForm';
 import { useCallback } from 'react';
+import AddExpertForm from '../AddExpertForm';
 
 export default function AdminPage() {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState();
   const [events, setEvents] = useState([]);
 
   const { data: signer } = useSigner();
@@ -49,7 +49,7 @@ export default function AdminPage() {
     address: contractAddress,
     abi: abi,
     functionName: 'updateProfitRate',
-    enabled: false,
+    enabled: Boolean(value),
     args: [parseInt(value)]
   });
   const writeData = useContractWrite(config);
@@ -103,13 +103,20 @@ export default function AdminPage() {
         <Typography.Title level={3}>Profit Rate</Typography.Title>
         <AdminFee value={value} setValue={setValue} writeData={writeData} />
       </div>
-      <div style={{ marginBottom: 40 }}>
-        <Typography.Title level={3}>Experts</Typography.Title>
-        <ExpertForm />
-        <ExpertTable events={events} marketplace={marketplace} />
-      </div>
-      <Typography.Title level={3}>Ads</Typography.Title>
-      <AdminTable />
+      <Row gutter={24}>
+        <Col xs={24} md={12}>
+          <Typography.Title level={3}>Experts</Typography.Title>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <AddExpertForm />
+            <ExpertTable events={events} marketplace={marketplace} />
+          </Space>
+        </Col>
+        <Col xs={24} md={12}>
+          <Typography.Title level={3}>Ads</Typography.Title>
+          <AdminTable />
+        </Col>
+      </Row>
+      <Row></Row>
     </div>
   );
 }

@@ -13,7 +13,12 @@ export const watchesSlice = createSlice({
       state.watches.push(action.payload);
     },
     update: (state, action) => {
-      state.watches.splice(action.payload.id, 1, action.payload);
+      const watches = state.watches.filter(
+        (watch) => watch.id !== action.payload.id
+      );
+      watches.push(action.payload);
+
+      return { ...state, watches };
     },
     initFull: (state, action) => {
       state.fullWatches = action.payload;

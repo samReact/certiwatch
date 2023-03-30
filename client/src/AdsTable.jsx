@@ -1,27 +1,22 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Row, Space, Table, Tag, Typography } from 'antd';
+import axios from 'axios';
 
 import { formattedAddress } from './utils/index.js';
 import { update } from './state/watchesSlice';
+import { useNavigate } from 'react-router-dom';
 
-export default function AdminTable() {
+export default function AdsTable() {
   const watches = useSelector((state) => state.watches.watches);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
 
+  const navigate = useNavigate();
+
   async function handleSubmit(record) {
-    setSelectedRow(record);
-    setLoading(true);
-    try {
-      const payload = { ...record, approved: true };
-      dispatch(update(payload));
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
+    navigate(`/expert/${record.id}`);
   }
 
   const columns = [
@@ -41,12 +36,20 @@ export default function AdminTable() {
     {
       title: 'Status',
       dataIndex: 'certified',
-      render: (_, record) =>
-        record.approved ? (
-          <Tag color={'purple'}>Approved</Tag>
-        ) : (
-          <Tag>Pending</Tag>
-        )
+      render: (_, record) => {
+        const tags = [];
+        record.approved ? tags.push('Approved') : tags.push('Pending');
+        if (record.certified) {
+          tags.push('Certified');
+        }
+        return (
+          <>
+            {tags.map((elt) => {
+              return <Tag key={elt}>{elt}</Tag>;
+            })}
+          </>
+        );
+      }
     },
 
     {
@@ -55,16 +58,26 @@ export default function AdminTable() {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            disabled={record.approved}
+            disabled={!record.approved || record.certified}
             onClick={() => handleSubmit(record)}
             loading={selectedRow && selectedRow.id === record.id && loading}
           >
-            Approve
+            Certified
           </Button>
         </Space>
       )
     }
   ];
 
-  return <Table rowKey={'id'} columns={columns} dataSource={watches} />;
+  return (
+    <>
+      {watches.length ? (
+        <Table rowKey={'id'} columns={columns} dataSource={watches} />
+      ) : (
+        <Row justify={'center'}>
+          <Typography>No pending certification</Typography>
+        </Row>
+      )}
+    </>
+  );
 }

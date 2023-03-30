@@ -21,13 +21,13 @@ export const formSlice = createSlice({
     update: (state, action) => {
       return { ...state, ...action.payload };
     },
-    resetForm: (state, action) => {
-      state = initialState;
+    reset: (state) => {
+      return { ...initialState };
     }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { update } = formSlice.actions;
+export const { update, reset } = formSlice.actions;
 
 export default formSlice.reducer;

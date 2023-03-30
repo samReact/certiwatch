@@ -3,24 +3,17 @@ import { purple } from '@ant-design/colors';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
-import { Route, Routes } from 'react-router-dom';
 import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 
 import ResponsiveAppBar from './AppBar';
-import HomePage from './routes/HomePage';
 import './index.css';
-import SellPage from './routes/SellPage';
 import { store } from './state/store';
-import ShopPage from './routes/ShopPage';
 
-import WatchPage from './routes/WatchPage';
-import AdminPage from './routes/AdminPage';
-import CreatePage from './routes/CreatePage';
 import FooterComponent from './FooterComponent';
-import ExpertPage from './routes/ExpertPage';
+import Root from './root';
 
 const { provider, webSocketProvider } = configureChains(
   [hardhat],
@@ -58,15 +51,7 @@ function App() {
                 <ResponsiveAppBar />
               </Header>
               <Content>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/sell" element={<SellPage />} />
-                  <Route path="/shop" element={<ShopPage />} />
-                  <Route path="/shop/:id" element={<WatchPage />} />
-                  <Route path="/mint" element={<CreatePage />} />
-                  <Route path="/admin" element={<AdminPage />} />
-                  <Route path="/expert" element={<ExpertPage />} />
-                </Routes>
+                <Root />
               </Content>
               <FooterComponent />
             </Layout>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAccount, useContractRead } from 'wagmi';
 import { abi } from '../../contractsData/MarketPlace.json';
 import { address as contractAddress } from '../../contractsData/Marketplace-address.json';
+import AdsTable from '../AdsTable';
 
 export default function ExpertPage() {
   const navigate = useNavigate();
@@ -25,5 +26,11 @@ export default function ExpertPage() {
     }
   }, [isDisconnected, isExpert]);
 
-  return <div>ExpertPage</div>;
+  return (
+    <div className="container">
+      <div style={{ marginBottom: 40 }}>
+        <AdsTable />
+      </div>
+    </div>
+  );
 }

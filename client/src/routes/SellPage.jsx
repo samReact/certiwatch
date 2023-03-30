@@ -5,38 +5,30 @@ import {
   Select,
   Row,
   Col,
-  DatePicker,
   Space,
   Button,
   InputNumber,
-  Typography
+  Typography,
+  Steps
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
-import ImageUploader from '../ImageUploader';
-import { update } from '../state/formSlice';
-import { decrement, increment, resetStep } from '../state/stepperSlice';
+import { reset, update } from '../state/formSlice';
 import { add } from '../state/watchesSlice';
-import Stepper from '../Stepper';
-import {
-  BRACELET_MATERIAL,
-  CASE_MATERIAL,
-  GENDER,
-  WATCH_BRANDS,
-  WATCH_MOVEMENTS
-} from '../utils';
+import { WATCH_BRANDS } from '../utils';
+import { InfoCircleOutlined, SendOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
 export default function SellPage() {
   const [fileList, setFileList] = useState([]);
+  const [step, setStep] = useState(0);
   const { address, isDisconnected } = useAccount();
 
-  const step = useSelector((state) => state.stepper.value);
-  const sellForm = useSelector((state) => state.sellForm);
   const watches = useSelector((state) => state.watches.watches);
+  const sellForm = useSelector((state) => state.sellForm);
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -44,7 +36,7 @@ export default function SellPage() {
   const navigate = useNavigate();
 
   function handlePrevious() {
-    dispatch(decrement());
+    setStep(step - 1);
   }
   async function handleNext() {
     if (step == 0) {
@@ -53,22 +45,13 @@ export default function SellPage() {
         const { errorFields } = validate;
         if (!errorFields) {
           let values = form.getFieldsValue();
-          let formattedYear = values.year
-            .toISOString()
-            .slice(0, 5)
-            .replace(/-/g, '');
-          values.year = formattedYear;
           dispatch(update(values));
-          dispatch(increment());
+          setStep(step + 1);
         }
       } catch (error) {
         console.log(error);
       }
     } else if (step == 1) {
-      const toto = fileList.map((elt) => elt.thumbUrl);
-      dispatch(update({ photos: toto }));
-      dispatch(increment());
-    } else if (step == 2) {
       try {
         dispatch(
           add({
@@ -77,7 +60,7 @@ export default function SellPage() {
             id: watches.length
           })
         );
-        dispatch(resetStep());
+        dispatch(reset());
         return navigate('/');
       } catch (error) {
         console.log(error);
@@ -101,7 +84,20 @@ export default function SellPage() {
         </Row>
       ) : (
         <>
-          <Stepper step={step} />
+          <Steps
+            labelPlacement="vertical"
+            current={step}
+            items={[
+              {
+                title: 'Détails',
+                icon: <InfoCircleOutlined />
+              },
+              {
+                title: 'Submission',
+                icon: <SendOutlined />
+              }
+            ]}
+          />
           <div className="container-content">
             <Row style={{ height: '50vh' }}>
               <Col xs={24}>
@@ -144,121 +140,20 @@ export default function SellPage() {
                         >
                           <Input />
                         </Item>
-                        <Item
-                          name="gender"
-                          label="Gender"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill gender !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {GENDER.map((gender) => (
-                              <Select.Option key={gender} value={gender}>
-                                {gender}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="year"
-                          label="Year"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch year !'
-                            }
-                          ]}
-                        >
-                          <DatePicker
-                            picker="year"
-                            disabledDate={(current) => current > Date.now()}
-                          />
+                        <Item name="description" label="Description">
+                          <Input.TextArea />
                         </Item>
                         <Item
                           name="serial"
-                          label="Serial No"
+                          label="Serial number"
                           rules={[
                             {
                               required: true,
-                              message: 'Please fill watch serial number !'
+                              message: 'Please fill serial number !'
                             }
                           ]}
                         >
-                          <Input />
-                        </Item>
-                      </Col>
-                      <Col xs={24} md={12}>
-                        <Item
-                          name="watch_case"
-                          label="Case material"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill case material !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {CASE_MATERIAL.map((material) => (
-                              <Select.Option key={material} value={material}>
-                                {material}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="bracelet"
-                          label="Bracelet material"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill bracelet material !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {BRACELET_MATERIAL.map((material) => (
-                              <Select.Option key={material} value={material}>
-                                {material}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="movement"
-                          label="Movement"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch movement !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {WATCH_MOVEMENTS.map((movement) => (
-                              <Select.Option key={movement} value={movement}>
-                                {movement}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="color"
-                          label="Color"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch color !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                        <Item name="description" label="Description">
-                          <Input.TextArea />
+                          <InputNumber />
                         </Item>
                         <Item
                           name="price"
@@ -277,18 +172,10 @@ export default function SellPage() {
                   </Form>
                 )}
                 {step === 1 && (
-                  <ImageUploader
-                    fileList={fileList}
-                    setFileList={setFileList}
-                  />
-                )}
-                {step === 2 && (
                   <Row justify="center" style={{ fontSize: 32 }}>
                     <Typography style={{ fontSize: 22, textAlign: 'center' }}>
-                      All details will be sent to our expert who will examine
-                      the watch. Once this step is over, you will be able to
-                      mint your certificate of authenticity in the create
-                      section.
+                      After approval you will receive instructions how send
+                      safely and secure your watch to Certiwatch !
                     </Typography>
                   </Row>
                 )}
@@ -302,12 +189,8 @@ export default function SellPage() {
                       Previous
                     </Button>
                   )}
-                  <Button
-                    type="primary"
-                    onClick={() => handleNext()}
-                    disabled={step == 1 && fileList.length < 3}
-                  >
-                    {step == 2 ? 'Submit' : 'Next'}
+                  <Button type="primary" onClick={() => handleNext()}>
+                    {step == 1 ? 'Submit' : 'Next'}
                   </Button>
                 </Space>
               </Col>

@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { Card, List, Typography } from 'antd';
+import { useEffect, useCallback } from 'react';
+import { Card, List, Row, Typography } from 'antd';
 import { ethers } from 'ethers';
 import Meta from 'antd/es/card/Meta';
 import { useNavigate } from 'react-router-dom';
@@ -67,35 +67,41 @@ export default function ShopPage() {
   return (
     <div className="container">
       <div className="container-content">
-        <List
-          grid={{
-            gutter: 16,
-            xs: 1,
-            sm: 2,
-            md: 2,
-            lg: 3,
-            xl: 3,
-            xxl: 4
-          }}
-          dataSource={fullWatches}
-          renderItem={(item) => (
-            <List.Item>
-              <Card
-                onClick={() => navigate(`/shop/${item.id}`)}
-                hoverable
-                style={{ width: 300 }}
-                cover={<img alt="example" src={item.photos[0]} />}
-              >
-                <Typography.Text strong>{item.model}</Typography.Text>
-                <Meta
-                  title={`${item.totalPrice} ETH`}
-                  description={item.brand}
-                />
-                <p>{item.description}</p>
-              </Card>
-            </List.Item>
-          )}
-        />
+        {fullWatches.length ? (
+          <List
+            grid={{
+              gutter: 16,
+              xs: 1,
+              sm: 2,
+              md: 2,
+              lg: 3,
+              xl: 3,
+              xxl: 4
+            }}
+            dataSource={fullWatches}
+            renderItem={(item) => (
+              <List.Item>
+                <Card
+                  onClick={() => navigate(`/shop/${item.id}`)}
+                  hoverable
+                  style={{ width: 300 }}
+                  cover={<img alt="example" src={item.photos[0]} />}
+                >
+                  <Typography.Text strong>{item.model}</Typography.Text>
+                  <Meta
+                    title={`${item.totalPrice} ETH`}
+                    description={item.brand}
+                  />
+                  <p>{item.description}</p>
+                </Card>
+              </List.Item>
+            )}
+          />
+        ) : (
+          <Row justify={'center'}>
+            <Typography>No items to buy</Typography>
+          </Row>
+        )}
       </div>
     </div>
   );
