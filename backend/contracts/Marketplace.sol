@@ -25,8 +25,14 @@ contract Marketplace is ReentrancyGuard, Ownable {
         bool sold;
     }
 
+    struct Expert {
+        string name;
+        bool authorized;
+    }
+
     NFTCollection[] public NFTCollectionArray;
     mapping(uint => Item) public items;
+    mapping(address => Expert) public experts;
 
     // ::::::::::EVENTS:::::::::: //
 
@@ -47,6 +53,7 @@ contract Marketplace is ReentrancyGuard, Ownable {
         address indexed seller,
         address indexed buyer
     );
+    event ExpertAdded(address indexed _addr, string _name);
 
     // ::::::::CONSTRUCTOR:::::::::: //
 
@@ -59,7 +66,7 @@ contract Marketplace is ReentrancyGuard, Ownable {
         feeRate = _feeRate;
     }
 
-    // :::::::FUNCTIONS::::::: //
+    // :::::::GETTERS::::::: //
 
     /**
      * @dev Return the total price of an item
@@ -68,6 +75,12 @@ contract Marketplace is ReentrancyGuard, Ownable {
      */
     function getTotalPrice(uint _itemId) public view returns (uint) {
         return ((items[_itemId].price * (100 + feeRate)) / 100);
+    }
+
+    function getExpert(
+        address _addr
+    ) external view onlyOwner returns (Expert memory) {
+        return experts[_addr];
     }
 
     /**
@@ -125,6 +138,16 @@ contract Marketplace is ReentrancyGuard, Ownable {
             _price,
             msg.sender
         );
+    }
+
+    function addExpert(
+        address _addr,
+        string calldata _name
+    ) external onlyOwner {
+        require(_addr != address(0));
+        require(experts[_addr].authorized != true, "Already registered");
+        experts[_addr] = Expert(_name, true);
+        emit ExpertAdded(_addr, _name);
     }
 
     /**
