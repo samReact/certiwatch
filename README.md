@@ -2,7 +2,7 @@
 
 ---
 
-Welcome to the Web3 Project! This project is a Web3 application that uses React and Antd for the front-end, Express.js for the API, and Hardhat for the blockchain. The goal of this project is to provide a user interface for interacting with a decentralized application on the Ethereum blockchain.
+_Welcome to the Web3 Project! This project is a Web3 application that uses React and Antd for the front-end, Express.js for the API, and Hardhat for the blockchain. The goal of this project is to provide a user interface for interacting with a decentralized application on the Ethereum blockchain._
 
 ## Installation
 
