@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import stepperReducer from './stepperSlice';
-import sellFormReducer from './formSlice';
 import watchesSlice from './watchesSlice';
 import ethSlice from './ethSlice';
 import storage from 'redux-persist/lib/storage';
@@ -14,18 +13,20 @@ import {
   PURGE,
   REGISTER
 } from 'redux-persist';
+import notificationSlice from './notificationSlice';
 
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage
+  storage,
+  blacklist: ['notification']
 };
 
 let root = combineReducers({
   stepper: stepperReducer,
-  sellForm: sellFormReducer,
   watches: watchesSlice,
-  eth: ethSlice
+  eth: ethSlice,
+  notification: notificationSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, root);
