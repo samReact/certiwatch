@@ -25,7 +25,7 @@ export default function ExpertTable({ events }) {
     if (events.length > 0) {
       getExperts();
     }
-  }, [events]);
+  }, [events, getExperts]);
 
   const columns = [
     {

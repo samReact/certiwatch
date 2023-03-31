@@ -24,7 +24,7 @@ export default function ExpertPage() {
     if (isDisconnected || !isExpert) {
       navigate('/');
     }
-  }, [isDisconnected, isExpert]);
+  }, [isDisconnected, isExpert, navigate]);
 
   return (
     <div className="container">

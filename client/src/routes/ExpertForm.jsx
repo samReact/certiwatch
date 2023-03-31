@@ -8,7 +8,8 @@ import {
   DatePicker,
   Space,
   Button,
-  Typography
+  Typography,
+  Result
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,17 +27,20 @@ import {
   WATCH_BRANDS,
   WATCH_MOVEMENTS
 } from '../utils';
+import { addNotification } from '../state/notificationSlice';
+import { SmileOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
 export default function ExpertForm() {
   const [fileList, setFileList] = useState([]);
-  const { address, isDisconnected } = useAccount();
+  const [loading, setLoading] = useState(false);
+  const { isDisconnected } = useAccount();
   const { id } = useParams();
 
   const step = useSelector((state) => state.stepper.value);
   const watches = useSelector((state) => state.watches.watches);
-  const watch = watches.filter((watch) => watch.id == id)[0];
+  const watch = watches.filter((watch) => watch.id === parseInt(id))[0];
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -44,13 +48,13 @@ export default function ExpertForm() {
   const navigate = useNavigate();
 
   function handlePrevious() {
-    if (step != 0) {
+    if (step !== 0) {
       dispatch(decrement());
     }
   }
   async function handleNext() {
     let values = form.getFieldsValue();
-    if (step == 0) {
+    if (step === 0) {
       try {
         let validate = await form.validateFields();
         const { errorFields } = validate;
@@ -64,14 +68,17 @@ export default function ExpertForm() {
           dispatch(increment());
         }
       } catch (error) {
-        console.log(error);
+        dispatch(
+          addNotification({
+            message: 'Error',
+            description: error.message,
+            type: 'error'
+          })
+        );
       }
-    } else if (step == 1) {
-      const toto = fileList.map((elt) => elt.thumbUrl);
-      dispatch(update({ ...watch, photos: toto }));
-      dispatch(increment());
-    } else if (step == 2) {
+    } else if (step === 1) {
       setLoading(true);
+      const photos = fileList.map((elt) => elt.thumbUrl);
       const {
         brand,
         model,
@@ -98,12 +105,18 @@ export default function ExpertForm() {
         const data = await res.data;
 
         dispatch(
-          update({ ...watch, ipfsHash: data.IpfsHash, certified: true })
+          update({ ...watch, ipfsHash: data.IpfsHash, photos, certified: true })
         );
+        dispatch(increment());
         setLoading(false);
-        return navigate('/expert');
       } catch (error) {
-        console.log(error);
+        dispatch(
+          addNotification({
+            message: 'Error',
+            description: error.message,
+            type: 'error'
+          })
+        );
         setLoading(false);
       }
     }
@@ -128,7 +141,7 @@ export default function ExpertForm() {
           <div className="container-content">
             <Row style={{ height: '50vh' }}>
               <Col xs={24}>
-                {step == 0 && (
+                {step === 0 && (
                   <Form
                     name="form_item_path"
                     layout="vertical"
@@ -296,14 +309,18 @@ export default function ExpertForm() {
                   />
                 )}
                 {step === 2 && (
-                  <Row justify="center" style={{ fontSize: 32 }}>
-                    <Typography style={{ fontSize: 22, textAlign: 'center' }}>
-                      All details will be sent to our expert who will examine
-                      the watch. Once this step is over, you will be able to
-                      mint your certificate of authenticity in the create
-                      section.
-                    </Typography>
-                  </Row>
+                  <Result
+                    icon={<SmileOutlined />}
+                    title="Watch has been certified !"
+                    extra={
+                      <Button
+                        type="primary"
+                        onClick={() => navigate('/expert')}
+                      >
+                        Go to Dashboard
+                      </Button>
+                    }
+                  />
                 )}
               </Col>
             </Row>
@@ -318,9 +335,10 @@ export default function ExpertForm() {
                   <Button
                     type="primary"
                     onClick={() => handleNext()}
-                    disabled={step == 1 && fileList.length < 3}
+                    disabled={step === 1 && fileList.length < 3}
+                    loading={loading}
                   >
-                    {step == 2 ? 'Submit' : 'Next'}
+                    {step === 1 ? 'Submit' : 'Next'}
                   </Button>
                 </Space>
               </Col>
