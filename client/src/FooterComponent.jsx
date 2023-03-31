@@ -1,14 +1,17 @@
 import React from 'react';
-import { Button, Divider, Layout, Row, Space, Typography } from 'antd';
-const { Footer } = Layout;
-import logo from './assets/logo-main.png';
 import {
   FacebookOutlined,
   TwitterOutlined,
   YoutubeOutlined
 } from '@ant-design/icons';
+import { Button, Divider, Layout, Row, Space, Typography } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import logo from './assets/logo-main.png';
+
+const { Footer } = Layout;
 
 export default function FooterComponent() {
+  const navigate = useNavigate();
   return (
     <Footer style={{ backgroundColor: '#fff' }}>
       <div style={{ height: 200 }}>

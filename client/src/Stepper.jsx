@@ -1,8 +1,8 @@
 import { Steps } from 'antd';
 import {
-  InfoCircleOutlined,
+  FileDoneOutlined,
   PictureOutlined,
-  SendOutlined
+  ProfileOutlined
 } from '@ant-design/icons';
 
 export default function Stepper({ step }) {
@@ -12,16 +12,16 @@ export default function Stepper({ step }) {
       current={step}
       items={[
         {
-          title: 'Détails',
-          icon: <InfoCircleOutlined />
+          title: 'Details',
+          icon: <ProfileOutlined />
         },
         {
           title: 'Photos',
           icon: <PictureOutlined />
         },
         {
-          title: 'Submission',
-          icon: <SendOutlined />
+          title: 'Submitted !',
+          icon: <FileDoneOutlined />
         }
       ]}
     />

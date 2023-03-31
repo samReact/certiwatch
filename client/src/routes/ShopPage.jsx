@@ -56,13 +56,13 @@ export default function ShopPage() {
       });
     }
     dispatch(initFull(items));
-  }, [marketplace]);
+  }, [marketplace, certificate, dispatch, watches]);
 
   useEffect(() => {
     if (marketplace.signer) {
       loadMarketPlaceItems();
     }
-  }, [marketplace]);
+  }, [marketplace, loadMarketPlaceItems]);
 
   return (
     <div className="container">

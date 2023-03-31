@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { update } from '../state/watchesSlice.js';
 import { formattedAddress, removeIpfs } from '../utils/index.js';
+import { addNotification } from '../state/notificationSlice.js';
 
 export default function CreateTable({ marketplace, certificate, address }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,13 @@ export default function CreateTable({ marketplace, certificate, address }) {
       const payload = { ...record, tokenId: parsedId, minted: true };
       dispatch(update(payload));
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
     }
   }
 
@@ -53,7 +60,13 @@ export default function CreateTable({ marketplace, certificate, address }) {
       fileDownload(res2.data, 'certificate.png');
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
       setIsLoading(false);
     }
   }
@@ -76,7 +89,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
       title: 'Status',
       dataIndex: 'certified',
       render: (_, record) => {
-        if (record.certified && !record.minted) {
+        if (record.approved && !record.minted) {
           return <Tag color={'green'}>Approved</Tag>;
         } else if (record.minted) {
           return <Tag color={'purple'}>Minted</Tag>;

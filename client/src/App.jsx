@@ -1,4 +1,4 @@
-import { ConfigProvider, Layout } from 'antd';
+import { ConfigProvider } from 'antd';
 import { purple } from '@ant-design/colors';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -6,14 +6,11 @@ import { persistStore } from 'redux-persist';
 import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-const { Header, Content } = Layout;
 
-import ResponsiveAppBar from './AppBar';
 import './index.css';
 import { store } from './state/store';
 
-import FooterComponent from './FooterComponent';
-import Root from './root';
+import Root from './Root';
 
 const { provider, webSocketProvider } = configureChains(
   [hardhat],
@@ -46,15 +43,7 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <WagmiConfig client={client}>
           <ConfigProvider theme={theme}>
-            <Layout hasSider={false}>
-              <Header>
-                <ResponsiveAppBar />
-              </Header>
-              <Content>
-                <Root />
-              </Content>
-              <FooterComponent />
-            </Layout>
+            <Root />
           </ConfigProvider>
         </WagmiConfig>
       </PersistGate>

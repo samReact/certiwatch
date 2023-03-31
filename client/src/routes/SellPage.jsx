@@ -1,70 +1,68 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   Input,
   Select,
   Row,
   Col,
-  Space,
   Button,
   InputNumber,
   Typography,
-  Steps
+  Steps,
+  Result
 } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
+import {
+  FileDoneOutlined,
+  ProfileOutlined,
+  SmileOutlined
+} from '@ant-design/icons';
 
-import { reset, update } from '../state/formSlice';
 import { add } from '../state/watchesSlice';
 import { WATCH_BRANDS } from '../utils';
-import { InfoCircleOutlined, SendOutlined } from '@ant-design/icons';
+import { addNotification } from '../state/notificationSlice';
 
 const { Item } = Form;
 
 export default function SellPage() {
-  const [fileList, setFileList] = useState([]);
   const [step, setStep] = useState(0);
   const { address, isDisconnected } = useAccount();
 
   const watches = useSelector((state) => state.watches.watches);
-  const sellForm = useSelector((state) => state.sellForm);
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const navigate = useNavigate();
 
-  function handlePrevious() {
-    setStep(step - 1);
-  }
   async function handleNext() {
-    if (step == 0) {
+    if (step === 0) {
       try {
         let validate = await form.validateFields();
         const { errorFields } = validate;
         if (!errorFields) {
           let values = form.getFieldsValue();
-          dispatch(update(values));
+          dispatch(
+            add({
+              ...values,
+              address,
+              id: watches.length
+            })
+          );
           setStep(step + 1);
         }
       } catch (error) {
-        console.log(error);
-      }
-    } else if (step == 1) {
-      try {
         dispatch(
-          add({
-            ...sellForm,
-            address,
-            id: watches.length
+          addNotification({
+            message: 'Error',
+            description: error.message,
+            type: 'error'
           })
         );
-        dispatch(reset());
-        return navigate('/');
-      } catch (error) {
-        console.log(error);
       }
+    } else if (step === 1) {
     }
   }
 
@@ -90,18 +88,18 @@ export default function SellPage() {
             items={[
               {
                 title: 'Détails',
-                icon: <InfoCircleOutlined />
+                icon: <ProfileOutlined />
               },
               {
-                title: 'Submission',
-                icon: <SendOutlined />
+                title: 'Submitted !',
+                icon: <FileDoneOutlined />
               }
             ]}
           />
           <div className="container-content">
             <Row style={{ height: '50vh' }}>
               <Col xs={24}>
-                {step == 0 && (
+                {step === 0 && (
                   <Form
                     name="form_item_path"
                     layout="vertical"
@@ -167,32 +165,24 @@ export default function SellPage() {
                         >
                           <InputNumber addonAfter="ETH" min={0} />
                         </Item>
+                        <Button type="primary" onClick={() => handleNext()}>
+                          Submit
+                        </Button>
                       </Col>
                     </Row>
                   </Form>
                 )}
                 {step === 1 && (
-                  <Row justify="center" style={{ fontSize: 32 }}>
-                    <Typography style={{ fontSize: 22, textAlign: 'center' }}>
-                      After approval you will receive instructions how send
-                      safely and secure your watch to Certiwatch !
-                    </Typography>
-                  </Row>
+                  <Result
+                    icon={<SmileOutlined />}
+                    title="Great, Certiwatch will contact you shortly !"
+                    extra={
+                      <Button type="primary" onClick={() => navigate('/')}>
+                        Go to Home
+                      </Button>
+                    }
+                  />
                 )}
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={24}>
-                <Space>
-                  {step !== 0 && (
-                    <Button type="primary" onClick={() => handlePrevious()}>
-                      Previous
-                    </Button>
-                  )}
-                  <Button type="primary" onClick={() => handleNext()}>
-                    {step == 1 ? 'Submit' : 'Next'}
-                  </Button>
-                </Space>
               </Col>
             </Row>
           </div>

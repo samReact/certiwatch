@@ -83,19 +83,19 @@ export default function AdminPage() {
     if (isDisconnected || !isOwner) {
       navigate('/');
     }
-  }, [isDisconnected, isOwner]);
+  }, [isDisconnected, isOwner, navigate]);
 
   const getOldEvents = useCallback(async () => {
     let eventFilter = marketplace.filters.ExpertAdded();
     let events = await marketplace.queryFilter(eventFilter);
     setEvents(events);
-  }, [marketplace.provider]);
+  }, [marketplace]);
 
   useEffect(() => {
     if (marketplace.provider) {
       getOldEvents();
     }
-  }, [marketplace.provider]);
+  }, [marketplace.provider, getOldEvents]);
 
   return (
     <div className="container">

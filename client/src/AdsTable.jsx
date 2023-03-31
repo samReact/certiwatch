@@ -45,7 +45,11 @@ export default function AdsTable() {
         return (
           <>
             {tags.map((elt) => {
-              return <Tag key={elt}>{elt}</Tag>;
+              return (
+                <Tag key={elt} color={elt === 'Approved' ? 'green' : 'purple'}>
+                  {elt}
+                </Tag>
+              );
             })}
           </>
         );

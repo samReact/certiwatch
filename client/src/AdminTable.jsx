@@ -4,6 +4,7 @@ import { Button, Space, Table, Tag } from 'antd';
 
 import { formattedAddress } from './utils/index.js';
 import { update } from './state/watchesSlice';
+import { addNotification } from './state/notificationSlice.js';
 
 export default function AdminTable() {
   const watches = useSelector((state) => state.watches.watches);
@@ -18,8 +19,21 @@ export default function AdminTable() {
       const payload = { ...record, approved: true };
       dispatch(update(payload));
       setLoading(false);
+      dispatch(
+        addNotification({
+          message: `${record.brand} ${record.model} approved !`,
+          description: 'This add is now approved',
+          type: 'success'
+        })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
       setLoading(false);
     }
   }
