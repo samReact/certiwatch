@@ -3,22 +3,40 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Space, Table, Tag } from 'antd';
 
 import { formattedAddress } from './utils/index.js';
-import { update } from './state/watchesSlice';
 import { addNotification } from './state/notificationSlice.js';
+import { useEffect } from 'react';
 
-export default function AdminTable() {
-  const watches = useSelector((state) => state.watches.watches);
+export default function AdminTable({ marketplace }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [selectedRow, setSelectedRow] = useState();
+  const [proposals, setProposals] = useState([]);
+  const [selectedRow, setSelectedRow] = useState([]);
+
+  const proposalEvents = useSelector((state) => state.eth.proposalEvents);
+
+  function filterEvents(tableau) {
+    const result = Object.values(
+      tableau.reduce((acc, obj) => {
+        if (!acc[obj.proposalId] || acc[obj.proposalId].status < obj.status) {
+          acc[obj.proposalId] = obj;
+        }
+        return acc;
+      }, {})
+    );
+    setProposals(result);
+  }
+
+  useEffect(() => {
+    if (proposalEvents.length > 0) {
+      filterEvents(proposalEvents);
+    }
+  }, [proposalEvents]);
 
   async function handleSubmit(record) {
     setSelectedRow(record);
     setLoading(true);
     try {
-      const payload = { ...record, approved: true };
-      dispatch(update(payload));
-      setLoading(false);
+      await marketplace.updateProposalStatus(parseInt(record.proposalId), 1);
       dispatch(
         addNotification({
           message: `${record.brand} ${record.model} approved !`,
@@ -26,6 +44,7 @@ export default function AdminTable() {
           type: 'success'
         })
       );
+      setLoading(true);
     } catch (error) {
       dispatch(
         addNotification({
@@ -49,18 +68,15 @@ export default function AdminTable() {
     },
     {
       title: 'Address',
-      dataIndex: 'address',
-      render: (_, record) => formattedAddress(record.address)
+      dataIndex: 'seller',
+      render: (_, record) => formattedAddress(record.seller)
     },
     {
       title: 'Status',
-      dataIndex: 'certified',
-      render: (_, record) =>
-        record.approved ? (
-          <Tag color={'purple'}>Approved</Tag>
-        ) : (
-          <Tag>Pending</Tag>
-        )
+      dataIndex: 'status',
+      render: (_, record) => (
+        <Tag>{record.status === 0 ? 'Pending' : 'Approved'}</Tag>
+      )
     },
 
     {
@@ -69,9 +85,9 @@ export default function AdminTable() {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            disabled={record.approved}
+            disabled={record.status === 1}
             onClick={() => handleSubmit(record)}
-            loading={selectedRow && selectedRow.id === record.id && loading}
+            loading={loading && record.proposalId === selectedRow.proposalId}
           >
             Approve
           </Button>
@@ -79,6 +95,7 @@ export default function AdminTable() {
       )
     }
   ];
-
-  return <Table rowKey={'id'} columns={columns} dataSource={watches} />;
+  return (
+    <Table rowKey={'proposalId'} columns={columns} dataSource={proposals} />
+  );
 }

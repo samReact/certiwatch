@@ -1,53 +1,45 @@
+import { useEffect, useState } from 'react';
 import { Table, Tag } from 'antd';
 
 import { formattedAddress } from './utils/index.js';
-import { useEffect, useState } from 'react';
-import { useCallback } from 'react';
 
 export default function ExpertTable({ events }) {
-  const [experts, setExperts] = useState([]);
+  const [filteredEvents, setFilteredEvent] = useState([]);
 
-  const getExperts = useCallback(async () => {
-    const experts = [];
-    for (let i = 0; i < events.length; i++) {
-      let { _addr, _name } = events[i].args;
-
-      experts.push({
-        address: _addr,
-        name: _name,
-        authorized: true
-      });
-    }
-    setExperts(experts);
-  }, [events]);
+  function removeDuplicates(arr) {
+    const uniqueArr = arr.reduce((acc, obj) => {
+      if (!acc.some((item) => item._addr === obj._addr)) {
+        acc.push(obj);
+      }
+      return acc;
+    }, []);
+    setFilteredEvent(uniqueArr);
+  }
 
   useEffect(() => {
-    if (events.length > 0) {
-      getExperts();
+    if (events) {
+      removeDuplicates(events);
     }
-  }, [events, getExperts]);
+  }, [events]);
 
   const columns = [
     {
       title: 'name',
-      dataIndex: 'name'
+      dataIndex: '_name'
     },
     {
       title: 'Address',
       dataIndex: 'address',
-      render: (_, record) => formattedAddress(record.address)
+      render: (_, record) => formattedAddress(record._addr)
     },
     {
       title: 'Status',
-      dataIndex: 'authorized',
-      render: (_, record) =>
-        record.authorized ? (
-          <Tag color={'purple'}>Approved</Tag>
-        ) : (
-          <Tag>Pending</Tag>
-        )
+      dataIndex: 'status',
+      render: (_, record) => <Tag color={'purple'}>Approved</Tag>
     }
   ];
 
-  return <Table rowKey={'address'} columns={columns} dataSource={experts} />;
+  return (
+    <Table rowKey={'_addr'} columns={columns} dataSource={filteredEvents} />
+  );
 }

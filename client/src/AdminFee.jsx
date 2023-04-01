@@ -1,7 +1,8 @@
-import { Button, Input, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { EditOutlined, SaveOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
+import { Button, Input, Space } from 'antd';
+import { EditOutlined, SaveOutlined } from '@ant-design/icons';
+
 import { addNotification } from './state/notificationSlice';
 
 export default function AdminFee({ writeData, value, setValue }) {

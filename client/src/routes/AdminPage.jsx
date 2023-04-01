@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Col, Row, Space, Typography } from 'antd';
 import {
   useAccount,
   useContract,
-  useContractEvent,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -11,18 +12,15 @@ import {
 } from 'wagmi';
 
 import AdminTable from '../AdminTable';
-import { address as contractAddress } from '../../contractsData/Marketplace-address.json';
-import { abi } from '../../contractsData/MarketPlace.json';
-import { useEffect } from 'react';
 import AdminFee from '../AdminFee';
-import { Col, Row, Space, Typography } from 'antd';
 import ExpertTable from '../ExpertTable';
-import { useCallback } from 'react';
 import AddExpertForm from '../AddExpertForm';
 
 export default function AdminPage() {
+  const { proposalsEvents, expertEvents, marketplaceAddress, marketplaceAbi } =
+    useSelector((state) => state.eth);
+  const { feeRate } = useSelector((state) => state.app);
   const [value, setValue] = useState();
-  const [events, setEvents] = useState([]);
 
   const { data: signer } = useSigner();
 
@@ -30,24 +28,16 @@ export default function AdminPage() {
   const navigate = useNavigate();
 
   const { data } = useContractRead({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     functionName: 'owner',
     watch: true,
     enabled: Boolean(address)
   });
 
-  const feeRate = useContractRead({
-    address: contractAddress,
-    abi: abi,
-    functionName: 'feeRate',
-    watch: true,
-    enabled: Boolean(address && contractAddress)
-  });
-
   const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     functionName: 'updateProfitRate',
     enabled: Boolean(value),
     args: [parseInt(value)]
@@ -55,29 +45,12 @@ export default function AdminPage() {
   const writeData = useContractWrite(config);
 
   const marketplace = useContract({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     signerOrProvider: signer
   });
 
-  useContractEvent({
-    address: contractAddress,
-    abi: abi,
-    eventName: 'ExpertAdded',
-    listener(node, label, owner) {
-      if (owner) {
-        setEvents([...events, owner]);
-      }
-    }
-  });
-
   const isOwner = data && address && data === address;
-
-  useEffect(() => {
-    if (feeRate.data) {
-      setValue(feeRate.data);
-    }
-  }, [feeRate.data]);
 
   useEffect(() => {
     if (isDisconnected || !isOwner) {
@@ -85,17 +58,11 @@ export default function AdminPage() {
     }
   }, [isDisconnected, isOwner, navigate]);
 
-  const getOldEvents = useCallback(async () => {
-    let eventFilter = marketplace.filters.ExpertAdded();
-    let events = await marketplace.queryFilter(eventFilter);
-    setEvents(events);
-  }, [marketplace]);
-
   useEffect(() => {
-    if (marketplace.provider) {
-      getOldEvents();
+    if (typeof parseInt(feeRate.data) === 'number') {
+      setValue(feeRate);
     }
-  }, [marketplace.provider, getOldEvents]);
+  }, [feeRate]);
 
   return (
     <div className="container">
@@ -108,15 +75,14 @@ export default function AdminPage() {
           <Typography.Title level={3}>Experts</Typography.Title>
           <Space direction="vertical" style={{ width: '100%' }}>
             <AddExpertForm />
-            <ExpertTable events={events} marketplace={marketplace} />
+            <ExpertTable events={expertEvents} marketplace={marketplace} />
           </Space>
         </Col>
         <Col xs={24} md={12}>
           <Typography.Title level={3}>Ads</Typography.Title>
-          <AdminTable />
+          <AdminTable events={proposalsEvents} marketplace={marketplace} />
         </Col>
       </Row>
-      <Row></Row>
     </div>
   );
 }

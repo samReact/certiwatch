@@ -9,16 +9,16 @@ import {
   Space,
   Button,
   Typography,
-  Result
+  Result,
+  Spin
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractRead } from 'wagmi';
 import axios from 'axios';
 
 import ImageUploader from '../ImageUploader';
-import { decrement, increment } from '../state/stepperSlice';
-import { update } from '../state/watchesSlice';
+import { decrement, increment, resetStep } from '../state/stepperSlice';
 import Stepper from '../Stepper';
 import {
   BRACELET_MATERIAL,
@@ -29,23 +29,43 @@ import {
 } from '../utils';
 import { addNotification } from '../state/notificationSlice';
 import { SmileOutlined } from '@ant-design/icons';
+import { add } from '../state/watchesSlice';
 
 const { Item } = Form;
 
 export default function ExpertForm() {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { isDisconnected } = useAccount();
+  const { address, isDisconnected } = useAccount();
   const { id } = useParams();
 
   const step = useSelector((state) => state.stepper.value);
-  const watches = useSelector((state) => state.watches.watches);
-  const watch = watches.filter((watch) => watch.id === parseInt(id))[0];
+  const { marketplaceAbi, marketplaceAddress } = useSelector(
+    (state) => state.eth
+  );
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const navigate = useNavigate();
+
+  const expert = useContractRead({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    functionName: 'getExpert',
+    watch: false,
+    enabled: Boolean(address),
+    args: [address]
+  });
+
+  const proposalHook = useContractRead({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    functionName: 'getProposal',
+    watch: false,
+    enabled: Boolean(id),
+    args: [id]
+  });
 
   function handlePrevious() {
     if (step !== 0) {
@@ -64,7 +84,7 @@ export default function ExpertForm() {
             .slice(0, 5)
             .replace(/-/g, '');
           values.year = formattedYear;
-          dispatch(update({ ...watch, ...values }));
+          dispatch(add({ ...values }));
           dispatch(increment());
         }
       } catch (error) {
@@ -79,36 +99,48 @@ export default function ExpertForm() {
     } else if (step === 1) {
       setLoading(true);
       const photos = fileList.map((elt) => elt.thumbUrl);
-      const {
-        brand,
-        model,
-        gender,
-        year,
-        serial,
-        watch_case,
-        bracelet,
-        movement,
-        color
-      } = watch;
+      // const {
+      //   brand,
+      //   model,
+      //   gender,
+      //   year,
+      //   serial,
+      //   watch_case,
+      //   bracelet,
+      //   movement,
+      //   color
+      // } = watch;
       try {
-        const res = await axios.post('/api/uploadIpfs', {
-          brand,
-          model,
-          gender,
-          year,
-          serial,
-          watch_case,
-          bracelet,
-          movement,
-          color
+        const res = await axios.post('/api/uploadPics', {
+          photos
         });
         const data = await res.data;
-
-        dispatch(
-          update({ ...watch, ipfsHash: data.IpfsHash, photos, certified: true })
-        );
-        dispatch(increment());
+        console.log(data);
         setLoading(false);
+        // const res = await axios.post('/api/uploadIpfs', {
+        //   brand,
+        //   model,
+        //   gender,
+        //   year,
+        //   serial,
+        //   watch_case,
+        //   bracelet,
+        //   movement,
+        //   color,
+        //   expert_addr: address,
+        //   expert_name: expert.data.name
+        // });
+        // const data = await res.data;
+
+        // let data = {
+        //   IpfsHash: 'QmNRduJEXsU39sH3EQBaxcj9X5cWPdr5Ld2uVmnwRVygSb'
+        // };
+
+        // dispatch(
+        //   update({ ...watch, ipfsHash: data.IpfsHash, photos, certified: true })
+        // );
+        // dispatch(increment());
+        // setLoading(false);
       } catch (error) {
         dispatch(
           addNotification({
@@ -121,6 +153,7 @@ export default function ExpertForm() {
       }
     }
   }
+  const { brand, model, serial } = proposalHook.data;
 
   const layout = {
     wrapperCol: {
@@ -139,191 +172,198 @@ export default function ExpertForm() {
         <>
           <Stepper step={step} />
           <div className="container-content">
-            <Row style={{ height: '50vh' }}>
-              <Col xs={24}>
-                {step === 0 && (
-                  <Form
-                    name="form_item_path"
-                    layout="vertical"
-                    form={form}
-                    {...layout}
-                    initialValues={{
-                      brand: watch.brand,
-                      model: watch.model,
-                      serial: watch.serial
-                    }}
-                  >
-                    <Row>
-                      <Col xs={24} md={12}>
-                        <Item
-                          name="brand"
-                          label="Brand"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch brand !'
-                            }
-                          ]}
+            {proposalHook.isLoading ? (
+              <Spin />
+            ) : (
+              <Row style={{ height: '50vh' }}>
+                <Col xs={24}>
+                  {step === 0 && (
+                    <Form
+                      name="form_item_path"
+                      layout="vertical"
+                      form={form}
+                      {...layout}
+                      initialValues={{
+                        brand,
+                        model,
+                        serial
+                      }}
+                    >
+                      <Row>
+                        <Col xs={24} md={12}>
+                          <Item
+                            name="brand"
+                            label="Brand"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch brand !'
+                              }
+                            ]}
+                          >
+                            <Select>
+                              {WATCH_BRANDS.map((brand) => (
+                                <Select.Option key={brand} value={brand}>
+                                  {brand}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Item>
+                          <Item
+                            name="model"
+                            label="Model"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch model !'
+                              }
+                            ]}
+                          >
+                            <Input />
+                          </Item>
+                          <Item
+                            name="gender"
+                            label="Gender"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill gender !'
+                              }
+                            ]}
+                          >
+                            <Select>
+                              {GENDER.map((gender) => (
+                                <Select.Option key={gender} value={gender}>
+                                  {gender}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Item>
+                          <Item
+                            name="year"
+                            label="Year"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch year !'
+                              }
+                            ]}
+                          >
+                            <DatePicker
+                              picker="year"
+                              disabledDate={(current) => current > Date.now()}
+                            />
+                          </Item>
+                          <Item
+                            name="serial"
+                            label="Serial No"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch serial number !'
+                              }
+                            ]}
+                          >
+                            <Input />
+                          </Item>
+                        </Col>
+                        <Col xs={24} md={12}>
+                          <Item
+                            name="watch_case"
+                            label="Case material"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill case material !'
+                              }
+                            ]}
+                          >
+                            <Select>
+                              {CASE_MATERIAL.map((material) => (
+                                <Select.Option key={material} value={material}>
+                                  {material}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Item>
+                          <Item
+                            name="bracelet"
+                            label="Bracelet material"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill bracelet material !'
+                              }
+                            ]}
+                          >
+                            <Select>
+                              {BRACELET_MATERIAL.map((material) => (
+                                <Select.Option key={material} value={material}>
+                                  {material}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Item>
+                          <Item
+                            name="movement"
+                            label="Movement"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch movement !'
+                              }
+                            ]}
+                          >
+                            <Select>
+                              {WATCH_MOVEMENTS.map((movement) => (
+                                <Select.Option key={movement} value={movement}>
+                                  {movement}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Item>
+                          <Item
+                            name="color"
+                            label="Color"
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Please fill watch color !'
+                              }
+                            ]}
+                          >
+                            <Input />
+                          </Item>
+                        </Col>
+                      </Row>
+                    </Form>
+                  )}
+                  {step === 1 && (
+                    <ImageUploader
+                      fileList={fileList}
+                      setFileList={setFileList}
+                    />
+                  )}
+                  {step === 2 && (
+                    <Result
+                      icon={<SmileOutlined />}
+                      title="Watch has been certified !"
+                      extra={
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            dispatch(resetStep());
+                            navigate('/expert');
+                          }}
                         >
-                          <Select>
-                            {WATCH_BRANDS.map((brand) => (
-                              <Select.Option key={brand} value={brand}>
-                                {brand}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="model"
-                          label="Model"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch model !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                        <Item
-                          name="gender"
-                          label="Gender"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill gender !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {GENDER.map((gender) => (
-                              <Select.Option key={gender} value={gender}>
-                                {gender}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="year"
-                          label="Year"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch year !'
-                            }
-                          ]}
-                        >
-                          <DatePicker
-                            picker="year"
-                            disabledDate={(current) => current > Date.now()}
-                          />
-                        </Item>
-                        <Item
-                          name="serial"
-                          label="Serial No"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch serial number !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                      </Col>
-                      <Col xs={24} md={12}>
-                        <Item
-                          name="watch_case"
-                          label="Case material"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill case material !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {CASE_MATERIAL.map((material) => (
-                              <Select.Option key={material} value={material}>
-                                {material}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="bracelet"
-                          label="Bracelet material"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill bracelet material !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {BRACELET_MATERIAL.map((material) => (
-                              <Select.Option key={material} value={material}>
-                                {material}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="movement"
-                          label="Movement"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch movement !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {WATCH_MOVEMENTS.map((movement) => (
-                              <Select.Option key={movement} value={movement}>
-                                {movement}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="color"
-                          label="Color"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch color !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                      </Col>
-                    </Row>
-                  </Form>
-                )}
-                {step === 1 && (
-                  <ImageUploader
-                    fileList={fileList}
-                    setFileList={setFileList}
-                  />
-                )}
-                {step === 2 && (
-                  <Result
-                    icon={<SmileOutlined />}
-                    title="Watch has been certified !"
-                    extra={
-                      <Button
-                        type="primary"
-                        onClick={() => navigate('/expert')}
-                      >
-                        Go to Dashboard
-                      </Button>
-                    }
-                  />
-                )}
-              </Col>
-            </Row>
+                          Go to Dashboard
+                        </Button>
+                      }
+                    />
+                  )}
+                </Col>
+              </Row>
+            )}
             <Row>
               <Col xs={24}>
                 <Space>

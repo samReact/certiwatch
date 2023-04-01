@@ -6,7 +6,7 @@ import axios from 'axios';
 import { DownloadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { update } from '../state/watchesSlice.js';
+import { update, updateOpen } from '../state/watchesSlice.js';
 import { formattedAddress, removeIpfs } from '../utils/index.js';
 import { addNotification } from '../state/notificationSlice.js';
 
@@ -34,6 +34,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
       const parsedId = parseInt(tokenId);
       const payload = { ...record, tokenId: parsedId, minted: true };
       dispatch(update(payload));
+      dispatch(updateOpen(true));
     } catch (error) {
       dispatch(
         addNotification({
@@ -89,13 +90,25 @@ export default function CreateTable({ marketplace, certificate, address }) {
       title: 'Status',
       dataIndex: 'certified',
       render: (_, record) => {
-        if (record.approved && !record.minted) {
-          return <Tag color={'green'}>Approved</Tag>;
-        } else if (record.minted) {
-          return <Tag color={'purple'}>Minted</Tag>;
-        } else if (!record.certified) {
-          return <Tag>Pending</Tag>;
+        const tags = [];
+        record.approved ? tags.push('Approved') : tags.push('Pending');
+        if (record.certified) {
+          tags.push('Certified');
         }
+        if (record.minted) {
+          tags.push('Minted');
+        }
+        return (
+          <>
+            {tags.map((elt) => {
+              return (
+                <Tag key={elt} color={elt === 'Approved' ? 'green' : 'purple'}>
+                  {elt}
+                </Tag>
+              );
+            })}
+          </>
+        );
       }
     },
 

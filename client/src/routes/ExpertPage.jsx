@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAccount, useContractRead } from 'wagmi';
-import { abi } from '../../contractsData/MarketPlace.json';
+
+import { abi } from '../../contractsData/Marketplace.json';
 import { address as contractAddress } from '../../contractsData/Marketplace-address.json';
 import AdsTable from '../AdsTable';
 
