@@ -1,5 +1,4 @@
 require('@nomicfoundation/hardhat-toolbox');
-require('hardhat-abi-exporter');
 /** @type import('hardhat/config').HardhatUserConfig */
 
 module.exports = {
@@ -10,11 +9,11 @@ module.exports = {
       chainId: 31337
     }
   },
-  solidity: '0.8.19'
-  // abiExporter: {
-  //   path: './client/abi',
-  //   runOnCompile: true,
-  //   clear: true,
-  //   flat: true
-  // }
+  solidity: '0.8.19',
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    }
+  }
 };
