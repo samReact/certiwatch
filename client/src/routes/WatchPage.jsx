@@ -1,91 +1,135 @@
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { Col, List, Row, Typography, Image, Button, Spin, Space } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Spin, Result } from 'antd';
 
-import { formattedAddress, removeIpfs } from '../utils';
 import { useEffect, useState } from 'react';
+import {
+  useAccount,
+  useContract,
+  useContractWrite,
+  usePrepareContractWrite,
+  useSigner
+} from 'wagmi';
+import { ethers } from 'ethers';
+import { addNotification } from '../state/notificationSlice';
+import WatchDetails from '../WatchDetails';
+import { useCallback } from 'react';
+import { removeIpfs } from '../utils';
 
 export default function WatchPage() {
   const [watch, setWatch] = useState();
-  let { id } = useParams();
+  const { id } = useParams();
 
-  const watches = useSelector((state) => state.watches.fullWatches);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (id && watches) {
-      const watch = watches.filter((watch) => watch.id == id)[0];
+  const dispatch = useDispatch();
+
+  const {
+    marketplaceAbi,
+    marketplaceAddress,
+    nftCollectionAbi,
+    nftCollectionAddress
+  } = useSelector((state) => state.eth);
+
+  const { address } = useAccount();
+  const { data: signer } = useSigner();
+
+  const { config } = usePrepareContractWrite({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    functionName: 'buyItem',
+    enabled: Boolean(watch),
+    args: [watch && parseInt(watch.itemId)],
+    overrides: {
+      value: watch && ethers.utils.parseEther(watch.totalPrice)
+    }
+  });
+  const { write, isLoading, isSuccess } = useContractWrite(config);
+
+  const marketplace = useContract({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    signerOrProvider: signer,
+    watch: true
+  });
+
+  const certificate = useContract({
+    address: nftCollectionAddress,
+    abi: nftCollectionAbi,
+    signerOrProvider: signer
+  });
+
+  const isSeller = address && watch && address === watch.seller;
+
+  async function handleBuy() {
+    try {
+      write();
+    } catch (error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
+    }
+  }
+  const loadMarketPlaceItems = useCallback(async () => {
+    let item = await marketplace.items(id);
+    if (item.status === 3) {
+      const uri = await certificate.tokenURI(item.tokenId);
+      const res = await fetch(uri);
+      const metada = await res.json();
+      let imagesUri = metada.attributes.filter((attr) => attr.images)[0];
+
+      const finalUri = `https://ipfs.io/ipfs/${removeIpfs(imagesUri.value)}`;
+      const res2 = await fetch(finalUri);
+      const imagesMeta = await res2.json();
+      const totalPrice = await marketplace.getTotalPrice(item.itemId);
+      let watch = {
+        totalPrice: ethers.utils.formatEther(totalPrice),
+        itemId: parseInt(item.itemId),
+        seller: item.seller,
+        tokenId: parseInt(item.tokenId),
+        certificateUrl: metada.image,
+        images: imagesMeta.images,
+        model: item.model,
+        brand: item.brand
+      };
       setWatch(watch);
     }
-  }, [id]);
+  }, [marketplace, certificate, id]);
 
+  useEffect(() => {
+    if (marketplace.signer) {
+      loadMarketPlaceItems();
+    }
+  }, [marketplace.signer, loadMarketPlaceItems]);
+
+  function handleClick() {
+    navigate('/');
+  }
   return (
     <div className="container">
-      {watch ? (
-        <Row gutter={32}>
-          <Col xs={8}>
-            <Image
-              placeholder
-              src={watch.photos[0]}
-              width={'100%'}
-              style={{ marginBottom: 8 }}
-            />
-            <List
-              grid={{ column: 2, gutter: 8 }}
-              dataSource={watch.photos.filter((photo, i) => i !== 0)}
-              renderItem={(url, i) => (
-                <List.Item>
-                  <Image src={url} width={'100%'} />
-                </List.Item>
-              )}
-            />
-            <Image
-              placeholder
-              src={` https://ipfs.io/ipfs/${removeIpfs(watch.image)}`}
-              width={'50%'}
-            />
-          </Col>
-          <Col xs={16}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                height: '100%'
-              }}
-            >
-              <div>
-                <Typography.Title level={2} style={{ marginTop: 0 }}>
-                  {watch.brand} {watch.model}
-                </Typography.Title>
-                <Typography.Text>
-                  Owned by{' '}
-                  <Typography.Text strong>
-                    {formattedAddress(watch.seller)}
-                  </Typography.Text>
-                </Typography.Text>
-              </div>
-              <div style={{ marginTop: 20 }}>
-                <Typography.Text>{watch.description}</Typography.Text>
-              </div>
-              <Space style={{ marginTop: 20 }} direction="vertical">
-                <Typography.Text>
-                  Case material: {watch.watch_case}
-                </Typography.Text>
-                <Typography.Text>
-                  Bracelet material: {watch.bracelet}
-                </Typography.Text>
-                <Typography.Text>Color: {watch.color}</Typography.Text>
-                <Typography.Text>Movement: {watch.movement}</Typography.Text>
-                <Typography.Text>Year: {watch.year}</Typography.Text>
-                <Typography.Text>Gender: {watch.gender}</Typography.Text>
-                <Typography.Text>Serial: {watch.serial}</Typography.Text>
-              </Space>
-              <Button type="primary" size="large">
-                Buy at {watch.totalPrice} ETH
-              </Button>
-            </div>
-          </Col>
-        </Row>
+      {isSuccess ? (
+        <Result
+          status="success"
+          title="Successfully Purchased !"
+          subTitle="Order number: 2017182818828182881 blockchain synchronization takes 1-5 minutes, please wait."
+          extra={[
+            <Button type="primary" key="console" onClick={handleClick}>
+              Go Home
+            </Button>
+          ]}
+        />
+      ) : watch ? (
+        <WatchDetails
+          write={write}
+          isSeller={isSeller}
+          handleBuy={handleBuy}
+          isLoading={isLoading}
+          watch={watch}
+        />
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Spin size="large" />

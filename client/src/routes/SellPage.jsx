@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Form,
@@ -13,56 +12,84 @@ import {
   Steps,
   Result
 } from 'antd';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import {
   FileDoneOutlined,
   ProfileOutlined,
   SmileOutlined
 } from '@ant-design/icons';
 
-import { add } from '../state/watchesSlice';
 import { WATCH_BRANDS } from '../utils';
 import { addNotification } from '../state/notificationSlice';
+import { abi as marketplaceAbi } from '../../contractsData/Marketplace.json';
+import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
 
 const { Item } = Form;
 
 export default function SellPage() {
-  const [step, setStep] = useState(0);
-  const { address, isDisconnected } = useAccount();
-
-  const watches = useSelector((state) => state.watches.watches);
+  const { isDisconnected } = useAccount();
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const brand = Form.useWatch('brand', form);
+  const model = Form.useWatch('model', form);
+  const description = Form.useWatch('description', form);
+  const serial = Form.useWatch('serial', form);
+  const price = Form.useWatch('price', form);
 
   const navigate = useNavigate();
+  const { config } = usePrepareContractWrite({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    functionName: 'addItem',
+    enabled:
+      Boolean(brand) &&
+      Boolean(description) &&
+      Boolean(model) &&
+      Boolean(price),
+    args: [brand, model, description, serial, price]
+  });
+  const { write, isSuccess } = useContractWrite(config);
 
+  // const balance = useContractRead({
+  //   address: nftCollectionAddress,
+  //   abi: nftCollectionAbi,
+  //   functionName: 'balanceOf',
+  //   watch: false,
+  //   enabled: Boolean(address),
+  //   args: [address]
+  // });
+
+  // const certificate = useContract({
+  //   address: nftCollectionAddress,
+  //   abi: nftCollectionAbi,
+  //   signerOrProvider: signer
+  // });
+
+  // async function getTokenId() {
+  // const tokenId = certificate.tokenOfOwnerByIndex(balance.data);
+  // }
+
+  // useEffect(() => {
+  //   if (balance.data) {
+  //     getTokenId();
+  //   }
+  // }, [balance.data]);
   async function handleNext() {
-    if (step === 0) {
-      try {
-        let validate = await form.validateFields();
-        const { errorFields } = validate;
-        if (!errorFields) {
-          let values = form.getFieldsValue();
-          dispatch(
-            add({
-              ...values,
-              address,
-              id: watches.length
-            })
-          );
-          setStep(step + 1);
-        }
-      } catch (error) {
-        dispatch(
-          addNotification({
-            message: 'Error',
-            description: error.message,
-            type: 'error'
-          })
-        );
+    try {
+      let validate = await form.validateFields();
+      const { errorFields } = validate;
+      if (!errorFields) {
+        write();
       }
-    } else if (step === 1) {
+    } catch (error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
     }
   }
 
@@ -84,7 +111,7 @@ export default function SellPage() {
         <>
           <Steps
             labelPlacement="vertical"
-            current={step}
+            current={isSuccess ? 1 : 0}
             items={[
               {
                 title: 'Détails',
@@ -97,9 +124,19 @@ export default function SellPage() {
             ]}
           />
           <div className="container-content">
-            <Row style={{ height: '50vh' }}>
-              <Col xs={24}>
-                {step === 0 && (
+            {isSuccess ? (
+              <Result
+                icon={<SmileOutlined />}
+                title="Great, Certiwatch will contact you shortly !"
+                extra={
+                  <Button type="primary" onClick={() => navigate('/')}>
+                    Go to Home
+                  </Button>
+                }
+              />
+            ) : (
+              <Row style={{ height: '50vh' }}>
+                <Col xs={24}>
                   <Form
                     name="form_item_path"
                     layout="vertical"
@@ -151,7 +188,7 @@ export default function SellPage() {
                             }
                           ]}
                         >
-                          <InputNumber />
+                          <Input />
                         </Item>
                         <Item
                           name="price"
@@ -165,26 +202,19 @@ export default function SellPage() {
                         >
                           <InputNumber addonAfter="ETH" min={0} />
                         </Item>
-                        <Button type="primary" onClick={() => handleNext()}>
+                        <Button
+                          type="primary"
+                          onClick={() => handleNext()}
+                          disabled={!write}
+                        >
                           Submit
                         </Button>
                       </Col>
                     </Row>
                   </Form>
-                )}
-                {step === 1 && (
-                  <Result
-                    icon={<SmileOutlined />}
-                    title="Great, Certiwatch will contact you shortly !"
-                    extra={
-                      <Button type="primary" onClick={() => navigate('/')}>
-                        Go to Home
-                      </Button>
-                    }
-                  />
-                )}
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            )}
           </div>
         </>
       )}

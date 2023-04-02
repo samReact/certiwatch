@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
-import { abi } from '../contractsData/MarketPlace.json';
+import { abi } from '../contractsData/Marketplace.json';
 import { address as contractAddress } from '../contractsData/Marketplace-address.json';
 
 export default function ResponsiveAppBar() {
@@ -77,7 +77,9 @@ export default function ResponsiveAppBar() {
           <Link
             to={'/expert'}
             className={
-              pathname === '/expert' ? `menu-item -selected` : 'menu-item'
+              pathname.startsWith('/expert')
+                ? `menu-item -selected`
+                : 'menu-item'
             }
           >
             Expert

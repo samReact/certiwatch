@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Form,
   Input,
@@ -14,8 +14,9 @@ import {
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAccount, useContractRead } from 'wagmi';
+import { useAccount, useContract, useContractRead, useSigner } from 'wagmi';
 import axios from 'axios';
+import { SmileOutlined } from '@ant-design/icons';
 
 import ImageUploader from '../ImageUploader';
 import { decrement, increment, resetStep } from '../state/stepperSlice';
@@ -28,8 +29,7 @@ import {
   WATCH_MOVEMENTS
 } from '../utils';
 import { addNotification } from '../state/notificationSlice';
-import { SmileOutlined } from '@ant-design/icons';
-import { add } from '../state/watchesSlice';
+import { updateForm } from '../state/appSlice';
 
 const { Item } = Form;
 
@@ -38,12 +38,13 @@ export default function ExpertForm() {
   const [loading, setLoading] = useState(false);
   const { address, isDisconnected } = useAccount();
   const { id } = useParams();
+  const { data: signer } = useSigner();
 
   const step = useSelector((state) => state.stepper.value);
+  const savedForm = useSelector((state) => state.app.form);
   const { marketplaceAbi, marketplaceAddress } = useSelector(
     (state) => state.eth
   );
-
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
@@ -61,10 +62,16 @@ export default function ExpertForm() {
   const proposalHook = useContractRead({
     address: marketplaceAddress,
     abi: marketplaceAbi,
-    functionName: 'getProposal',
+    functionName: 'items',
     watch: false,
     enabled: Boolean(id),
     args: [id]
+  });
+
+  const marketplace = useContract({
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
+    signerOrProvider: signer
   });
 
   function handlePrevious() {
@@ -84,7 +91,7 @@ export default function ExpertForm() {
             .slice(0, 5)
             .replace(/-/g, '');
           values.year = formattedYear;
-          dispatch(add({ ...values }));
+          dispatch(updateForm({ ...values, id: parseInt(id) }));
           dispatch(increment());
         }
       } catch (error) {
@@ -99,48 +106,50 @@ export default function ExpertForm() {
     } else if (step === 1) {
       setLoading(true);
       const photos = fileList.map((elt) => elt.thumbUrl);
-      // const {
-      //   brand,
-      //   model,
-      //   gender,
-      //   year,
-      //   serial,
-      //   watch_case,
-      //   bracelet,
-      //   movement,
-      //   color
-      // } = watch;
+      const {
+        brand,
+        model,
+        gender,
+        year,
+        serial,
+        watch_case,
+        bracelet,
+        movement,
+        color
+      } = savedForm;
       try {
-        const res = await axios.post('/api/uploadPics', {
+        const res = await axios.post('/api/uploadImages', {
           photos
         });
         const data = await res.data;
-        console.log(data);
+
+        const res2 = await axios.post('/api/uploadIpfs', {
+          brand,
+          model,
+          gender,
+          year,
+          serial,
+          watch_case,
+          bracelet,
+          movement,
+          color,
+          expert_addr: address,
+          expert_name: expert.data.name,
+          images_url: `ipfs://${data.IpfsHash}`
+        });
+        const data2 = await res2.data;
+
+        const ipfsUrl = `ipfs://${data2.IpfsHash}`;
+        await marketplace.updateItem(parseInt(id), 2, ipfsUrl);
+        dispatch(
+          addNotification({
+            message: `Success !`,
+            description: `${brand} ${model} is now certified !`,
+            type: 'success'
+          })
+        );
+        dispatch(increment());
         setLoading(false);
-        // const res = await axios.post('/api/uploadIpfs', {
-        //   brand,
-        //   model,
-        //   gender,
-        //   year,
-        //   serial,
-        //   watch_case,
-        //   bracelet,
-        //   movement,
-        //   color,
-        //   expert_addr: address,
-        //   expert_name: expert.data.name
-        // });
-        // const data = await res.data;
-
-        // let data = {
-        //   IpfsHash: 'QmNRduJEXsU39sH3EQBaxcj9X5cWPdr5Ld2uVmnwRVygSb'
-        // };
-
-        // dispatch(
-        //   update({ ...watch, ipfsHash: data.IpfsHash, photos, certified: true })
-        // );
-        // dispatch(increment());
-        // setLoading(false);
       } catch (error) {
         dispatch(
           addNotification({
@@ -153,16 +162,20 @@ export default function ExpertForm() {
       }
     }
   }
-  const { brand, model, serial } = proposalHook.data;
+
+  useEffect(() => {
+    return () => dispatch(resetStep());
+  }, [dispatch]);
 
   const layout = {
     wrapperCol: {
       span: 18
     }
   };
+
   return (
     <div className="container">
-      {isDisconnected ? (
+      {isDisconnected || !proposalHook || !proposalHook.data ? (
         <Row justify={'center'}>
           <Typography>
             To have access to this functionality you must be connected{' '}
@@ -184,9 +197,9 @@ export default function ExpertForm() {
                       form={form}
                       {...layout}
                       initialValues={{
-                        brand,
-                        model,
-                        serial
+                        brand: proposalHook.data.brand,
+                        model: proposalHook.data.model,
+                        serial: proposalHook.data.serial
                       }}
                     >
                       <Row>
@@ -367,7 +380,7 @@ export default function ExpertForm() {
             <Row>
               <Col xs={24}>
                 <Space>
-                  {step !== 0 && (
+                  {step !== 0 && step !== 2 && (
                     <Button type="primary" onClick={() => handlePrevious()}>
                       Previous
                     </Button>

@@ -12,13 +12,13 @@ export default function AdminTable({ marketplace }) {
   const [proposals, setProposals] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
 
-  const proposalEvents = useSelector((state) => state.eth.proposalEvents);
+  const itemEvents = useSelector((state) => state.eth.itemEvents);
 
   function filterEvents(tableau) {
     const result = Object.values(
       tableau.reduce((acc, obj) => {
-        if (!acc[obj.proposalId] || acc[obj.proposalId].status < obj.status) {
-          acc[obj.proposalId] = obj;
+        if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
+          acc[obj.itemId] = obj;
         }
         return acc;
       }, {})
@@ -27,16 +27,16 @@ export default function AdminTable({ marketplace }) {
   }
 
   useEffect(() => {
-    if (proposalEvents.length > 0) {
-      filterEvents(proposalEvents);
+    if (itemEvents.length > 0) {
+      filterEvents(itemEvents);
     }
-  }, [proposalEvents]);
+  }, [itemEvents]);
 
   async function handleSubmit(record) {
     setSelectedRow(record);
     setLoading(true);
     try {
-      await marketplace.updateProposalStatus(parseInt(record.proposalId), 1);
+      await marketplace.updateItem(parseInt(record.itemId), 1, '');
       dispatch(
         addNotification({
           message: `${record.brand} ${record.model} approved !`,
@@ -74,9 +74,17 @@ export default function AdminTable({ marketplace }) {
     {
       title: 'Status',
       dataIndex: 'status',
-      render: (_, record) => (
-        <Tag>{record.status === 0 ? 'Pending' : 'Approved'}</Tag>
-      )
+      render: (_, record) => {
+        let tag = 'Pending';
+        if (record.status === 1) {
+          tag = 'Approved';
+        } else if (record.status === 2) {
+          tag = 'Certified';
+        } else if (record.status === 3) {
+          tag = 'Published';
+        }
+        return <Tag color={tag === 'Approved' ? 'green' : 'purple'}>{tag}</Tag>;
+      }
     },
 
     {
@@ -85,9 +93,9 @@ export default function AdminTable({ marketplace }) {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            disabled={record.status === 1}
+            disabled={record.status !== 0}
             onClick={() => handleSubmit(record)}
-            loading={loading && record.proposalId === selectedRow.proposalId}
+            loading={loading && record.itemId === selectedRow.itemId}
           >
             Approve
           </Button>
@@ -95,7 +103,6 @@ export default function AdminTable({ marketplace }) {
       )
     }
   ];
-  return (
-    <Table rowKey={'proposalId'} columns={columns} dataSource={proposals} />
-  );
+  console.log(proposals);
+  return <Table rowKey={'itemId'} columns={columns} dataSource={proposals} />;
 }

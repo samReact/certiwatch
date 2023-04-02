@@ -1,40 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Row, Space, Table, Tag, Typography } from 'antd';
-import { ethers } from 'ethers';
 import fileDownload from 'js-file-download';
 import axios from 'axios';
 import { DownloadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { update, updateOpen } from '../state/watchesSlice.js';
 import { formattedAddress, removeIpfs } from '../utils/index.js';
 import { addNotification } from '../state/notificationSlice.js';
+import { useCallback } from 'react';
 
 export default function CreateTable({ marketplace, certificate, address }) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
+  const [proposals, setProposals] = useState([]);
 
-  const watches = useSelector((state) => state.watches.watches);
-  const myWatches = watches.filter((watch) => watch.address === address);
+  const { itemEvents } = useSelector((state) => state.eth);
+
   const dispatch = useDispatch();
-
   async function handleMint(record) {
-    const listingPrice = ethers.utils.parseEther(record.price.toString());
-
+    const item = await marketplace.items(record.itemId);
+    const ipfsHash = removeIpfs(item.ipfsUrl);
     try {
-      const uri = `https://ipfs.io/ipfs/${record.ipfsHash}`;
+      const uri = `https://ipfs.io/ipfs/${ipfsHash}`;
       await (await certificate.mintItem(uri)).wait();
       await (
         await certificate.setApprovalForAll(marketplace.address, true)
       ).wait();
       const tokenId = await certificate.tokenIds();
       await (
-        await marketplace.addItem(certificate.address, tokenId, listingPrice)
+        await marketplace.addToken(certificate.address, tokenId, item.itemId)
       ).wait();
-      const parsedId = parseInt(tokenId);
-      const payload = { ...record, tokenId: parsedId, minted: true };
-      dispatch(update(payload));
-      dispatch(updateOpen(true));
+      dispatch(
+        addNotification({
+          message: `${record.brand} ${record.model} minted !`,
+          description:
+            'In a few minute your item will be visible to the marketplace',
+          type: 'success'
+        })
+      );
     } catch (error) {
       dispatch(
         addNotification({
@@ -84,31 +87,21 @@ export default function CreateTable({ marketplace, certificate, address }) {
     {
       title: 'Address',
       dataIndex: 'address',
-      render: (_, record) => formattedAddress(record.address)
+      render: (_, record) => formattedAddress(record.seller)
     },
     {
       title: 'Status',
       dataIndex: 'certified',
       render: (_, record) => {
-        const tags = [];
-        record.approved ? tags.push('Approved') : tags.push('Pending');
-        if (record.certified) {
-          tags.push('Certified');
+        let tag = 'Pending';
+        if (record.status === 1) {
+          tag = 'Approved';
+        } else if (record.status === 2) {
+          tag = 'Certified';
+        } else if (record.status === 3) {
+          tag = 'Published';
         }
-        if (record.minted) {
-          tags.push('Minted');
-        }
-        return (
-          <>
-            {tags.map((elt) => {
-              return (
-                <Tag key={elt} color={elt === 'Approved' ? 'green' : 'purple'}>
-                  {elt}
-                </Tag>
-              );
-            })}
-          </>
-        );
+        return <Tag color={tag === 'Approved' ? 'green' : 'purple'}>{tag}</Tag>;
       }
     },
 
@@ -120,7 +113,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
           return (
             <Space size="middle">
               <Button
-                disabled={!record.certified}
+                disabled={record.status !== 2}
                 onClick={() => {
                   handleMint(record);
                 }}
@@ -144,14 +137,36 @@ export default function CreateTable({ marketplace, certificate, address }) {
     }
   ];
 
+  const filterEvents = useCallback(
+    (tableau) => {
+      const results = Object.values(
+        tableau.reduce((acc, obj) => {
+          if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
+            acc[obj.itemId] = obj;
+          }
+          return acc;
+        }, {})
+      );
+      const filtered = results.filter((result) => result.seller === address);
+      setProposals(filtered);
+    },
+    [address]
+  );
+
+  useEffect(() => {
+    if (itemEvents.length > 0) {
+      filterEvents(itemEvents);
+    }
+  }, [itemEvents, filterEvents]);
+
   return (
     <>
-      {!myWatches.length ? (
+      {!proposals.length ? (
         <Row justify={'center'}>
           <Typography>You don't have any listing yet</Typography>
         </Row>
       ) : (
-        <Table rowKey={'id'} columns={columns} dataSource={myWatches} />
+        <Table rowKey={'itemId'} columns={columns} dataSource={proposals} />
       )}
     </>
   );

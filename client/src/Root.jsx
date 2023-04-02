@@ -64,10 +64,10 @@ export default function Root() {
   useContractEvent({
     address: marketplaceAddress,
     abi: marketplaceAbi,
-    eventName: 'ProposalUpdated',
+    eventName: 'ItemUpdated',
     listener(a, b, c, d, e, f, g, h, event) {
       if (event) {
-        dispatch(updateEvents({ name: 'proposalEvents', value: [event.args] }));
+        dispatch(updateEvents({ name: 'itemEvents', value: [event.args] }));
       }
     }
   });
@@ -104,7 +104,7 @@ export default function Root() {
 
   useEffect(() => {
     if (marketplace.provider) {
-      getOldProposalEvents('ProposalUpdated', 'proposalEvents');
+      getOldProposalEvents('ItemUpdated', 'itemEvents');
       getOldProposalEvents('ExpertAdded', 'expertEvents');
     }
   }, [marketplace.provider, getOldProposalEvents]);

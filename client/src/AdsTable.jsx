@@ -8,12 +8,12 @@ import { formattedAddress } from './utils/index.js';
 export default function AdsTable() {
   const [proposals, setProposals] = useState([]);
 
-  const { proposalEvents } = useSelector((state) => state.eth);
+  const { itemEvents } = useSelector((state) => state.eth);
 
   const navigate = useNavigate();
 
   async function handleSubmit(record) {
-    navigate(`/expert/${record.proposalId}`);
+    navigate(`/expert/${record.itemId}`);
   }
 
   const columns = [
@@ -39,6 +39,8 @@ export default function AdsTable() {
           tag = 'Approved';
         } else if (record.status === 2) {
           tag = 'Certified';
+        } else if (record.status === 3) {
+          tag = 'Published';
         }
         return <Tag color={tag === 'Approved' ? 'green' : 'purple'}>{tag}</Tag>;
       }
@@ -59,7 +61,7 @@ export default function AdsTable() {
           <Space size="middle">
             <Popover content={content} title={record.brand} trigger="hover">
               <Button
-                disabled={record.status === 2}
+                disabled={record.status !== 1}
                 onClick={() => handleSubmit(record)}
               >
                 Certified
@@ -74,8 +76,8 @@ export default function AdsTable() {
   function filterEvents(tableau) {
     const result = Object.values(
       tableau.reduce((acc, obj) => {
-        if (!acc[obj.proposalId] || acc[obj.proposalId].status < obj.status) {
-          acc[obj.proposalId] = obj;
+        if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
+          acc[obj.itemId] = obj;
         }
         return acc;
       }, {})
@@ -84,15 +86,15 @@ export default function AdsTable() {
   }
 
   useEffect(() => {
-    if (proposalEvents.length > 0) {
-      filterEvents(proposalEvents);
+    if (itemEvents.length > 0) {
+      filterEvents(itemEvents);
     }
-  }, [proposalEvents]);
+  }, [itemEvents]);
 
   return (
     <>
       {proposals.length ? (
-        <Table rowKey={'proposalId'} columns={columns} dataSource={proposals} />
+        <Table rowKey={'itemId'} columns={columns} dataSource={proposals} />
       ) : (
         <Row justify={'center'}>
           <Typography>No pending certification</Typography>

@@ -34,8 +34,7 @@ export default function ExpertTable({ events }) {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
-      render: (_, record) => <Tag color={'purple'}>Approved</Tag>
+      render: () => <Tag color={'green'}>Approved</Tag>
     }
   ];
 

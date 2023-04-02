@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Divider, Layout, Row, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+
 import logo from './assets/logo-main.png';
 
 const { Footer } = Layout;

@@ -15,22 +15,29 @@ export default function WatchDetails({
         <Col xs={8}>
           <Image
             placeholder
-            src={watch.photos[0]}
+            src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+              watch.images[0]
+            )}`}
             width={'100%'}
             style={{ marginBottom: 8 }}
           />
           <List
             grid={{ column: 2, gutter: 8 }}
-            dataSource={watch.photos.filter((photo, i) => i !== 0)}
+            dataSource={watch.images.filter((photo, i) => i !== 0)}
             renderItem={(url, i) => (
               <List.Item>
-                <Image src={url} width={'100%'} />
+                <Image
+                  src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(url)}`}
+                  width={'100%'}
+                />
               </List.Item>
             )}
           />
           <Image
             placeholder
-            src={` https://ipfs.io/ipfs/${removeIpfs(watch.image)}`}
+            src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+              watch.certificateUrl
+            )}`}
             width={'50%'}
           />
         </Col>

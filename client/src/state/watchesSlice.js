@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  watches: [],
-  fullWatches: []
+  watches: []
 };
 
 export const watchesSlice = createSlice({
@@ -19,14 +18,11 @@ export const watchesSlice = createSlice({
       watches.push(action.payload);
 
       return { ...state, watches };
-    },
-    initFull: (state, action) => {
-      state.fullWatches = action.payload;
     }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { add, update, initFull } = watchesSlice.actions;
+export const { add, update } = watchesSlice.actions;
 
 export default watchesSlice.reducer;
