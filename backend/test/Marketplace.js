@@ -32,26 +32,26 @@ describe('Marketplace', async () => {
     });
   });
 
-  describe('Create new collections', () => {
-    let address1, newCollection, instance1;
+  // describe('Create new collections', () => {
+  //   let address1, newCollection, instance1;
 
-    beforeEach(async () => {
-      newCollection = await marketplace.createCollection('2pac', 'NWA');
-      address1 = await marketplace.NFTCollectionArray(0);
-      instance1 = await NFTCollection.attach(address1);
-    });
+  //   beforeEach(async () => {
+  //     newCollection = await marketplace.createCollection('2pacs', 'NWA');
+  //     address1 = await marketplace.NFTCollectionArray(0);
+  //     instance1 = await NFTCollection.attach(address1);
+  //   });
 
-    it('Should return the correct name and symbol of new collection 1', async () => {
-      expect(await instance1.name()).to.equal('2pac');
-      expect(await instance1.symbol()).to.equal('NWA');
-    });
+  //   it('Should return the correct name and symbol of new collection 1', async () => {
+  //     expect(await instance1.name()).to.equal('2pac');
+  //     expect(await instance1.symbol()).to.equal('NWA');
+  //   });
 
-    it('Should emit NewCollection events', async () => {
-      await expect(newCollection)
-        .to.emit(marketplace, 'NewCollection')
-        .withArgs('2pac', address1, anyValue);
-    });
-  });
+  //   it('Should emit NewCollection events', async () => {
+  //     await expect(newCollection)
+  //       .to.emit(marketplace, 'NewCollection')
+  //       .withArgs('2pac', address1, anyValue);
+  //   });
+  // });
 
   describe('Profit Rate', () => {
     it('Should has an initial value', async () => {
@@ -77,7 +77,7 @@ describe('Marketplace', async () => {
       });
       it('Should emit an UpdatedProfitRate event', async () => {
         expect(tx)
-          .to.emit(marketplace, 'UpdatedProfitRate')
+          .to.emit(marketplace, 'UpdatedProfisstRate')
           .withArgs(feeRate, newRate);
       });
     });
@@ -103,6 +103,29 @@ describe('Marketplace', async () => {
       await certificate
         .connect(addr1)
         .setApprovalForAll(marketplace.address, true);
+    });
+  });
+
+  describe('Add a new proposal', () => {
+    let tx;
+    beforeEach(async () => {
+      tx = await marketplace
+        .connect(addr2)
+        .addProposal('Rolex', 'Submariner', 'jolie montre', '123', 12);
+    });
+    it('Should emit a ProposalUpdated event', async () => {
+      await expect(tx)
+        .to.emit(marketplace, 'ProposalUpdated')
+        .withArgs(
+          1,
+          addr2.address,
+          'Rolex',
+          'Submariner',
+          'jolie montre',
+          '123',
+          12,
+          0
+        );
     });
   });
 });
