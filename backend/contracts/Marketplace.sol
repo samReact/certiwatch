@@ -12,14 +12,77 @@ import "./NFTCollection.sol";
  * @author Samir
  * @dev Implements a nft marketplace
  */
-contract Marketplace is Ownable {
+contract Marketplace is Ownable, ReentrancyGuard {
+    // ::::::::::STATE:::::::::: //
+
     uint public feeRate;
     uint public itemCount;
     address payable public immutable feeAccount;
 
+    // ::::::::::EVENTS:::::::::: //
+
+    event UpdatedProfitRate(uint _prev, uint _profitRate);
+    event ExpertAdded(address indexed _addr, string _name);
+    event ItemUpdated(
+        uint itemId,
+        uint tokenId,
+        address payable seller,
+        string brand,
+        string model,
+        string serial,
+        ItemStatus status
+    );
+
+    // :::::::MODIFIERS::::::: //
+
+    /**
+     * @dev Modifier to check if caller is the seller
+     * @param _itemId item's id
+     */
+    modifier onlySeller(uint _itemId) {
+        require(items[_itemId].seller == msg.sender, "Not Authorized");
+        _;
+    }
+
+    /**
+     * @dev Modifier to check if caller is the seller or the owner
+     */
+    modifier onlyAuthorized() {
+        require(
+            experts[msg.sender].authorized == true || msg.sender == owner(),
+            "Not Authorized"
+        );
+        _;
+    }
+
+    /**
+     * @dev Modifier to check if an item exist and not sold
+     * @param _itemId item's id
+     */
+    modifier onlyValid(uint _itemId) {
+        require(_itemId > 0 && _itemId <= itemCount, "Doesn't exist");
+        require(items[_itemId].status != ItemStatus.Sold, "Already sold");
+        _;
+    }
+
     struct Expert {
         string name;
         bool authorized;
+    }
+
+    struct Item {
+        uint itemId;
+        IERC721 certificate;
+        uint tokenId;
+        address payable seller;
+        address payable expert;
+        string brand;
+        string model;
+        string description;
+        string serial;
+        uint price;
+        ItemStatus status;
+        string ipfsUrl;
     }
 
     enum ItemStatus {
@@ -30,39 +93,8 @@ contract Marketplace is Ownable {
         Sold
     }
 
-    struct Item {
-        uint itemId;
-        IERC721 certificate;
-        uint tokenId;
-        address payable seller;
-        string brand;
-        string model;
-        string description;
-        string serial;
-        uint price;
-        ItemStatus status;
-        string ipfsUrl;
-    }
-
-    // NFTCollection[] NFTCollectionArray;
-    mapping(address => Expert) experts;
+    mapping(address => Expert) public experts;
     mapping(uint => Item) public items;
-
-    // ::::::::::EVENTS:::::::::: //
-
-    // event NewCollection(string _name, address _addr, uint timestamp);
-    event UpdatedProfitRate(uint _prev, uint _profitRate);
-    event ExpertAdded(address indexed _addr, string _name);
-    event ItemUpdated(
-        uint itemId,
-        uint tokenId,
-        address payable seller,
-        string brand,
-        string model,
-        string serial,
-        ItemStatus status,
-        string ipfsUrl
-    );
 
     // ::::::::CONSTRUCTOR:::::::::: //
 
@@ -82,40 +114,31 @@ contract Marketplace is Ownable {
      * @param _itemId id of the marketplace item we want to get
      * @return uint total price (selling price + marketplace profit)
      */
-    function getTotalPrice(uint _itemId) public view returns (uint) {
+    function getTotalPrice(
+        uint _itemId
+    ) public view onlyValid(_itemId) returns (uint) {
         return ((items[_itemId].price * (100 + feeRate)) / 100);
     }
 
-    function getExpert(address _addr) external view returns (Expert memory) {
-        return experts[_addr];
-    }
-
-    // /**
-    //  * @dev Create a new nft collection
-    //  * @param _name  string, name of the new collection
-    //  * @param _symbol  symbol of the new collection
-    //  */
-    // function createCollection(
-    //     string calldata _name,
-    //     string calldata _symbol
-    // ) external onlyOwner {
-    //     NFTCollection newCollection = new NFTCollection(_name, _symbol);
-    //     NFTCollectionArray.push(newCollection);
-    //     emit NewCollection(_name, address(newCollection), block.timestamp);
-    // }
+    // :::::::ADD FUNCTIONS::::::: //
 
     /**
-     * @dev Update profit rate of the marketplace
-     * @param _feeRate percentage of the new rate
+     * @dev Add an authorized expert to a marketplace
+     * @param _addr expert's eth address
+     * @param _name expert's name
      */
-    function updateProfitRate(uint _feeRate) external onlyOwner {
-        require(_feeRate > 0 && _feeRate < 100, "Incorrect rate number");
-        feeRate = _feeRate;
-        emit UpdatedProfitRate(feeRate, _feeRate);
+    function addExpert(
+        address payable _addr,
+        string calldata _name
+    ) external onlyOwner {
+        require(_addr != address(0));
+        require(experts[_addr].authorized != true, "Already registered");
+        experts[_addr] = Expert(_name, true);
+        emit ExpertAdded(_addr, _name);
     }
 
     /**
-     * @dev Add new marketplace item
+     * @dev Transfer token's seller to marketplace and publish ads
      * @param _certificate token that will be added
      * @param _tokenId id of the token that will be added
      */
@@ -123,7 +146,7 @@ contract Marketplace is Ownable {
         IERC721 _certificate,
         uint _tokenId,
         uint _itemId
-    ) external {
+    ) external onlySeller(_itemId) nonReentrant {
         Item storage item = items[_itemId];
         _certificate.transferFrom(msg.sender, address(this), _tokenId);
         item.certificate = _certificate;
@@ -137,11 +160,18 @@ contract Marketplace is Ownable {
             item.brand,
             item.model,
             item.serial,
-            ItemStatus.Published,
-            item.ipfsUrl
+            ItemStatus.Published
         );
     }
 
+    /**
+     * @dev Add token to a marketplace item
+     * @param _brand watch's brand
+     * @param _model watch's model
+     * @param _description watch's descrition
+     * @param _serial watch's serial number
+     * @param _price watch's price
+     */
     function addItem(
         string calldata _brand,
         string calldata _model,
@@ -149,7 +179,7 @@ contract Marketplace is Ownable {
         string calldata _serial,
         uint _price
     ) external {
-        require(_price > 0);
+        require(_price > 0, "Incorrect price");
         itemCount++;
         Item storage item = items[itemCount];
 
@@ -158,6 +188,7 @@ contract Marketplace is Ownable {
             item.certificate,
             item.tokenId,
             payable(msg.sender),
+            item.expert,
             _brand,
             _model,
             _description,
@@ -173,17 +204,29 @@ contract Marketplace is Ownable {
             _brand,
             _model,
             _serial,
-            ItemStatus.Pending,
-            item.ipfsUrl
+            ItemStatus.Pending
         );
     }
 
+    // :::::::UPDATE FUNCTIONS::::::: //
+
+    /**
+     * @dev Update an existing item
+     * @param _itemId item's id
+     * @param _status new status index
+     * @param _ipfsUrl associated certificate ipfs url
+     */
     function updateItem(
         uint _itemId,
         uint _status,
         string calldata _ipfsUrl
-    ) external {
+    ) external onlyAuthorized onlyValid(_itemId) {
         Item storage item = items[_itemId];
+        address payable newExpert;
+        if (_status == 2) {
+            newExpert = payable(msg.sender);
+        }
+        item.expert = newExpert;
         item.status = ItemStatus(_status);
         item.ipfsUrl = _ipfsUrl;
         emit ItemUpdated(
@@ -193,33 +236,35 @@ contract Marketplace is Ownable {
             item.brand,
             item.model,
             item.serial,
-            ItemStatus(_status),
-            _ipfsUrl
+            ItemStatus(_status)
         );
     }
 
-    function addExpert(
-        address _addr,
-        string calldata _name
-    ) external onlyOwner {
-        require(_addr != address(0));
-        require(experts[_addr].authorized != true, "Already registered");
-        experts[_addr] = Expert(_name, true);
-        emit ExpertAdded(_addr, _name);
+    /**
+     * @dev Update profit rate of the marketplace
+     * @param _feeRate percentage of the new rate
+     */
+    function updateProfitRate(uint _feeRate) external onlyOwner {
+        require(_feeRate > 0 && _feeRate < 100, "Incorrect rate number");
+        uint prevFeeRate = feeRate;
+        feeRate = _feeRate;
+        emit UpdatedProfitRate(prevFeeRate, _feeRate);
     }
 
     /**
      * @dev buy a marketplace item
      * @param _itemId id of the item that will be bought
      */
-    function buyItem(uint _itemId) external payable {
-        uint _totalPrice = getTotalPrice(_itemId);
+    function buyItem(
+        uint _itemId
+    ) external payable nonReentrant onlyValid(_itemId) {
         Item storage item = items[_itemId];
-        require(_itemId > 0 && _itemId <= itemCount, "Doesn't exist");
-        require(msg.value >= _totalPrice, "not enough ether");
-        require(item.status != ItemStatus.Sold, "Already sold");
+        uint _totalPrice = getTotalPrice(_itemId);
+        uint profit = (_totalPrice - item.price);
+        require(msg.value >= _totalPrice, "Not enough ether");
         item.seller.transfer(item.price);
-        feeAccount.transfer(_totalPrice - item.price);
+        item.expert.transfer(profit / 2);
+        feeAccount.transfer(profit / 2);
         item.status = ItemStatus.Sold;
         item.certificate.transferFrom(address(this), msg.sender, item.tokenId);
 
@@ -230,8 +275,7 @@ contract Marketplace is Ownable {
             item.brand,
             item.model,
             item.serial,
-            ItemStatus.Sold,
-            item.ipfsUrl
+            ItemStatus.Sold
         );
     }
 }
