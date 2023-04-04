@@ -92,17 +92,22 @@ export default function CreateTable({ marketplace, certificate, address }) {
     },
     {
       title: 'Status',
-      dataIndex: 'certified',
       render: (_, record) => {
         let tag = 'Pending';
+        let color;
         if (record.status === 1) {
           tag = 'Approved';
+          color = 'green';
         } else if (record.status === 2) {
+          color = 'pink';
           tag = 'Certified';
         } else if (record.status === 3) {
+          color = 'purple';
           tag = 'Published';
+        } else if (record.status === 4) {
+          tag = 'Sold';
         }
-        return <Tag color={tag === 'Approved' ? 'green' : 'purple'}>{tag}</Tag>;
+        return <Tag color={color}>{tag}</Tag>;
       }
     },
 

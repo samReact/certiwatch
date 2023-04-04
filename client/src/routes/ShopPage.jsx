@@ -125,8 +125,14 @@ export default function ShopPage() {
                     )}`}
                     placeholder={placeholder}
                   >
-                    {(src) => {
-                      return <img src={src} alt="" />;
+                    {(src, loading) => {
+                      return (
+                        <img
+                          src={src}
+                          alt=""
+                          style={{ opacity: loading ? 0.5 : 1 }}
+                        />
+                      );
                     }}
                   </ProgressiveImage>
                 }

@@ -13,15 +13,15 @@ export default function Stepper({ step }) {
       items={[
         {
           title: 'Details',
-          icon: <ProfileOutlined />
+          icon: <ProfileOutlined className="step-icon" />
         },
         {
           title: 'Photos',
-          icon: <PictureOutlined />
+          icon: <PictureOutlined className="step-icon" />
         },
         {
           title: 'Submitted !',
-          icon: <FileDoneOutlined />
+          icon: <FileDoneOutlined className="step-icon" />
         }
       ]}
     />

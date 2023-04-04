@@ -44,7 +44,7 @@ export default function WatchPage() {
       value: watch && ethers.utils.parseEther(watch.totalPrice)
     }
   });
-  const { write, isLoading, isSuccess } = useContractWrite(config);
+  const { data, write, isLoading, isSuccess } = useContractWrite(config);
 
   const marketplace = useContract({
     address: marketplaceAddress,
@@ -117,20 +117,16 @@ export default function WatchPage() {
     }
   }, [marketplace.signer, loadMarketPlaceItems]);
 
-  function handleClick() {
-    navigate('/');
-  }
-
   return (
     <div className="container">
       {isSuccess ? (
         <Result
           status="success"
           title="Successfully Purchased !"
-          subTitle="Order number: 2017182818828182881 blockchain synchronization takes 1-5 minutes, please wait."
+          subTitle={`Transaction ${data.hash}`}
           extra={[
-            <Button type="primary" key="console" onClick={handleClick}>
-              Go Home
+            <Button type="primary" key="console" onClick={() => navigate(-1)}>
+              Go To Shop
             </Button>
           ]}
         />

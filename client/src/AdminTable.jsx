@@ -74,7 +74,6 @@ export default function AdminTable({ marketplace, nftCollection }) {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
       render: (_, record) => {
         let tag = 'Pending';
         let color;

@@ -2,6 +2,7 @@ import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
 import React from 'react';
 import { formattedAddress, removeIpfs } from './utils';
 import placeholder from './assets/placeholder.png';
+import { useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -12,7 +13,8 @@ export default function WatchDetails({
   handleBuy,
   isLoading
 }) {
-  console.log(watch.attributes);
+  const navigate = useNavigate();
+
   return (
     <Row gutter={32} style={{ height: '100%' }}>
       {!watch ? (
@@ -106,7 +108,15 @@ export default function WatchDetails({
                   )
               )}
             </Space>
-            <div style={{ marginTop: 24 }}>
+            <Space style={{ marginTop: 24 }}>
+              <Button
+                type="primary"
+                size="large"
+                disabled={isLoading}
+                onClick={() => navigate(-1)}
+              >
+                Go back
+              </Button>
               <Button
                 type="primary"
                 size="large"
@@ -116,7 +126,7 @@ export default function WatchDetails({
               >
                 Buy at {watch.totalPrice} ETH
               </Button>
-            </div>
+            </Space>
           </Col>
         </>
       )}

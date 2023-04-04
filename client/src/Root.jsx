@@ -22,7 +22,6 @@ import {
 } from 'wagmi';
 import { updateEvents } from './state/ethSlice';
 import { updateFeeRate } from './state/appSlice';
-import axios from 'axios';
 
 const { Header, Content } = Layout;
 
@@ -41,7 +40,8 @@ export default function Root() {
     (message, description, type) => {
       return api[type]({
         message,
-        description
+        description,
+        duration: 2
       });
     },
     [api]
@@ -84,14 +84,6 @@ export default function Root() {
       }
     }
   });
-
-  const loadJwt = useCallback(async () => {
-    const res = await axios.post('/api/access', {
-      user: address
-    });
-    const token = await res.data;
-    document.cookie = `token=${token}`;
-  }, [address]);
 
   const getOldProposalEvents = useCallback(
     async (eventName, key) => {

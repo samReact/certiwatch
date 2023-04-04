@@ -122,12 +122,12 @@ export default function SellPage() {
             current={isSuccess ? 1 : 0}
             items={[
               {
-                title: 'Détails',
-                icon: <ProfileOutlined />
+                title: 'Details',
+                icon: <ProfileOutlined className="step-icon" />
               },
               {
                 title: 'Submitted !',
-                icon: <FileDoneOutlined />
+                icon: <FileDoneOutlined className="step-icon" />
               }
             ]}
           />
@@ -183,7 +183,16 @@ export default function SellPage() {
                         >
                           <Input />
                         </Item>
-                        <Item name="description" label="Description">
+                        <Item
+                          name="description"
+                          label="Description"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Please fill description !'
+                            }
+                          ]}
+                        >
                           <Input.TextArea />
                         </Item>
                         <Item

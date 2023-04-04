@@ -46,6 +46,10 @@ body {
 .success-icon {
   color: #b37feb !important;
 }
+.step-icon {
+  font-size: 32px;
+}
+
 .divider {
   height: 1px;
   border-width: 0;

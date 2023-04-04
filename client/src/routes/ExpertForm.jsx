@@ -414,14 +414,16 @@ export default function ExpertForm() {
                       Previous
                     </Button>
                   )}
-                  <Button
-                    type="primary"
-                    onClick={() => handleNext()}
-                    disabled={step === 1 && fileList.length < 3}
-                    loading={loading}
-                  >
-                    {step === 1 ? 'Submit' : 'Next'}
-                  </Button>
+                  {step !== 2 && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNext()}
+                      disabled={step === 1 && fileList.length < 3}
+                      loading={loading}
+                    >
+                      {step === 1 ? 'Submit' : 'Next'}
+                    </Button>
+                  )}
                 </Space>
               </Col>
             </Row>
