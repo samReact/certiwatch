@@ -28,6 +28,10 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1800s' });
 }
 
+app.get('/', (req, res) => {
+  res.send('hello world !');
+});
+
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
   res.json(token);
