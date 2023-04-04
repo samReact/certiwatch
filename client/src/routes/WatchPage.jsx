@@ -14,7 +14,7 @@ import { ethers } from 'ethers';
 import { addNotification } from '../state/notificationSlice';
 import WatchDetails from '../WatchDetails';
 import { useCallback } from 'react';
-import { removeIpfs } from '../utils';
+import { fromWei, removeIpfs } from '../utils';
 
 export default function WatchPage() {
   const [watch, setWatch] = useState();
@@ -77,28 +77,39 @@ export default function WatchPage() {
   const loadMarketPlaceItems = useCallback(async () => {
     let item = await marketplace.items(id);
     if (item.status === 3) {
-      const uri = await certificate.tokenURI(item.tokenId);
-      const res = await fetch(uri);
-      const metada = await res.json();
-      let imagesUri = metada.attributes.filter((attr) => attr.images)[0];
-
-      const finalUri = `https://ipfs.io/ipfs/${removeIpfs(imagesUri.value)}`;
-      const res2 = await fetch(finalUri);
-      const imagesMeta = await res2.json();
-      const totalPrice = await marketplace.getTotalPrice(item.itemId);
-      let watch = {
-        totalPrice: ethers.utils.formatEther(totalPrice),
-        itemId: parseInt(item.itemId),
-        seller: item.seller,
-        tokenId: parseInt(item.tokenId),
-        certificateUrl: metada.image,
-        images: imagesMeta.images,
-        model: item.model,
-        brand: item.brand
-      };
-      setWatch(watch);
+      try {
+        const uri = await certificate.tokenURI(item.tokenId);
+        const res = await fetch(uri);
+        const metada = await res.json();
+        let imagesUri = metada.attributes.filter((attr) => attr.images)[0];
+        const finalUri = `https://ipfs.io/ipfs/${removeIpfs(imagesUri.value)}`;
+        const res2 = await fetch(finalUri);
+        const imagesMeta = await res2.json();
+        const totalPrice = await marketplace.getTotalPrice(item.itemId);
+        let watch = {
+          totalPrice: fromWei(totalPrice),
+          itemId: parseInt(item.itemId),
+          seller: item.seller,
+          tokenId: parseInt(item.tokenId),
+          certificateUrl: metada.image,
+          images: imagesMeta.images,
+          model: item.model,
+          brand: item.brand,
+          attributes: metada.attributes,
+          description: item.description
+        };
+        setWatch(watch);
+      } catch (error) {
+        dispatch(
+          addNotification({
+            message: 'Error',
+            description: error.message,
+            type: 'error'
+          })
+        );
+      }
     }
-  }, [marketplace, certificate, id]);
+  }, [marketplace, certificate, id, dispatch]);
 
   useEffect(() => {
     if (marketplace.signer) {
@@ -109,6 +120,7 @@ export default function WatchPage() {
   function handleClick() {
     navigate('/');
   }
+
   return (
     <div className="container">
       {isSuccess ? (

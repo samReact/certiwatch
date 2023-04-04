@@ -13,7 +13,7 @@ export default function ExpertPage() {
   const expert = useContractRead({
     address: contractAddress,
     abi: abi,
-    functionName: 'getExpert',
+    functionName: 'experts',
     watch: true,
     enabled: Boolean(address && contractAddress),
     args: [address]

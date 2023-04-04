@@ -17,6 +17,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
   const { itemEvents } = useSelector((state) => state.eth);
 
   const dispatch = useDispatch();
+
   async function handleMint(record) {
     const item = await marketplace.items(record.itemId);
     const ipfsHash = removeIpfs(item.ipfsUrl);

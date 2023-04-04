@@ -6,7 +6,7 @@ import { formattedAddress } from './utils/index.js';
 import { addNotification } from './state/notificationSlice.js';
 import { useEffect } from 'react';
 
-export default function AdminTable({ marketplace }) {
+export default function AdminTable({ marketplace, nftCollection }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [proposals, setProposals] = useState([]);
@@ -36,6 +36,7 @@ export default function AdminTable({ marketplace }) {
     setSelectedRow(record);
     setLoading(true);
     try {
+      await (await nftCollection.addToWhitelist(record.seller)).wait();
       await marketplace.updateItem(parseInt(record.itemId), 1, '');
       dispatch(
         addNotification({
@@ -76,14 +77,20 @@ export default function AdminTable({ marketplace }) {
       dataIndex: 'status',
       render: (_, record) => {
         let tag = 'Pending';
+        let color;
         if (record.status === 1) {
           tag = 'Approved';
+          color = 'green';
         } else if (record.status === 2) {
+          color = 'pink';
           tag = 'Certified';
         } else if (record.status === 3) {
+          color = 'purple';
           tag = 'Published';
+        } else if (record.status === 4) {
+          tag = 'Sold';
         }
-        return <Tag color={tag === 'Approved' ? 'green' : 'purple'}>{tag}</Tag>;
+        return <Tag color={color}>{tag}</Tag>;
       }
     },
 
@@ -103,6 +110,5 @@ export default function AdminTable({ marketplace }) {
       )
     }
   ];
-  console.log(proposals);
   return <Table rowKey={'itemId'} columns={columns} dataSource={proposals} />;
 }

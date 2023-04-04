@@ -17,8 +17,14 @@ import ExpertTable from '../ExpertTable';
 import AddExpertForm from '../AddExpertForm';
 
 export default function AdminPage() {
-  const { proposalsEvents, expertEvents, marketplaceAddress, marketplaceAbi } =
-    useSelector((state) => state.eth);
+  const {
+    proposalsEvents,
+    expertEvents,
+    marketplaceAddress,
+    marketplaceAbi,
+    nftCollectionAddress,
+    nftCollectionAbi
+  } = useSelector((state) => state.eth);
   const { feeRate } = useSelector((state) => state.app);
   const [value, setValue] = useState();
 
@@ -50,6 +56,12 @@ export default function AdminPage() {
     signerOrProvider: signer
   });
 
+  const nftCollection = useContract({
+    address: nftCollectionAddress,
+    abi: nftCollectionAbi,
+    signerOrProvider: signer
+  });
+
   const isOwner = data && address && data === address;
 
   useEffect(() => {
@@ -75,12 +87,16 @@ export default function AdminPage() {
           <Typography.Title level={3}>Experts</Typography.Title>
           <Space direction="vertical" style={{ width: '100%' }}>
             <AddExpertForm />
-            <ExpertTable events={expertEvents} marketplace={marketplace} />
+            <ExpertTable events={expertEvents} />
           </Space>
         </Col>
         <Col xs={24} md={12}>
           <Typography.Title level={3}>Ads</Typography.Title>
-          <AdminTable events={proposalsEvents} marketplace={marketplace} />
+          <AdminTable
+            events={proposalsEvents}
+            marketplace={marketplace}
+            nftCollection={nftCollection}
+          />
         </Col>
       </Row>
     </div>

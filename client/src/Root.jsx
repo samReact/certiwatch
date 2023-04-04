@@ -65,7 +65,7 @@ export default function Root() {
     address: marketplaceAddress,
     abi: marketplaceAbi,
     eventName: 'ItemUpdated',
-    listener(a, b, c, d, e, f, g, h, event) {
+    listener(a, b, c, d, e, f, g, event) {
       if (event) {
         dispatch(updateEvents({ name: 'itemEvents', value: [event.args] }));
       }

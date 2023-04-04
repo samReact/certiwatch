@@ -31,6 +31,8 @@ import {
 import { addNotification } from '../state/notificationSlice';
 import { updateForm } from '../state/appSlice';
 
+const token = import.meta.env.JWT_SECRET;
+
 const { Item } = Form;
 
 export default function ExpertForm() {
@@ -53,7 +55,7 @@ export default function ExpertForm() {
   const expert = useContractRead({
     address: marketplaceAddress,
     abi: marketplaceAbi,
-    functionName: 'getExpert',
+    functionName: 'experts',
     watch: false,
     enabled: Boolean(address),
     args: [address]
@@ -119,7 +121,10 @@ export default function ExpertForm() {
       } = savedForm;
       try {
         const res = await axios.post('/api/uploadImages', {
-          photos
+          photos,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         const data = await res.data;
 
@@ -135,7 +140,10 @@ export default function ExpertForm() {
           color,
           expert_addr: address,
           expert_name: expert.data.name,
-          images_url: `ipfs://${data.IpfsHash}`
+          images_url: `ipfs://${data.IpfsHash}`,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         const data2 = await res2.data;
 
@@ -359,7 +367,7 @@ export default function ExpertForm() {
                   )}
                   {step === 2 && (
                     <Result
-                      icon={<SmileOutlined />}
+                      icon={<SmileOutlined className="success-icon" />}
                       title="Watch has been certified !"
                       extra={
                         <Button

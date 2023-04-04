@@ -42,3 +42,14 @@ body {
 .ant-layout {
   min-height: 100vh;
 }
+
+.success-icon {
+  color: #b37feb !important;
+}
+.divider {
+  height: 1px;
+  border-width: 0;
+  background-color: lightgray;
+  width: 100%;
+  margin: 2px;
+}

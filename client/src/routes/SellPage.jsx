@@ -23,6 +23,7 @@ import { WATCH_BRANDS } from '../utils';
 import { addNotification } from '../state/notificationSlice';
 import { abi as marketplaceAbi } from '../../contractsData/Marketplace.json';
 import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
+import { ethers } from 'ethers';
 
 const { Item } = Form;
 
@@ -35,7 +36,7 @@ export default function SellPage() {
   const model = Form.useWatch('model', form);
   const description = Form.useWatch('description', form);
   const serial = Form.useWatch('serial', form);
-  const price = Form.useWatch('price', form);
+  let price = Form.useWatch('price', form);
 
   const navigate = useNavigate();
   const { config } = usePrepareContractWrite({
@@ -47,7 +48,13 @@ export default function SellPage() {
       Boolean(description) &&
       Boolean(model) &&
       Boolean(price),
-    args: [brand, model, description, serial, price]
+    args: [
+      brand,
+      model,
+      description,
+      serial,
+      price && ethers.utils.parseEther(price.toString())
+    ]
   });
   const { write, isSuccess } = useContractWrite(config);
 
@@ -126,7 +133,7 @@ export default function SellPage() {
           <div className="container-content">
             {isSuccess ? (
               <Result
-                icon={<SmileOutlined />}
+                icon={<SmileOutlined className="success-icon" />}
                 title="Great, Certiwatch will contact you shortly !"
                 extra={
                   <Button type="primary" onClick={() => navigate('/')}>
