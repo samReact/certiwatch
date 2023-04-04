@@ -26,13 +26,13 @@ import {
   CASE_MATERIAL,
   GENDER,
   WATCH_BRANDS,
-  WATCH_MOVEMENTS
+  WATCH_MOVEMENTS,
+  getCookie
 } from '../utils';
 import { addNotification } from '../state/notificationSlice';
 import { updateForm } from '../state/appSlice';
 
-const token = import.meta.env.JWT_SECRET;
-
+const token = getCookie('token');
 const { Item } = Form;
 
 export default function ExpertForm() {
@@ -120,31 +120,38 @@ export default function ExpertForm() {
         color
       } = savedForm;
       try {
-        const res = await axios.post('/api/uploadImages', {
-          photos,
-          headers: {
-            Authorization: `Bearer ${token}`
+        const res = await axios.post(
+          '/api/uploadImages',
+          { photos },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
+        );
         const data = await res.data;
-
-        const res2 = await axios.post('/api/uploadIpfs', {
-          brand,
-          model,
-          gender,
-          year,
-          serial,
-          watch_case,
-          bracelet,
-          movement,
-          color,
-          expert_addr: address,
-          expert_name: expert.data.name,
-          images_url: `ipfs://${data.IpfsHash}`,
-          headers: {
-            Authorization: `Bearer ${token}`
+        const res2 = await axios.post(
+          '/api/uploadIpfs',
+          {
+            brand,
+            model,
+            gender,
+            year,
+            serial,
+            watch_case,
+            bracelet,
+            movement,
+            color,
+            expert_addr: address,
+            expert_name: expert.data.name,
+            images_url: `ipfs://${data.IpfsHash}`
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
+        );
         const data2 = await res2.data;
 
         const ipfsUrl = `ipfs://${data2.IpfsHash}`;

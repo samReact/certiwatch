@@ -1,14 +1,4 @@
-import {
-  Button,
-  Col,
-  Image,
-  List,
-  Row,
-  Space,
-  Spin,
-  Tag,
-  Typography
-} from 'antd';
+import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
 import React from 'react';
 import { formattedAddress, removeIpfs } from './utils';
 import placeholder from './assets/placeholder.png';
@@ -22,6 +12,7 @@ export default function WatchDetails({
   handleBuy,
   isLoading
 }) {
+  console.log(watch.attributes);
   return (
     <Row gutter={32} style={{ height: '100%' }}>
       {!watch ? (
@@ -36,6 +27,7 @@ export default function WatchDetails({
                   watch.images[0]
                 )}`}
                 placeholder={placeholder}
+                fallback={placeholder}
                 style={{ marginBottom: 8 }}
                 width={'100%'}
               />
@@ -85,41 +77,31 @@ export default function WatchDetails({
               <Typography.Text>{watch.description}</Typography.Text>
             </div>
             <Space style={{ marginTop: 20, flexWrap: 'wrap' }}>
-              {watch.attributes.map((elt) => {
-                return (
-                  <>
-                    {elt.trait_type && (
-                      <Tag key={elt.value}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            textAlign: 'center',
-                            fontSize: '12px'
-                          }}
-                        >
-                          <Text
-                            strong
-                            style={{
-                              fontSize: 12
-                            }}
-                          >
-                            {elt.trait_type}
-                          </Text>
-                          <hr className="divider" />
-                          <Text
-                            style={{
-                              fontSize: 12
-                            }}
-                          >
-                            {elt.value}
-                          </Text>
-                        </div>
-                      </Tag>
-                    )}
-                  </>
-                );
-              })}
+              {watch.attributes.map(
+                (elt, i) =>
+                  elt.trait_type && (
+                    <div key={i} className="attributes-tag">
+                      <Text
+                        strong
+                        style={{
+                          fontSize: 12
+                        }}
+                      >
+                        {elt.trait_type}
+                      </Text>
+                      <hr className="divider" />
+                      <Text
+                        style={{
+                          fontSize: 12
+                        }}
+                      >
+                        {elt.trait_type === 'Expert address'
+                          ? formattedAddress(elt.value)
+                          : elt.value}
+                      </Text>
+                    </div>
+                  )
+              )}
             </Space>
             <div style={{ marginTop: 24 }}>
               <Button

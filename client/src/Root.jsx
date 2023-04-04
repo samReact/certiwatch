@@ -24,6 +24,7 @@ import { address as marketplaceAddress } from '../contractsData/Marketplace-addr
 import { abi as marketplaceAbi } from '../contractsData/Marketplace.json';
 import { updateEvents } from './state/ethSlice';
 import { updateFeeRate } from './state/appSlice';
+import axios from 'axios';
 
 const { Header, Content } = Layout;
 
@@ -83,6 +84,14 @@ export default function Root() {
     }
   });
 
+  const loadJwt = useCallback(async () => {
+    const res = await axios.post('/api/access', {
+      user: address
+    });
+    const token = await res.data;
+    document.cookie = `token=${token}`;
+  }, [address]);
+
   const getOldProposalEvents = useCallback(
     async (eventName, key) => {
       let eventFilter = marketplace.filters[eventName]();
@@ -114,6 +123,12 @@ export default function Root() {
       dispatch(updateFeeRate(feeRate.data));
     }
   }, [feeRate.data, dispatch]);
+
+  useEffect(() => {
+    if (address) {
+      loadJwt();
+    }
+  }, [loadJwt, address]);
 
   return (
     <Layout hasSider={false}>

@@ -53,3 +53,16 @@ body {
   width: 100%;
   margin: 2px;
 }
+.attributes-tag {
+  display: flex;
+  flex-direction: column;
+  text-align: 'center';
+  height: 60px;
+  width: 180px;
+  border: 1px solid rgba(179, 127, 235, 1);
+  background-color: rgba(179, 127, 235, 0.04);
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
