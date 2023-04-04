@@ -20,8 +20,6 @@ import {
   useContractRead,
   useSigner
 } from 'wagmi';
-import { address as marketplaceAddress } from '../contractsData/Marketplace-address.json';
-import { abi as marketplaceAbi } from '../contractsData/Marketplace.json';
 import { updateEvents } from './state/ethSlice';
 import { updateFeeRate } from './state/appSlice';
 import axios from 'axios';
@@ -31,6 +29,9 @@ const { Header, Content } = Layout;
 export default function Root() {
   const [api, contextHolder] = notification.useNotification();
   const newNotification = useSelector((state) => state.notification);
+  const { marketplaceAbi, marketplaceAddress } = useSelector(
+    (state) => state.eth
+  );
 
   const dispatch = useDispatch();
 
