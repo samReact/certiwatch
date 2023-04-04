@@ -8,6 +8,9 @@ client/contractsData
 .env
 api/.env
 backend/.env
+client/.env
+*.local
+client/*.local
 
 # Hardhat files
 backend/cache
