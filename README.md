@@ -74,3 +74,11 @@ npx hardhat test
 ## License
 
 This project is licensed under the MIT License. Please see the LICENSE file for more information.
+
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat run scripts/deploy.js
+```
