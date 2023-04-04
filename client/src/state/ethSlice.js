@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
-import { abi as marketplaceAbi } from '../../contractsData/Marketplace.json';
-import { address as nftCollectionAddress } from '../../contractsData/NFTCollection-address.json';
-import { abi as nftCollectionAbi } from '../../contractsData/NFTCollection.json';
+import { address as marketplaceAddress } from '../contractsData/Marketplace-address.json';
+import { abi as marketplaceAbi } from '../contractsData/Marketplace.json';
+import { address as nftCollectionAddress } from '../contractsData/NFTCollection-address.json';
+import { abi as nftCollectionAbi } from '../contractsData/NFTCollection.json';
 
 const initialState = {
   expertEvents: [],

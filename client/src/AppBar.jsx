@@ -4,26 +4,28 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
 import logo from './assets/logo-main.png';
-import { abi } from '../contractsData/Marketplace.json';
-import { address as contractAddress } from '../contractsData/Marketplace-address.json';
+import { useSelector } from 'react-redux';
 
 export default function ResponsiveAppBar() {
   const { address } = useAccount();
+  const { marketplaceAbi, marketplaceAddress } = useSelector(
+    (state) => state.eth
+  );
 
   const { data } = useContractRead({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     functionName: 'owner',
     watch: true,
-    enabled: Boolean(address && contractAddress)
+    enabled: Boolean(address && marketplaceAddress)
   });
 
   const expert = useContractRead({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     functionName: 'experts',
     watch: true,
-    enabled: Boolean(address && contractAddress),
+    enabled: Boolean(address && marketplaceAddress),
     args: [address]
   });
 

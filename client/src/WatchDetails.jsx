@@ -40,6 +40,7 @@ export default function WatchDetails({
                 <List.Item>
                   <Image
                     placeholder={placeholder}
+                    fallback={placeholder}
                     preview={false}
                     src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(url)}`}
                     width={'100%'}
@@ -49,10 +50,12 @@ export default function WatchDetails({
             />
             <Image
               placeholder={placeholder}
+              fallback={placeholder}
               src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
                 watch.certificateUrl
               )}`}
               width={'50%'}
+              alt="image"
             />
           </Col>
           <Col

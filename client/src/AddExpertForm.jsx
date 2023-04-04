@@ -3,9 +3,7 @@ import { Button, Form, Input } from 'antd';
 import { ethers } from 'ethers';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-import { address as contractAddress } from '../contractsData/Marketplace-address.json';
-import { abi } from '../contractsData/Marketplace.json';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addNotification } from './state/notificationSlice';
 
 export default function AddExpertForm() {
@@ -13,11 +11,15 @@ export default function AddExpertForm() {
   const [fields, setFields] = useState({ address: '', name: '' });
   const dispatch = useDispatch();
 
+  const { marketplaceAbi, marketplaceAddress } = useSelector(
+    (state) => state.eth
+  );
+
   const isValidAddress = ethers.utils.isAddress(fields.address);
 
   const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: abi,
+    address: marketplaceAddress,
+    abi: marketplaceAbi,
     functionName: 'addExpert',
     enabled: isValidAddress && fields.name.length > 0,
     args: [fields.address, fields.name]

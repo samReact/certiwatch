@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Form,
   Input,
@@ -32,12 +32,12 @@ import {
 import { addNotification } from '../state/notificationSlice';
 import { updateForm } from '../state/appSlice';
 
-const token = getCookie('token');
 const { Item } = Form;
 
 export default function ExpertForm() {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState();
   const { address, isDisconnected } = useAccount();
   const { id } = useParams();
   const { data: signer } = useSigner();
@@ -178,6 +178,21 @@ export default function ExpertForm() {
     }
   }
 
+  const loadJwt = useCallback(async () => {
+    const res = await axios.post('/api/access', {
+      user: address
+    });
+    const token = await res.data;
+    document.cookie = `token=${token}`;
+    setToken(token);
+  }, [address]);
+
+  useEffect(() => {
+    if (address && !token) {
+      loadJwt();
+    }
+  }, [loadJwt, address, token]);
+
   useEffect(() => {
     return () => dispatch(resetStep());
   }, [dispatch]);
@@ -187,7 +202,6 @@ export default function ExpertForm() {
       span: 18
     }
   };
-
   return (
     <div className="container">
       {isDisconnected || !proposalHook || !proposalHook.data ? (

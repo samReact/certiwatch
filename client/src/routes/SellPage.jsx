@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Form,
@@ -21,14 +21,15 @@ import {
 
 import { WATCH_BRANDS } from '../utils';
 import { addNotification } from '../state/notificationSlice';
-import { abi as marketplaceAbi } from '../../contractsData/Marketplace.json';
-import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
 import { ethers } from 'ethers';
 
 const { Item } = Form;
 
 export default function SellPage() {
   const { isDisconnected } = useAccount();
+  const { marketplaceAbi, marketplaceAddress } = useSelector(
+    (state) => state.eth
+  );
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();

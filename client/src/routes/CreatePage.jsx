@@ -2,24 +2,28 @@ import { useAccount, useContract, useSigner } from 'wagmi';
 import { Row, Typography } from 'antd';
 
 import CreateTable from './CreateTable';
-import { abi as abiMarketplace } from '../../contractsData/Marketplace.json';
-import { abi as abiCertificate } from '../../contractsData/NFTCollection.json';
-import { address as certificateAddress } from '../../contractsData/NFTCollection-address.json';
-import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
+import { useSelector } from 'react-redux';
 
 export default function CreatePage() {
   const { data: signer } = useSigner();
   const { address, isDisconnected } = useAccount();
 
+  const {
+    marketplaceAbi,
+    marketplaceAddress,
+    nftCollectionAddress,
+    nftCollectionAbi
+  } = useSelector((state) => state.eth);
+
   const marketplace = useContract({
     address: marketplaceAddress,
-    abi: abiMarketplace,
+    abi: marketplaceAbi,
     signerOrProvider: signer
   });
 
   const certificate = useContract({
-    address: certificateAddress,
-    abi: abiCertificate,
+    address: nftCollectionAddress,
+    abi: nftCollectionAbi,
     signerOrProvider: signer
   });
 

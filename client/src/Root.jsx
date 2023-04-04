@@ -125,12 +125,6 @@ export default function Root() {
     }
   }, [feeRate.data, dispatch]);
 
-  useEffect(() => {
-    if (address) {
-      loadJwt();
-    }
-  }, [loadJwt, address]);
-
   return (
     <Layout hasSider={false}>
       <Header>

@@ -3,7 +3,6 @@ coverage
 coverage.json
 typechain
 typechain-types
-client/contractsData
 
 .env
 api/.env

@@ -6,12 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useContract, useSigner } from 'wagmi';
 import ProgressiveImage from 'react-progressive-graceful-image';
 
-import { abi as abiMarketplace } from '../../contractsData/Marketplace.json';
-import { abi as abiCertificate } from '../../contractsData/NFTCollection.json';
-import { address as certificateAddress } from '../../contractsData/NFTCollection-address.json';
-import { address as marketplaceAddress } from '../../contractsData/Marketplace-address.json';
 import { removeIpfs } from '../utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addNotification } from '../state/notificationSlice';
 import placeholder from '../assets/placeholder.png';
 
@@ -19,20 +15,27 @@ export default function ShopPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const {
+    marketplaceAbi,
+    marketplaceAddress,
+    nftCollectionAbi,
+    nftCollectionAddress
+  } = useSelector((state) => state.eth);
+
   const dispatch = useDispatch();
 
   const { data: signer } = useSigner();
 
   const marketplace = useContract({
     address: marketplaceAddress,
-    abi: abiMarketplace,
+    abi: marketplaceAbi,
     signerOrProvider: signer,
     watch: true
   });
 
   const certificate = useContract({
-    address: certificateAddress,
-    abi: abiCertificate,
+    address: nftCollectionAddress,
+    abi: nftCollectionAbi,
     signerOrProvider: signer
   });
 
