@@ -4,23 +4,24 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import { WagmiConfig, createClient, configureChains, goerli } from 'wagmi';
-import { hardhat } from 'wagmi/chains';
+import { hardhat, sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { InjectedConnector } from '@wagmi/core';
 
 import './styles/index.css';
 import { store } from './state/store';
 
 import Root from './Root';
 
-const { provider, webSocketProvider } = configureChains(
-  [hardhat, goerli],
+const { chains, provider } = configureChains(
+  [hardhat, goerli, sepolia],
   [publicProvider()]
 );
 
 const client = createClient({
   autoConnect: true,
-  provider,
-  webSocketProvider
+  connectors: [new InjectedConnector({ chains })],
+  provider
 });
 
 const theme = {

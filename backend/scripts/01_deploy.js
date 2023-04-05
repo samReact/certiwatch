@@ -8,10 +8,13 @@ async function main() {
 
   const nftCollection = await NFTCollection.deploy(
     'Certiwatch collection',
-    'CWT'
+    'CWT',
+    { gasLimit: 10000000 }
   );
-  const marketplace = await Marketplace.deploy(1);
-  const factory = await Factory.deploy(nftCollection.address);
+  const marketplace = await Marketplace.deploy(1, { gasLimit: 10000000 });
+  const factory = await Factory.deploy(nftCollection.address, {
+    gasLimit: 10000000
+  });
 
   await nftCollection.deployed();
   await marketplace.deployed();
