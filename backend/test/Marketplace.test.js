@@ -72,7 +72,7 @@ describe('Marketplace', async () => {
       let tx = marketplace.connect(owner).addExpert(addr1.address, 'Samir');
       await expect(tx).to.be.revertedWith('Already registered');
     });
-    it('Emit ExertAdded event', async () => {
+    it('Emit ExpertAdded event', async () => {
       await expect(tx)
         .to.emit(marketplace, 'ExpertAdded')
         .withArgs(addr1.address, 'Samir');
@@ -343,6 +343,7 @@ describe('Marketplace', async () => {
     beforeEach(async () => {
       await nftCollection.connect(owner).addToWhitelist(addr1.address);
       await nftCollection.connect(addr1).mintItem(URI);
+      await nftCollection.connect(addr1).mintItem(URI);
       await nftCollection
         .connect(addr1)
         .setApprovalForAll(marketplace.address, true);
@@ -355,9 +356,20 @@ describe('Marketplace', async () => {
           item.serial,
           toWei(item.price)
         );
+      await marketplace
+        .connect(addr1)
+        .addItem(
+          item.brand,
+          item.model,
+          item.description,
+          item.serial,
+          toWei(item.price)
+        );
       await marketplace.addExpert(addr3.address, 'Samir');
       await marketplace.connect(addr3).updateItem(1, 2, URI);
+      await marketplace.connect(addr3).updateItem(2, 2, URI);
       await marketplace.connect(addr1).addToken(nftCollection.address, 1, 1);
+      await marketplace.connect(addr1).addToken(nftCollection.address, 2, 2);
 
       initialBuyBalance = await addr2.getBalance();
       initialFeeAccountBalance = await owner.getBalance();
@@ -368,27 +380,44 @@ describe('Marketplace', async () => {
         value: totalPrice
       });
     });
-    it('Seller and feeAccount receive payment', async function () {
+    it('Revert if incorrect itemId', async () => {
+      let tx = marketplace.connect(owner).buyItem(3);
+      await expect(tx).to.be.revertedWith("Doesn't exist");
+    });
+    it('Revert if Already sold', async () => {
+      let tx = marketplace.connect(addr2).buyItem(1, {
+        value: totalPrice
+      });
+      await expect(tx).to.be.revertedWith('Already sold');
+    });
+    it('Revert if Insufficent balance', async () => {
+      let tx = marketplace.connect(addr2).buyItem(2, {
+        value: toWei(1)
+      });
+      await expect(tx).to.be.revertedWith('Not enough ether');
+    });
+    it('FeeAccount receive payment', async function () {
       const finalFeeAccountBlalance = await owner.getBalance();
-      const finalSellBalance = await addr1.getBalance();
       const fee = ((feeRate / 100) * item.price) / 2;
+      let finalBalance =
+        Number(fee) + Number(fromWei(initialFeeAccountBalance));
+      let initialBalance = Number(fromWei(finalFeeAccountBlalance));
 
-      expect(+fromWei(finalFeeAccountBlalance)).to.equal(
-        +fee + +fromWei(initialFeeAccountBalance)
-      );
+      expect(initialBalance.toFixed(6)).to.equal(finalBalance.toFixed(6));
+    });
+    it('Seller receive payment', async function () {
+      const finalSellBalance = await addr1.getBalance();
 
       expect(+fromWei(finalSellBalance)).to.equal(
         +item.price + +fromWei(initialSellBalance)
       );
     });
-
     it('Expert receive payment', async function () {
       const finalExpertBalance = await addr3.getBalance();
       const fee = ((feeRate / 100) * item.price) / 2;
-
-      expect(+fromWei(finalExpertBalance)).to.equal(
-        +fee + +fromWei(initialExpertBalance)
-      );
+      let finalBalance = Number(fee) + Number(fromWei(initialExpertBalance));
+      let initialBalance = Number(fromWei(finalExpertBalance));
+      expect(initialBalance).to.equal(finalBalance);
     });
 
     it('Buyer is new nft owner', async function () {

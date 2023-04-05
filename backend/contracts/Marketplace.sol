@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "./NFTCollection.sol";
 
@@ -13,6 +14,8 @@ import "./NFTCollection.sol";
  * @dev Implements a nft marketplace
  */
 contract Marketplace is Ownable, ReentrancyGuard {
+    using SafeMath for uint;
+
     // ::::::::::STATE:::::::::: //
 
     uint public feeRate;
@@ -260,14 +263,17 @@ contract Marketplace is Ownable, ReentrancyGuard {
     ) external payable nonReentrant onlyValid(_itemId) {
         Item storage item = items[_itemId];
         uint _totalPrice = getTotalPrice(_itemId);
-        uint profit = (_totalPrice - item.price);
+        uint profit = _totalPrice.sub(item.price).div(2);
         require(msg.value >= _totalPrice, "Not enough ether");
-        item.seller.transfer(item.price);
-        item.expert.transfer(profit / 2);
-        feeAccount.transfer(profit / 2);
+        (bool sellerSuccess, ) = item.seller.call{value: item.price}("");
+        (bool expertSuccess, ) = item.expert.call{value: profit}("");
+        (bool feeAccountSuccess, ) = feeAccount.call{value: profit}("");
+        require(
+            sellerSuccess && expertSuccess && feeAccountSuccess,
+            "Transfer fail"
+        );
         item.status = ItemStatus.Sold;
         item.certificate.transferFrom(address(this), msg.sender, item.tokenId);
-
         emit ItemUpdated(
             _itemId,
             item.tokenId,

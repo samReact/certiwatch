@@ -4,7 +4,6 @@ pragma solidity 0.8.19;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -12,7 +11,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @author Samir
  * @dev Implements a nft collection
  */
-contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+contract NFTCollection is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIds;
 
@@ -21,6 +20,9 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     event WhitelistAdded(address _addr);
     event ItemMinted(address _addr, uint _tokenId, string _tokenURI);
 
+    /**
+     * @dev Modifier to check if caller is whitelisted
+     */
     modifier onlyWhitelisted() {
         require(whitelist[msg.sender], "Not Authorized");
         _;
@@ -39,37 +41,6 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     ) ERC721(_name, _symbol) {}
 
     /**
-     * @dev Modifier to check if caller is whitelisted
-     */
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 batchSize
-    ) internal override(ERC721, ERC721Enumerable) {
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);
-    }
-
-    function _burn(
-        uint256 tokenId
-    ) internal override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view override(ERC721, ERC721Enumerable) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-
-    /**
      * @dev Mint a new collection token
      * @param _tokenURI  ipfs uri of the token
      * @return uint minted token id
@@ -84,6 +55,10 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         return tokenIds.current();
     }
 
+    /**
+     * @dev add a user to whitelist
+     * @param _addr user address to be added
+     */
     function addToWhitelist(address _addr) external onlyOwner {
         whitelist[_addr] = true;
         emit WhitelistAdded(_addr);

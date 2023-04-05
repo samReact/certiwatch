@@ -10,21 +10,26 @@ const hre = require('hardhat');
 async function main() {
   const NFTCollection = await hre.ethers.getContractFactory('NFTCollection');
   const Marketplace = await hre.ethers.getContractFactory('Marketplace');
+  const Factory = await hre.ethers.getContractFactory('Factory');
 
   const nftCollection = await NFTCollection.deploy(
     'Certiwatch collection',
     'CWT'
   );
   const marketplace = await Marketplace.deploy(1);
+  const factory = await Factory.deploy(nftCollection.address);
 
   await nftCollection.deployed();
   await marketplace.deployed();
+  await factory.deployed();
 
   saveClientFiles(nftCollection, 'NFTCollection');
   saveClientFiles(marketplace, 'Marketplace');
+  saveClientFiles(factory, 'Factory');
 
   console.log(`NFTCollection deployed to ${nftCollection.address}`);
   console.log(`Marketplace deployed to ${marketplace.address}`);
+  console.log(`Factory deployed to ${factory.address}`);
 }
 
 function saveClientFiles(contract, name) {
