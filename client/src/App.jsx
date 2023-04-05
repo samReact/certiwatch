@@ -3,7 +3,7 @@ import { purple } from '@ant-design/colors';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
-import { WagmiConfig, createClient, configureChains } from 'wagmi';
+import { WagmiConfig, createClient, configureChains, goerli } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -13,7 +13,7 @@ import { store } from './state/store';
 import Root from './Root';
 
 const { provider, webSocketProvider } = configureChains(
-  [hardhat],
+  [hardhat, goerli],
   [publicProvider()]
 );
 
