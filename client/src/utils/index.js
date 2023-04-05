@@ -24,6 +24,28 @@ export function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+export function removeDuplicates(arr) {
+  const uniqueArr = arr.reduce((acc, obj) => {
+    if (!acc.some((item) => item._addr === obj._addr)) {
+      acc.push(obj);
+    }
+    return acc;
+  }, []);
+  return uniqueArr;
+}
+
+export function filterEvents(tableau) {
+  const result = Object.values(
+    tableau.reduce((acc, obj) => {
+      if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
+        acc[obj.itemId] = obj;
+      }
+      return acc;
+    }, {})
+  );
+  return result;
+}
+
 export const WATCH_BRANDS = [
   'Rolex',
   'Audemars Piguet',

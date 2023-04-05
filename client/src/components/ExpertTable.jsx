@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Popover, Row, Space, Table, Tag, Typography } from 'antd';
 
-import { formattedAddress } from '../utils/index.js';
+import { filterEvents, formattedAddress } from '../utils/index.js';
 
 export default function ExpertTable() {
   const [proposals, setProposals] = useState([]);
@@ -77,21 +77,10 @@ export default function ExpertTable() {
     }
   ];
 
-  function filterEvents(tableau) {
-    const result = Object.values(
-      tableau.reduce((acc, obj) => {
-        if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
-          acc[obj.itemId] = obj;
-        }
-        return acc;
-      }, {})
-    );
-    setProposals(result);
-  }
-
   useEffect(() => {
     if (itemEvents.length > 0) {
-      filterEvents(itemEvents);
+      const filtered = filterEvents(itemEvents);
+      setProposals(filtered);
     }
   }, [itemEvents]);
 

@@ -3,14 +3,19 @@ import { address as marketplaceAddress } from '../contractsData/Marketplace-addr
 import { abi as marketplaceAbi } from '../contractsData/Marketplace.json';
 import { address as nftCollectionAddress } from '../contractsData/NFTCollection-address.json';
 import { abi as nftCollectionAbi } from '../contractsData/NFTCollection.json';
+import { address as factoryAddress } from '../contractsData/Factory-address.json';
+import { abi as factoryAbi } from '../contractsData/Factory.json';
 
 const initialState = {
   expertEvents: [],
   itemEvents: [],
+  collectionEvents: [],
   marketplaceAbi,
   marketplaceAddress,
   nftCollectionAbi,
-  nftCollectionAddress
+  nftCollectionAddress,
+  factoryAddress,
+  factoryAbi
 };
 
 export const formSlice = createSlice({

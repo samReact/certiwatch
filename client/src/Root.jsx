@@ -28,9 +28,8 @@ const { Header, Content } = Layout;
 export default function Root() {
   const [api, contextHolder] = notification.useNotification();
   const newNotification = useSelector((state) => state.notification);
-  const { marketplaceAbi, marketplaceAddress } = useSelector(
-    (state) => state.eth
-  );
+  const { marketplaceAbi, marketplaceAddress, factoryAddress, factoryAbi } =
+    useSelector((state) => state.eth);
 
   const dispatch = useDispatch();
 
@@ -52,6 +51,12 @@ export default function Root() {
   const marketplace = useContract({
     address: marketplaceAddress,
     abi: marketplaceAbi,
+    signerOrProvider: signer
+  });
+
+  const factory = useContract({
+    address: factoryAddress,
+    abi: factoryAbi,
     signerOrProvider: signer
   });
 
@@ -85,16 +90,29 @@ export default function Root() {
     }
   });
 
+  useContractEvent({
+    address: factoryAddress,
+    abi: factoryAbi,
+    eventName: 'CollectionAdded',
+    listener(node, label, a, event) {
+      if (event) {
+        dispatch(
+          updateEvents({ name: 'collectionEvents', value: [event.args] })
+        );
+      }
+    }
+  });
+
   const getOldProposalEvents = useCallback(
-    async (eventName, key) => {
-      let eventFilter = marketplace.filters[eventName]();
-      let events = await marketplace.queryFilter(eventFilter);
+    async (contract, eventName, key) => {
+      let eventFilter = contract.filters[eventName]();
+      let events = await contract.queryFilter(eventFilter);
       if (events.length) {
         let args = events.map((event) => event.args);
         dispatch(updateEvents({ name: key, value: args }));
       }
     },
-    [marketplace, dispatch]
+    [dispatch]
   );
 
   useEffect(() => {
@@ -105,11 +123,12 @@ export default function Root() {
   }, [newNotification, openNotification]);
 
   useEffect(() => {
-    if (marketplace.provider) {
-      getOldProposalEvents('ItemUpdated', 'itemEvents');
-      getOldProposalEvents('ExpertAdded', 'expertEvents');
+    if (marketplace.provider && factory.provider) {
+      getOldProposalEvents(marketplace, 'ItemUpdated', 'itemEvents');
+      getOldProposalEvents(marketplace, 'ExpertAdded', 'expertEvents');
+      getOldProposalEvents(factory, 'CollectionAdded', 'collectionEvents');
     }
-  }, [marketplace.provider, getOldProposalEvents]);
+  }, [marketplace, factory, getOldProposalEvents]);
 
   useEffect(() => {
     if (typeof parseInt(feeRate.data) === 'number') {

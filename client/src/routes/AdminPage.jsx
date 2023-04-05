@@ -15,10 +15,13 @@ import AdminFee from '../components/AdminFee';
 import AdminExpertForm from '../components/AdminExpertForm';
 import AdminExpertTable from '../components/AdminExpertTable';
 import AdminItemsTable from '../components/AdminItemsTable';
+import AdminCollectionTable from '../components/AdminCollectionTable';
+import AdminCollectionForm from '../components/AdminCollectionForm';
 
 export default function AdminPage() {
   const {
-    proposalsEvents,
+    itemEvents,
+    collectionEvents,
     expertEvents,
     marketplaceAddress,
     marketplaceAbi,
@@ -75,7 +78,6 @@ export default function AdminPage() {
       setValue(feeRate);
     }
   }, [feeRate]);
-
   return (
     <div className="container">
       <div style={{ marginBottom: 40 }}>
@@ -93,10 +95,17 @@ export default function AdminPage() {
         <Col xs={24} md={12}>
           <Typography.Title level={3}>Ads</Typography.Title>
           <AdminItemsTable
-            events={proposalsEvents}
+            itemEvents={itemEvents}
             marketplace={marketplace}
             nftCollection={nftCollection}
           />
+        </Col>
+        <Col xs={24} md={12}>
+          <Typography.Title level={3}>Collections</Typography.Title>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <AdminCollectionForm />
+            <AdminCollectionTable collectionEvents={collectionEvents} />
+          </Space>
         </Col>
       </Row>
     </div>

@@ -5,9 +5,8 @@ import axios from 'axios';
 import { DownloadOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { formattedAddress, removeIpfs } from '../utils/index.js';
+import { filterEvents, formattedAddress, removeIpfs } from '../utils/index.js';
 import { addNotification } from '../state/notificationSlice.js';
-import { useCallback } from 'react';
 
 export default function CreateTable({ marketplace, certificate, address }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -142,27 +141,12 @@ export default function CreateTable({ marketplace, certificate, address }) {
     }
   ];
 
-  const filterEvents = useCallback(
-    (tableau) => {
-      const results = Object.values(
-        tableau.reduce((acc, obj) => {
-          if (!acc[obj.itemId] || acc[obj.itemId].status < obj.status) {
-            acc[obj.itemId] = obj;
-          }
-          return acc;
-        }, {})
-      );
-      const filtered = results.filter((result) => result.seller === address);
-      setProposals(filtered);
-    },
-    [address]
-  );
-
   useEffect(() => {
     if (itemEvents.length > 0) {
-      filterEvents(itemEvents);
+      const filtered = filterEvents(itemEvents);
+      setProposals(filtered);
     }
-  }, [itemEvents, filterEvents, address]);
+  }, [itemEvents, address]);
 
   return (
     <>
