@@ -68,8 +68,7 @@ export default function AdminTable({ marketplace, nftCollection }) {
       dataIndex: 'serial'
     },
     {
-      title: 'Address',
-      dataIndex: 'seller',
+      title: 'Seller',
       render: (_, record) => formattedAddress(record.seller)
     },
     {

@@ -86,8 +86,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
       dataIndex: 'serial'
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
+      title: 'Seller',
       render: (_, record) => formattedAddress(record.seller)
     },
     {
@@ -163,7 +162,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
     if (itemEvents.length > 0) {
       filterEvents(itemEvents);
     }
-  }, [itemEvents, filterEvents]);
+  }, [itemEvents, filterEvents, address]);
 
   return (
     <>

@@ -26,8 +26,7 @@ import {
   CASE_MATERIAL,
   GENDER,
   WATCH_BRANDS,
-  WATCH_MOVEMENTS,
-  getCookie
+  WATCH_MOVEMENTS
 } from '../utils';
 import { addNotification } from '../state/notificationSlice';
 import { updateForm } from '../state/appSlice';
@@ -81,6 +80,7 @@ export default function ExpertForm() {
       dispatch(decrement());
     }
   }
+
   async function handleNext() {
     let values = form.getFieldsValue();
     if (step === 0) {

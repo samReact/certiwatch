@@ -193,7 +193,7 @@ export default function SellPage() {
                             }
                           ]}
                         >
-                          <Input.TextArea />
+                          <Input.TextArea maxLength={80} showCount />
                         </Item>
                         <Item
                           name="serial"

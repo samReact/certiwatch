@@ -9,7 +9,7 @@ import ProgressiveImage from 'react-progressive-graceful-image';
 import { removeIpfs } from '../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNotification } from '../state/notificationSlice';
-import placeholder from '../assets/placeholder.png';
+import placeholder from '../assets/rolex_ai.png';
 
 export default function ShopPage() {
   const [items, setItems] = useState([]);

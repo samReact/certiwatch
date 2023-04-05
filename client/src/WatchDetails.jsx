@@ -1,7 +1,7 @@
 import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
 import React from 'react';
 import { formattedAddress, removeIpfs } from './utils';
-import placeholder from './assets/placeholder.png';
+import placeholder from './assets/rolex_ai.png';
 import { useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
