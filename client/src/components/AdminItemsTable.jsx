@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Space, Table, Tag } from 'antd';
 
-import { formattedAddress } from './utils/index.js';
-import { addNotification } from './state/notificationSlice.js';
+import { formattedAddress } from '../utils/index.js';
+import { addNotification } from '../state/notificationSlice.js';
 import { useEffect } from 'react';
 
-export default function AdminTable({ marketplace, nftCollection }) {
+export default function AdminItemsTable({ marketplace, nftCollection }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [proposals, setProposals] = useState([]);

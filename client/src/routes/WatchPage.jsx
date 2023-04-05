@@ -12,7 +12,7 @@ import {
 } from 'wagmi';
 import { ethers } from 'ethers';
 import { addNotification } from '../state/notificationSlice';
-import WatchDetails from '../WatchDetails';
+import WatchDetails from '../components/WatchDetails';
 import { useCallback } from 'react';
 import { fromWei, removeIpfs } from '../utils';
 

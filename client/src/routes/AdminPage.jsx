@@ -11,10 +11,10 @@ import {
   useSigner
 } from 'wagmi';
 
-import AdminTable from '../AdminTable';
-import AdminFee from '../AdminFee';
-import ExpertTable from '../ExpertTable';
-import AddExpertForm from '../AddExpertForm';
+import AdminFee from '../components/AdminFee';
+import AdminExpertForm from '../components/AdminExpertForm';
+import AdminExpertTable from '../components/AdminExpertTable';
+import AdminItemsTable from '../components/AdminItemsTable';
 
 export default function AdminPage() {
   const {
@@ -86,13 +86,13 @@ export default function AdminPage() {
         <Col xs={24} md={12}>
           <Typography.Title level={3}>Experts</Typography.Title>
           <Space direction="vertical" style={{ width: '100%' }}>
-            <AddExpertForm />
-            <ExpertTable events={expertEvents} />
+            <AdminExpertForm />
+            <AdminExpertTable events={expertEvents} />
           </Space>
         </Col>
         <Col xs={24} md={12}>
           <Typography.Title level={3}>Ads</Typography.Title>
-          <AdminTable
+          <AdminItemsTable
             events={proposalsEvents}
             marketplace={marketplace}
             nftCollection={nftCollection}

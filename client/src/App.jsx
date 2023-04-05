@@ -7,7 +7,7 @@ import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
-import './index.css';
+import './styles/index.css';
 import { store } from './state/store';
 
 import Root from './Root';

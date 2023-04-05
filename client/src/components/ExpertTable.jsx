@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Popover, Row, Space, Table, Tag, Typography } from 'antd';
 
-import { formattedAddress } from './utils/index.js';
+import { formattedAddress } from '../utils/index.js';
 
-export default function AdsTable() {
+export default function ExpertTable() {
   const [proposals, setProposals] = useState([]);
 
   const { itemEvents } = useSelector((state) => state.eth);

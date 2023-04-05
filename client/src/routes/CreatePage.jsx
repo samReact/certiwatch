@@ -1,7 +1,7 @@
 import { useAccount, useContract, useSigner } from 'wagmi';
 import { Row, Typography } from 'antd';
 
-import CreateTable from './CreateTable';
+import CreateTable from '../components/CreateTable';
 import { useSelector } from 'react-redux';
 
 export default function CreatePage() {

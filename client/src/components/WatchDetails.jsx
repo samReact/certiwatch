@@ -1,7 +1,7 @@
 import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
 import React from 'react';
-import { formattedAddress, removeIpfs } from './utils';
-import placeholder from './assets/rolex_ai.png';
+import { formattedAddress, removeIpfs } from '../utils';
+import placeholder from '../assets/rolex_ai.png';
 import { useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
@@ -16,7 +16,7 @@ export default function WatchDetails({
   const navigate = useNavigate();
 
   return (
-    <Row gutter={32} style={{ height: '100%' }}>
+    <Row gutter={32} className="item">
       {!watch ? (
         <Spin />
       ) : (
@@ -30,7 +30,7 @@ export default function WatchDetails({
                 )}`}
                 placeholder={placeholder}
                 fallback={placeholder}
-                style={{ marginBottom: 8 }}
+                className="item-img"
                 width={'100%'}
               />
             </div>
@@ -60,13 +60,7 @@ export default function WatchDetails({
               alt="image"
             />
           </Col>
-          <Col
-            xs={16}
-            style={{
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-          >
+          <Col xs={16} className="item-right">
             <div>
               <Typography.Title level={2} style={{ marginTop: 0 }}>
                 {watch.brand} {watch.model}

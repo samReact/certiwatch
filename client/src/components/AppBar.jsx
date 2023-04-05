@@ -3,7 +3,7 @@ import { Row } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { LogIn } from './LogIn';
-import logo from './assets/logo-main.png';
+import logo from '../assets/logo-main.png';
 import { useSelector } from 'react-redux';
 
 export default function ResponsiveAppBar() {
@@ -36,15 +36,9 @@ export default function ResponsiveAppBar() {
   const { pathname } = location;
 
   return (
-    <Row align="middle" style={{ height: '100%' }} justify={'space-between'}>
-      <Row align="middle" style={{ height: '100%' }}>
-        <img
-          src={logo}
-          alt="logo"
-          width={200}
-          onClick={() => navigate('/')}
-          style={{ marginRight: 16 }}
-        />
+    <Row align="middle" className="menu" justify={'space-between'}>
+      <Row align="middle">
+        <img src={logo} alt="logo" width={200} onClick={() => navigate('/')} />
         <Link
           to={'/shop'}
           className={

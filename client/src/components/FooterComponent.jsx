@@ -7,16 +7,16 @@ import {
 import { Button, Divider, Layout, Row, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import logo from './assets/logo-main.png';
+import logo from '../assets/logo-main.png';
 
 const { Footer } = Layout;
 
 export default function FooterComponent() {
   const navigate = useNavigate();
   return (
-    <Footer style={{ backgroundColor: '#fff' }}>
-      <div style={{ height: 200 }}>
-        <Row justify={'center'} style={{ marginTop: 50 }}>
+    <Footer className="footer">
+      <div className="footer-container">
+        <Row justify={'center'} className="footer-item">
           <img
             src={logo}
             alt="logo"
@@ -25,7 +25,7 @@ export default function FooterComponent() {
           />
         </Row>
         <Divider />
-        <Row justify={'center'} style={{ marginTop: 50 }}>
+        <Row justify={'center'} className="footer-item">
           <Space size={'large'}>
             <Button type="primary" shape="circle" icon={<TwitterOutlined />} />
             <Button type="primary" shape="circle" icon={<FacebookOutlined />} />
@@ -33,7 +33,7 @@ export default function FooterComponent() {
           </Space>
         </Row>
         <Row justify={'center'}>
-          <Typography.Text type="secondary" style={{ marginTop: 30 }}>
+          <Typography.Text type="secondary" className="footer-item-last">
             &copy; Certiwatch 2023
           </Typography.Text>
         </Row>

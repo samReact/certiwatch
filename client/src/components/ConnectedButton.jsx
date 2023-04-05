@@ -4,7 +4,7 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { Button, Avatar, Space, Dropdown, Divider, Typography } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 
-import { formattedAddress } from './utils';
+import { formattedAddress } from '../utils';
 const { Text } = Typography;
 
 export function ConnectedButton() {
@@ -27,12 +27,7 @@ export function ConnectedButton() {
       trigger={['click']}
       onOpenChange={setOpen}
       dropdownRender={() => (
-        <div
-          style={{
-            padding: 12,
-            backgroundColor: '#fff'
-          }}
-        >
+        <div className="connected">
           <Space>
             <Avatar size={36} icon={<Jazzicon diameter={36} seed={avatar} />} />
             <Text>{formatted}</Text>
@@ -45,15 +40,9 @@ export function ConnectedButton() {
       )}
     >
       <Button type="primary" value={'small'} ghost>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
+        <div className="connected-btn">
           <Avatar
-            style={{ marginRight: 6 }}
+            className="connected-btn-avatar"
             size={24}
             icon={<Jazzicon seed={avatar} />}
           />

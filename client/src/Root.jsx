@@ -10,9 +10,9 @@ import HomePage from './routes/HomePage';
 import SellPage from './routes/SellPage';
 import ShopPage from './routes/ShopPage';
 import WatchPage from './routes/WatchPage';
-import ExpertForm from './routes/ExpertForm';
-import ResponsiveAppBar from './AppBar';
-import FooterComponent from './FooterComponent';
+import ExpertForm from './components/AdminExpertForm';
+import ResponsiveAppBar from './components/AppBar';
+import FooterComponent from './components/FooterComponent';
 import {
   useAccount,
   useContract,

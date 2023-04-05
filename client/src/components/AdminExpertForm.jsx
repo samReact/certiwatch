@@ -4,9 +4,9 @@ import { ethers } from 'ethers';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addNotification } from './state/notificationSlice';
+import { addNotification } from '../state/notificationSlice';
 
-export default function AddExpertForm() {
+export default function AdminExpertForm() {
   const [form] = Form.useForm();
   const [fields, setFields] = useState({ address: '', name: '' });
   const dispatch = useDispatch();

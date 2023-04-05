@@ -46,7 +46,7 @@ export default function ImageUploader({ fileList, setFileList }) {
         </Upload>
       </ImgCrop>
       <Modal open={previewOpen} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <img alt="preview" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </>
   );

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Table, Tag } from 'antd';
 
-import { formattedAddress } from './utils/index.js';
+import { formattedAddress } from '../utils/index.js';
 
-export default function ExpertTable({ events }) {
+export default function AdminExpertTable({ events }) {
   const [filteredEvents, setFilteredEvent] = useState([]);
 
   function removeDuplicates(arr) {

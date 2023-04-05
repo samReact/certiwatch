@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAccount, useContractRead } from 'wagmi';
 
-import AdsTable from '../AdsTable';
 import { useSelector } from 'react-redux';
+import ExpertTable from '../components/ExpertTable';
 
 export default function ExpertPage() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function ExpertPage() {
   return (
     <div className="container">
       <div style={{ marginBottom: 40 }}>
-        <AdsTable />
+        <ExpertTable />
       </div>
     </div>
   );

@@ -12,6 +12,22 @@ body {
   padding: 80px 0;
 }
 
+/* Layout  */
+
+.ant-layout-header {
+  background: #fff;
+  box-shadow: 0px 1px 5px #a5a5a5;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+/* App bar */
+.menu {
+  height: 100%;
+}
+
 .menu-item {
   border-bottom: 3px solid transparent;
   height: 55px;
@@ -32,15 +48,6 @@ body {
     rgba(244, 70, 252, 1) 100%
   );
   color: #b37feb;
-}
-
-.ant-layout-header {
-  background: #fff;
-  box-shadow: 0px 1px 5px #a5a5a5;
-}
-
-.ant-layout {
-  min-height: 100vh;
 }
 
 .success-icon {
@@ -69,4 +76,51 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+}
+
+/* Connected button */
+
+.connected {
+  padding: 12px;
+  background-color: #fff;
+}
+
+.connected-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connected-btn-avatar {
+  margin-right: 6px;
+}
+
+/* Footer */
+
+.footer {
+  background-color: #fff;
+}
+
+.footer-container {
+  height: 200px;
+}
+
+.footer-item {
+  margin-top: 50px;
+}
+.footer-item-last {
+  margin-top: 30px;
+}
+
+/* Item  */
+
+.item {
+  height: 100%;
+}
+.item-img {
+  margin-bottom: 8px;
+}
+.item-right {
+  display: flex;
+  flex-direction: column;
 }
