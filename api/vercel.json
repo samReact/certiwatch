@@ -24,7 +24,7 @@
         },
         {
           "key": "Access-Control-Max-Age",
-          "value": 86400
+          "value": "86400"
         }
       ]
     }
