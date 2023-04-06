@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://certiwatch-psi.vercel.app/"
+          "value": "https://certiwatch-psi.vercel.app"
         }
       ]
     }
