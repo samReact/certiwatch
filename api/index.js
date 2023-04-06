@@ -19,7 +19,7 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
-    res.status(200);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
     next();
   });
 }
@@ -30,7 +30,6 @@ function generateAccessToken(user) {
 
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
-  res.writeHead(200, { 'Content-Type': 'application/json' });
   return res.status(200).json(token);
 });
 
