@@ -31,7 +31,7 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1800s' });
 }
 
-app.get('/OPTIONS', (req, res) => {
+app.use('/OPTIONS', (req, res) => {
   res.status(200).end();
 });
 
