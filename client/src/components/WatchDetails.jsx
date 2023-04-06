@@ -68,7 +68,7 @@ export default function WatchDetails({
               <Typography.Text>
                 Owned by{' '}
                 <Typography.Text strong>
-                  {isSeller ? 'you' : formattedAddress(watch.seller)}
+                  {isSeller ? 'me' : formattedAddress(watch.seller)}
                 </Typography.Text>
               </Typography.Text>
             </div>

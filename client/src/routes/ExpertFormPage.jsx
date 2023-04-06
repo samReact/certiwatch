@@ -18,9 +18,9 @@ import { useAccount, useContract, useContractRead, useSigner } from 'wagmi';
 import axios from 'axios';
 import { SmileOutlined } from '@ant-design/icons';
 
-import ImageUploader from '../ImageUploader';
+import ImageUploader from '../components/ImageUploader';
 import { decrement, increment, resetStep } from '../state/stepperSlice';
-import Stepper from '../Stepper';
+import Stepper from '../components/Stepper';
 import {
   BRACELET_MATERIAL,
   CASE_MATERIAL,

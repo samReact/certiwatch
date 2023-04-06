@@ -144,7 +144,8 @@ export default function CreateTable({ marketplace, certificate, address }) {
   useEffect(() => {
     if (itemEvents.length > 0) {
       const filtered = filterEvents(itemEvents);
-      setProposals(filtered);
+      const final = filtered.filter((result) => result.seller === address);
+      setProposals(final);
     }
   }, [itemEvents, address]);
 

@@ -10,7 +10,6 @@ import HomePage from './routes/HomePage';
 import SellPage from './routes/SellPage';
 import ShopPage from './routes/ShopPage';
 import WatchPage from './routes/WatchPage';
-import ExpertForm from './components/AdminExpertForm';
 import ResponsiveAppBar from './components/AppBar';
 import FooterComponent from './components/FooterComponent';
 import {
@@ -22,6 +21,7 @@ import {
 } from 'wagmi';
 import { updateEvents } from './state/ethSlice';
 import { updateFeeRate } from './state/appSlice';
+import ExpertFormPage from './routes/ExpertFormPage';
 
 const { Header, Content } = Layout;
 
@@ -151,7 +151,7 @@ export default function Root() {
           <Route path="/mint" element={<CreatePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/expert" element={<ExpertPage />} />
-          <Route path="/expert/:id" element={<ExpertForm />} />
+          <Route path="/expert/:id" element={<ExpertFormPage />} />
         </Routes>
       </Content>
       <FooterComponent />
