@@ -32,6 +32,7 @@ import { addNotification } from '../state/notificationSlice';
 import { updateForm } from '../state/appSlice';
 
 const { Item } = Form;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ExpertFormPage() {
   const [fileList, setFileList] = useState([]);
@@ -121,7 +122,7 @@ export default function ExpertFormPage() {
       } = savedForm;
       try {
         const res = await axios.post(
-          '/api/uploadImages',
+          `${API_URL}/api/uploadImages`,
           { photos },
           {
             headers: {
@@ -131,7 +132,7 @@ export default function ExpertFormPage() {
         );
         const data = await res.data;
         const res2 = await axios.post(
-          '/api/uploadIpfs',
+          `${API_URL}/api/uploadIpfs`,
           {
             brand,
             model,
@@ -179,7 +180,7 @@ export default function ExpertFormPage() {
   }
 
   const loadJwt = useCallback(async () => {
-    const res = await axios.post('/api/access', {
+    const res = await axios.post(`${API_URL}/api/access`, {
       user: address
     });
     const token = await res.data;
