@@ -5,6 +5,7 @@
       "use": "@vercel/node"
     }
   ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
   "headers": [
     {
       "source": "/(.*)",
@@ -14,9 +15,6 @@
           "value": "https://certiwatch-psi.vercel.app"
         }
       ]
-    },
-    {
-      "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
     }
   ]
 }
