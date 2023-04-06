@@ -40,15 +40,15 @@ app.post('/api/access', (req, res) => {
   res.json(token);
 });
 
-app.post('/api/fillPng', authenticateToken, async (req, res) => {
-  await services.fillPng(req, res);
+app.post('/api/fillPng', authenticateToken, (req, res) => {
+  services.fillPng(req, res);
 });
 
-app.post('/api/uploadImages', authenticateToken, async (req, res) => {
+app.post('/api/uploadImages', authenticateToken, (req, res) => {
   services.uploadImages(req, res);
 });
 
-app.post('/api/uploadIpfs', authenticateToken, async (req, res) => {
+app.post('/api/uploadIpfs', authenticateToken, (req, res) => {
   services.pinFileToIPFS(req, res);
 });
 
