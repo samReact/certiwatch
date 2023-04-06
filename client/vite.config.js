@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: isDev
             ? 'http://localhost:5000'
-            : 'https://certiwatch.vercel.app/',
+            : 'https://certiwatch.vercel.app',
           changeOrigin: isDev,
           secure: !isDev
         }
