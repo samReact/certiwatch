@@ -44,7 +44,18 @@ export default function WatchPage() {
       value: watch && ethers.utils.parseEther(watch.totalPrice)
     }
   });
-  const { data, write, isLoading, isSuccess } = useContractWrite(config);
+  const { data, write, isLoading, isSuccess } = useContractWrite({
+    ...config,
+    onError(error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
+    }
+  });
 
   const marketplace = useContract({
     address: marketplaceAddress,
@@ -61,19 +72,6 @@ export default function WatchPage() {
 
   const isSeller = address && watch && address === watch.seller;
 
-  async function handleBuy() {
-    try {
-      write();
-    } catch (error) {
-      dispatch(
-        addNotification({
-          message: 'Error',
-          description: error.message,
-          type: 'error'
-        })
-      );
-    }
-  }
   const loadMarketPlaceItems = useCallback(async () => {
     let item = await marketplace.items(id);
     if (item.status === 3) {
@@ -134,7 +132,6 @@ export default function WatchPage() {
         <WatchDetails
           write={write}
           isSeller={isSeller}
-          handleBuy={handleBuy}
           isLoading={isLoading}
           watch={watch}
         />

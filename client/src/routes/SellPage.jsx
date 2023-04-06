@@ -57,32 +57,19 @@ export default function SellPage() {
       price && ethers.utils.parseEther(price.toString())
     ]
   });
-  const { write, isSuccess } = useContractWrite(config);
+  const { write, isSuccess } = useContractWrite({
+    ...config,
+    onError(error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
+    }
+  });
 
-  // const balance = useContractRead({
-  //   address: nftCollectionAddress,
-  //   abi: nftCollectionAbi,
-  //   functionName: 'balanceOf',
-  //   watch: false,
-  //   enabled: Boolean(address),
-  //   args: [address]
-  // });
-
-  // const certificate = useContract({
-  //   address: nftCollectionAddress,
-  //   abi: nftCollectionAbi,
-  //   signerOrProvider: signer
-  // });
-
-  // async function getTokenId() {
-  // const tokenId = certificate.tokenOfOwnerByIndex(balance.data);
-  // }
-
-  // useEffect(() => {
-  //   if (balance.data) {
-  //     getTokenId();
-  //   }
-  // }, [balance.data]);
   async function handleNext() {
     try {
       let validate = await form.validateFields();

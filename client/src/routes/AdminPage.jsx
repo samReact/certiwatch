@@ -1,15 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Col, Row, Space, Typography } from 'antd';
-import {
-  useAccount,
-  useContract,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  useSigner
-} from 'wagmi';
+import { useAccount, useContract, useContractRead, useSigner } from 'wagmi';
 
 import AdminFee from '../components/AdminFee';
 import AdminExpertForm from '../components/AdminExpertForm';
@@ -28,8 +21,6 @@ export default function AdminPage() {
     nftCollectionAddress,
     nftCollectionAbi
   } = useSelector((state) => state.eth);
-  const { feeRate } = useSelector((state) => state.app);
-  const [value, setValue] = useState();
 
   const { data: signer } = useSigner();
 
@@ -43,15 +34,6 @@ export default function AdminPage() {
     watch: true,
     enabled: Boolean(address)
   });
-
-  const { config } = usePrepareContractWrite({
-    address: marketplaceAddress,
-    abi: marketplaceAbi,
-    functionName: 'updateProfitRate',
-    enabled: Boolean(value),
-    args: [parseInt(value)]
-  });
-  const writeData = useContractWrite(config);
 
   const marketplace = useContract({
     address: marketplaceAddress,
@@ -73,16 +55,10 @@ export default function AdminPage() {
     }
   }, [isDisconnected, isOwner, navigate]);
 
-  useEffect(() => {
-    if (typeof parseInt(feeRate.data) === 'number') {
-      setValue(feeRate);
-    }
-  }, [feeRate]);
   return (
     <div className="container">
       <div style={{ marginBottom: 40 }}>
-        <Typography.Title level={3}>Profit Rate</Typography.Title>
-        <AdminFee value={value} setValue={setValue} writeData={writeData} />
+        <AdminFee />
       </div>
       <Row gutter={24}>
         <Col xs={24} md={12}>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import { ethers } from 'ethers';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -24,19 +24,28 @@ export default function AdminExpertForm() {
     enabled: isValidAddress && fields.name.length > 0,
     args: [fields.address, fields.name]
   });
-  const { write, isSuccess, isLoading } = useContractWrite(config);
-
-  const successNotification = useCallback(() => {
-    if (isSuccess) {
+  const { write, isLoading } = useContractWrite({
+    ...config,
+    onSuccess(data) {
       dispatch(
         addNotification({
           message: 'Expert Added !',
-          description: 'A new expert has been added',
+          description: `Tansaction ${data.hash}`,
           type: 'success'
         })
       );
+      form.resetFields();
+    },
+    onError(error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
     }
-  }, [isSuccess, dispatch]);
+  });
 
   const onSubmit = async () => {
     try {
@@ -44,7 +53,6 @@ export default function AdminExpertForm() {
       const { errorFields } = validate;
       if (!errorFields) {
         write();
-        form.resetFields();
       }
     } catch (error) {
       dispatch(
@@ -56,12 +64,6 @@ export default function AdminExpertForm() {
       );
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      successNotification();
-    }
-  }, [isSuccess, successNotification]);
 
   return (
     <Form

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
@@ -19,10 +19,9 @@ export default function AdminCollectionForm() {
     enabled: fields.symbol.length > 0 && fields.name.length > 0,
     args: [fields.name, fields.symbol]
   });
-  const { data, write, isSuccess, isLoading } = useContractWrite(config);
-
-  const successNotification = useCallback(() => {
-    if (isSuccess && data) {
+  const { write, isLoading } = useContractWrite({
+    ...config,
+    onSuccess(data) {
       dispatch(
         addNotification({
           message: 'Collection Added !',
@@ -30,8 +29,18 @@ export default function AdminCollectionForm() {
           type: 'success'
         })
       );
+      form.resetFields();
+    },
+    onError(error) {
+      dispatch(
+        addNotification({
+          message: 'Error',
+          description: error.message,
+          type: 'error'
+        })
+      );
     }
-  }, [isSuccess, dispatch, data]);
+  });
 
   const onSubmit = async () => {
     try {
@@ -39,7 +48,6 @@ export default function AdminCollectionForm() {
       const { errorFields } = validate;
       if (!errorFields) {
         write();
-        form.resetFields();
       }
     } catch (error) {
       dispatch(
@@ -51,12 +59,6 @@ export default function AdminCollectionForm() {
       );
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      successNotification();
-    }
-  }, [isSuccess, successNotification]);
 
   return (
     <Form

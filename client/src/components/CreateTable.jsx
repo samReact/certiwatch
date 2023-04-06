@@ -18,34 +18,40 @@ export default function CreateTable({ marketplace, certificate, address }) {
   const dispatch = useDispatch();
 
   async function handleMint(record) {
+    setSelectedRow(record);
+    setIsLoading(true);
     const item = await marketplace.items(record.itemId);
     const ipfsHash = removeIpfs(item.ipfsUrl);
-    try {
-      const uri = `https://ipfs.io/ipfs/${ipfsHash}`;
-      await (await certificate.mintItem(uri)).wait();
-      await (
-        await certificate.setApprovalForAll(marketplace.address, true)
-      ).wait();
-      const tokenId = await certificate.tokenIds();
-      await (
-        await marketplace.addToken(certificate.address, tokenId, item.itemId)
-      ).wait();
-      dispatch(
-        addNotification({
-          message: `${record.brand} ${record.model} minted !`,
-          description:
-            'In a few minute your item will be visible to the marketplace',
-          type: 'success'
-        })
-      );
-    } catch (error) {
-      dispatch(
-        addNotification({
-          message: 'Error',
-          description: error.message,
-          type: 'error'
-        })
-      );
+    if (ipfsHash && ipfsHash.length) {
+      try {
+        const uri = `https://ipfs.io/ipfs/${ipfsHash}`;
+        await (await certificate.mintItem(uri)).wait();
+        await (
+          await certificate.setApprovalForAll(marketplace.address, true)
+        ).wait();
+        const tokenId = await certificate.tokenIds();
+        await (
+          await marketplace.addToken(certificate.address, tokenId, item.itemId)
+        ).wait();
+        dispatch(
+          addNotification({
+            message: `${record.brand} ${record.model} minted !`,
+            description:
+              'In a few minute your item will be visible to the marketplace',
+            type: 'success'
+          })
+        );
+        setIsLoading(false);
+      } catch (error) {
+        dispatch(
+          addNotification({
+            message: 'Error',
+            description: error.message,
+            type: 'error'
+          })
+        );
+        setIsLoading(false);
+      }
     }
   }
 
@@ -117,6 +123,7 @@ export default function CreateTable({ marketplace, certificate, address }) {
           return (
             <Space size="middle">
               <Button
+                loading={selectedRow && record.itemId === selectedRow.itemId}
                 disabled={record.status !== 2}
                 onClick={() => {
                   handleMint(record);
