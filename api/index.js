@@ -37,7 +37,7 @@ app.get('/api', (req, res) => {
 
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
-  res.status(200).json(token);
+  return res.status(200).json(token);
 });
 
 app.post('/api/fillPng', authenticateToken, (req, res) => {
