@@ -23,7 +23,8 @@
           "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
         },
         {
-          "key": "HTTP/1.1 200 ok"
+          "key": "HTTP/1.1",
+          "value": "200 ok"
         }
       ]
     }
