@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
           target: isDev
             ? 'http://localhost:5000'
             : 'https://certiwatch.vercel.app',
-          changeOrigin: isDev,
+          changeOrigin: true,
           secure: !isDev
         }
       }
