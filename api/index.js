@@ -40,22 +40,16 @@ app.post('/api/access', (req, res) => {
   res.json(token);
 });
 
+app.post('/api/fillPng', authenticateToken, async (req, res) => {
+  await services.fillPng(req, res);
+});
+
 app.post('/api/uploadImages', authenticateToken, async (req, res) => {
-  try {
-    const result = await services.uploadImages(req, res);
-    res.send(result);
-  } catch (error) {
-    throw error;
-  }
+  services.uploadImages(req, res);
 });
 
 app.post('/api/uploadIpfs', authenticateToken, async (req, res) => {
-  try {
-    await services.fillPng(req, res);
-    await services.pinFileToIPFS(req, res);
-  } catch (error) {
-    throw error;
-  }
+  services.pinFileToIPFS(req, res);
 });
 
 app.listen(port, () => {

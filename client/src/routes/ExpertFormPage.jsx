@@ -120,6 +120,7 @@ export default function ExpertFormPage() {
         movement,
         color
       } = savedForm;
+
       try {
         const res = await axios.post(
           `${API_URL}/api/uploadImages`,
@@ -131,31 +132,44 @@ export default function ExpertFormPage() {
           }
         );
         const data = await res.data;
-        const res2 = await axios.post(
-          `${API_URL}/api/uploadIpfs`,
-          {
-            brand,
-            model,
-            gender,
-            year,
-            serial,
-            watch_case,
-            bracelet,
-            movement,
-            color,
-            expert_addr: address,
-            expert_name: expert.data.name,
-            images_url: `ipfs://${data.IpfsHash}`
-          },
+
+        const body = {
+          brand,
+          model,
+          gender,
+          year,
+          serial,
+          watch_case,
+          bracelet,
+          movement,
+          color,
+          expert_addr: address,
+          expert_name: expert.data.name,
+          images_url: `ipfs://${data.IpfsHash}`
+        };
+
+        await axios.post(
+          `${API_URL}/api/fillPng`,
+          { ...body },
           {
             headers: {
               Authorization: `Bearer ${token}`
             }
           }
         );
-        const data2 = await res2.data;
 
-        const ipfsUrl = `ipfs://${data2.IpfsHash}`;
+        const res2 = await axios.post(
+          `${API_URL}/api/uploadIpfs`,
+          { ...body },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const response = await res2.data;
+
+        const ipfsUrl = `ipfs://${response.IpfsHash}`;
         await marketplace.updateItem(parseInt(id), 2, ipfsUrl);
         dispatch(
           addNotification({

@@ -37,9 +37,11 @@ module.exports = {
         images
       };
       const response = await pinata.pinJSONToIPFS(body, options);
-      return response;
+      res.status(200).send(response);
     } catch (err) {
-      res.send(err.message);
+      res.status(400).send({
+        message: err.message
+      });
     }
   },
   pinFileToIPFS: async (req, res) => {
@@ -48,31 +50,31 @@ module.exports = {
     const pinata = new pinataSDK(key, secret);
     const readableStreamForFile = fs.createReadStream('filled.png');
 
-    const options = {
-      pinataMetadata: {
-        name: 'CWT'
-      },
-      pinataOptions: {
-        cidVersion: 0
-      }
-    };
-
-    const {
-      brand,
-      model,
-      year,
-      gender,
-      serial,
-      watch_case,
-      bracelet,
-      movement,
-      color,
-      expert_addr,
-      expert_name,
-      images_url
-    } = req.body;
-
     try {
+      const options = {
+        pinataMetadata: {
+          name: 'CWT'
+        },
+        pinataOptions: {
+          cidVersion: 0
+        }
+      };
+
+      const {
+        brand,
+        model,
+        year,
+        gender,
+        serial,
+        watch_case,
+        bracelet,
+        movement,
+        color,
+        expert_addr,
+        expert_name,
+        images_url
+      } = req.body;
+
       const result = await pinata.pinFileToIPFS(readableStreamForFile, options);
       const body = {
         description: 'Certificate of authenticity',
@@ -131,10 +133,11 @@ module.exports = {
       };
 
       const response = await pinata.pinJSONToIPFS(body, options);
-
-      res.send(response);
+      res.status(200).send(response);
     } catch (err) {
-      res.send(err.message);
+      res.status(400).send({
+        message: err.message
+      });
     }
   },
   fillPng: async (req, res) => {
@@ -168,9 +171,11 @@ module.exports = {
       image.print(font, 220, 320, expert_name);
       await image.writeAsync('filled.png');
 
-      return 'success';
+      res.status(201).end();
     } catch (err) {
-      res.send(err.message);
+      res.status(400).send({
+        message: err.message
+      });
     }
   }
 };

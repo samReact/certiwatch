@@ -2,6 +2,7 @@ import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
 import React from 'react';
 import { formattedAddress, removeIpfs } from '../utils';
 import { useNavigate } from 'react-router-dom';
+import ProgressiveImage from 'react-progressive-graceful-image';
 
 const { Text } = Typography;
 
@@ -25,7 +26,6 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                   watch.images[0]
                 )}`}
                 placeholder={placeholder}
-                fallback={placeholder}
                 className="item-img"
                 width={'100%'}
               />
@@ -36,25 +36,40 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
               dataSource={watch.images.filter((photo, i) => i !== 0)}
               renderItem={(url, i) => (
                 <List.Item>
-                  <Image
-                    placeholder={placeholder}
-                    fallback={placeholder}
-                    preview={false}
+                  <ProgressiveImage
                     src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(url)}`}
-                    width={'100%'}
-                  />
+                    placeholder={placeholder}
+                  >
+                    {(src, loading) => {
+                      return (
+                        <img
+                          src={src}
+                          alt=""
+                          style={{ opacity: loading ? 0.5 : 1 }}
+                        />
+                      );
+                    }}
+                  </ProgressiveImage>
                 </List.Item>
               )}
             />
-            <Image
-              placeholder={placeholder}
-              fallback={placeholder}
+            <ProgressiveImage
               src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
                 watch.certificateUrl
               )}`}
-              width={'50%'}
-              alt="image"
-            />
+              placeholder={placeholder}
+              style={{ width: '50%' }}
+            >
+              {(src, loading) => {
+                return (
+                  <img
+                    src={src}
+                    alt=""
+                    style={{ opacity: loading ? 0.5 : 1, width: '50%' }}
+                  />
+                );
+              }}
+            </ProgressiveImage>
           </Col>
           <Col xs={16} className="item-right">
             <div>
