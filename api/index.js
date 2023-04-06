@@ -32,7 +32,7 @@ app.options('/api/access', (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'application/json; charset=utf-8'
   });
-  return res.status(200).json(token);
+  res.status(200).send('Status: OK');
 });
 
 app.post('/api/access', (req, res) => {
@@ -40,6 +40,7 @@ app.post('/api/access', (req, res) => {
   response.writeHead(200, {
     'Content-Type': 'application/json; charset=utf-8'
   });
+
   return res.status(200).json(token);
 });
 
