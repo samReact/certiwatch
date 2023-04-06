@@ -3,16 +3,6 @@ const fs = require('fs');
 const Jimp = require('jimp');
 const path = require('path');
 
-const plugin = require.resolve('@jimp/plugin-print');
-const jimpFont = path.resolve(
-  plugin,
-  '../../fonts/open-sans/open-sans-16-black/open-sans-16-black.fnt'
-);
-const jimpFontSmall = path.resolve(
-  plugin,
-  '../../fonts/open-sans/open-sans-12-black/open-sans-12-black.fnt'
-);
-
 module.exports = {
   uploadImages: async (req, res) => {
     const key = process.env.PINATA_KEY;
@@ -152,6 +142,15 @@ module.exports = {
     }
   },
   fillPng: async (req, res) => {
+    const plugin = require.resolve('@jimp/plugin-print');
+    const jimpFont = path.resolve(
+      plugin,
+      '../../fonts/open-sans/open-sans-16-black/open-sans-16-black.fnt'
+    );
+    const jimpFontSmall = path.resolve(
+      plugin,
+      '../../fonts/open-sans/open-sans-12-black/open-sans-12-black.fnt'
+    );
     try {
       const font = await Jimp.loadFont(jimpFont);
       const smallfont = await Jimp.loadFont(jimpFontSmall);
