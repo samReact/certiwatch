@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express();
 const port = 5000;
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json({ limit: '100000mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,6 +19,7 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
+    res.status(200);
     next();
   });
 }
