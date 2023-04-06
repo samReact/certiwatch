@@ -4,6 +4,7 @@ import eslint from 'vite-plugin-eslint';
 
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
+  console.log('mode:', mode);
   return {
     plugins: [react(), eslint()],
     server: {
