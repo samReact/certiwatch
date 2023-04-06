@@ -24,8 +24,8 @@ module.exports = {
       for (let i = 0; i < photos.length; i++) {
         const src = photos[i];
         let buff = Buffer.from(src.split(',')[1], 'base64');
-        fs.writeFileSync(`./image${i}.png`, buff);
-        const readableStreamForFile = fs.createReadStream(`./image${i}.png`);
+        fs.writeFileSync(`/tmp/image${i}.png`, buff);
+        const readableStreamForFile = fs.createReadStream(`/tmp/image${i}.png`);
         const result = await pinata.pinFileToIPFS(
           readableStreamForFile,
           options
