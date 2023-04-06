@@ -28,8 +28,18 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1800s' });
 }
 
+app.options('/api/access', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'application/json; charset=utf-8'
+  });
+  return res.status(200).json(token);
+});
+
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
+  response.writeHead(200, {
+    'Content-Type': 'application/json; charset=utf-8'
+  });
   return res.status(200).json(token);
 });
 
