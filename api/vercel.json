@@ -16,19 +16,7 @@
       ]
     },
     {
-      "source": "(.*)",
-      "has": [
-        {
-          "type": "query",
-          "key": "OPTIONS"
-        }
-      ],
-      "headers": [
-        {
-          "key": "HTTP/1.1",
-          "value": "200 ok"
-        }
-      ]
+      "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
     }
   ]
 }
