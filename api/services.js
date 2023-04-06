@@ -141,6 +141,8 @@ module.exports = {
     }
   },
   fillPng: async (req, res) => {
+    const Jimp = require('jimp');
+
     try {
       const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
       const smallfont = await Jimp.loadFont(Jimp.FONT_SANS_12_BLACK);

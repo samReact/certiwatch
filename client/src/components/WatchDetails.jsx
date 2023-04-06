@@ -19,57 +19,62 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
       ) : (
         <>
           <Col xs={8}>
-            <div>
-              <Image
-                preview={false}
-                src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                  watch.images[0]
-                )}`}
-                placeholder={placeholder}
-                className="item-img"
-                width={'100%'}
-              />
-            </div>
-            <List
-              loading={!watch}
-              grid={{ column: 2, gutter: 8 }}
-              dataSource={watch.images.filter((photo, i) => i !== 0)}
-              renderItem={(url, i) => (
-                <List.Item>
-                  <ProgressiveImage
-                    src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(url)}`}
-                    placeholder={placeholder}
-                  >
-                    {(src, loading) => {
-                      return (
-                        <img
-                          src={src}
-                          alt=""
-                          style={{ opacity: loading ? 0.5 : 1 }}
-                        />
-                      );
-                    }}
-                  </ProgressiveImage>
-                </List.Item>
-              )}
-            />
-            <ProgressiveImage
-              src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                watch.certificateUrl
-              )}`}
-              placeholder={placeholder}
-              style={{ width: '50%' }}
-            >
-              {(src, loading) => {
-                return (
-                  <img
-                    src={src}
-                    alt=""
-                    style={{ opacity: loading ? 0.5 : 1, width: '50%' }}
-                  />
-                );
-              }}
-            </ProgressiveImage>
+            <Row gutter={16}>
+              <Col xs={24}>
+                <ProgressiveImage
+                  src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                    watch.images[0]
+                  )}`}
+                  placeholder={placeholder}
+                >
+                  {(src, loading) => {
+                    return (
+                      <img
+                        src={src}
+                        alt=""
+                        style={{ opacity: loading ? 0.5 : 1, width: '100%' }}
+                      />
+                    );
+                  }}
+                </ProgressiveImage>
+              </Col>
+              <Col xs={24}>
+                <List
+                  loading={!watch}
+                  grid={{ column: 2, gutter: 8 }}
+                  dataSource={watch.images.filter((photo, i) => i !== 0)}
+                  renderItem={(url, i) => (
+                    <List.Item>
+                      <ProgressiveImage
+                        src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                          url
+                        )}`}
+                        placeholder={placeholder}
+                      >
+                        {(src, loading) => {
+                          return (
+                            <img
+                              src={src}
+                              alt=""
+                              style={{
+                                opacity: loading ? 0.5 : 1,
+                                width: '100%'
+                              }}
+                            />
+                          );
+                        }}
+                      </ProgressiveImage>
+                    </List.Item>
+                  )}
+                />
+                <Image
+                  src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                    watch.certificateUrl
+                  )}`}
+                  placeholder={placeholder}
+                />
+              </Col>
+            </Row>
           </Col>
           <Col xs={16} className="item-right">
             <div>
