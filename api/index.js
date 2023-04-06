@@ -9,9 +9,6 @@ const app = express();
 const port = 5000;
 
 app.use(cors());
-app.options('/*', (_, res) => {
-  res.sendStatus(200);
-});
 app.use(express.json({ limit: '100000mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,12 +28,9 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1800s' });
 }
 
-app.use('/OPTIONS', (req, res) => {
-  res.status(200).end();
-});
-
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
+  res.writeHead(200, { 'Content-Type': 'application/json' });
   return res.status(200).json(token);
 });
 
