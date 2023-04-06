@@ -57,9 +57,7 @@ export default function ShopPage() {
         if (item.status === 3) {
           const uri = await certificate.tokenURI(item.tokenId);
           if (uri && uri.length > 30) {
-            console.log('uri:', uri.length);
             const res = await fetch(uri);
-            console.log(res);
             const metada = await res.json();
             let imagesUri = metada.attributes.filter((attr) => attr.images)[0];
             const finalUri = `https://ipfs.io/ipfs/${removeIpfs(
