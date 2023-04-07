@@ -18,5 +18,5 @@
       }
     }
   ],
-  "files": ["public/**/*"]
+  "include": ["public/**"]
 }
