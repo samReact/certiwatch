@@ -5,6 +5,8 @@ const path = require('path');
 const publicPath = path.join(__dirname, 'public');
 const fontPath = path.join(publicPath, 'fonts', 'open-sans-16-black.fnt');
 const smallPath = path.join(publicPath, 'fonts', 'open-sans-12-black.fnt');
+const nft_template = path.join(publicPath, 'img', 'nft_template.png');
+const filled = path.join(publicPath, 'img', 'filled.png');
 
 module.exports = {
   uploadImages: async (req, res) => {
@@ -52,7 +54,7 @@ module.exports = {
     const key = process.env.PINATA_KEY;
     const secret = process.env.PINATA_SECRET;
     const pinata = new pinataSDK(key, secret);
-    const readableStreamForFile = fs.createReadStream('filled.png');
+    const readableStreamForFile = fs.createReadStream(filled);
 
     try {
       const options = {
@@ -149,7 +151,7 @@ module.exports = {
       const font = await Jimp.loadFont(fontPath);
       const smallfont = await Jimp.loadFont(smallPath);
 
-      const image = await Jimp.read('./nft_template.png');
+      const image = await Jimp.read(nft_template);
       const {
         brand,
         model,
@@ -174,7 +176,7 @@ module.exports = {
       image.print(font, 220, 280, serial);
       image.print(smallfont, 220, 300, expert_addr);
       image.print(font, 220, 320, expert_name);
-      await image.writeAsync('filled.png');
+      await image.writeAsync(filled);
 
       res.status(201).end();
     } catch (err) {
