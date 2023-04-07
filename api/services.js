@@ -144,21 +144,32 @@ module.exports = {
   fillPng: async (req, res) => {
     try {
       // const font = await Jimp.loadFont('./public/fonts/open-sans-16-black.fnt');
-      const fontPath = path.join(
-        __dirname,
-        '/public/fonts/open-sans-16-black.fnt'
-      );
-      const font = await Jimp.loadFont(fontPath);
-
-      const samllfontPath = path.join(
-        __dirname,
-        '/public/fonts/open-sans-12-black.fnt'
-      );
-      const smallfont = await Jimp.loadFont(samllfontPath);
-
-      // const smallfont = await Jimp.loadFont(
-      //   './public/fonts/open-sans-12-black.fnt'
+      // const fontPath = path.join(
+      //   __dirname,
+      //   '/public/fonts/open-sans-16-black.fnt'
       // );
+      // const font = await Jimp.loadFont(fontPath);
+
+      // const samllfontPath = path.join(
+      //   __dirname,
+      //   '/public/fonts/open-sans-12-black.fnt'
+      // );
+      // const smallfont = await Jimp.loadFont(samllfontPath);
+      console.log(process.env.NODE_ENV);
+
+      const fontPath =
+        process.env.NODE_ENV === 'production'
+          ? '/var/task/api/public/fonts/open-sans-16-black.fnt' // chemin de fichier de production
+          : '/Users/samir/Desktop/dev/alyra-dev/certiwatch/api/public/fonts/open-sans-16-black.fnt'; // chemin de fichier de développement
+
+      const smallPath =
+        process.env.NODE_ENV === 'production'
+          ? '/var/task/api/public/fonts/open-sans-12-black.fnt' // chemin de fichier de production
+          : '/Users/samir/Desktop/dev/alyra-dev/certiwatch/api/public/fonts/open-sans-12-black.fnt'; // chemin de fichier de développement
+
+      const font = await Jimp.loadFont(fontPath);
+      const smallfont = await Jimp.loadFont(smallPath);
+
       const image = await Jimp.read('./nft_template.png');
       const {
         brand,
