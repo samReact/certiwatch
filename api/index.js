@@ -11,11 +11,12 @@ const port = 5000;
 app.use(express.json({ limit: '100000mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-const corsOptions = {
+corsOptions = {
   origin: 'https://certiwatch-psi.vercel.app',
   methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
-  maxAge: 86400
+  maxAge: 86400,
+  preflightContinue: true
 };
 
 app.use(cors(corsOptions));
@@ -27,7 +28,6 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
-    res.writeHead(200, { 'Content-Type': 'application/json' });
     next();
   });
 }
@@ -38,11 +38,8 @@ function generateAccessToken(user) {
 
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
-  res.writeHead(200, {
-    'Content-Type': 'application/json; charset=utf-8'
-  });
 
-  return res.status(200).json(token);
+  res.status(200).json(token);
 });
 
 app.post('/api/fillPng', authenticateToken, (req, res) => {
