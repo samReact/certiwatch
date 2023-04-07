@@ -5,16 +5,16 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://certiwatch-psi.vercel.app"
-        }
-      ]
+      "src": "/api/.*",
+      "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
+      "headers": {
+        "Access-Control-Allow-Origin": "https://certiwatch-psi.vercel.app",
+        "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Max-Age": "86400"
+      }
     }
   ]
 }
