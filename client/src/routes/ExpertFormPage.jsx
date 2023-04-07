@@ -148,7 +148,7 @@ export default function ExpertFormPage() {
           images_url: `ipfs://${data.IpfsHash}`
         };
 
-        await axios.post(
+        const res2 = await axios.post(
           `${API_URL}/api/fillPng`,
           { ...body },
           {
@@ -158,15 +158,6 @@ export default function ExpertFormPage() {
           }
         );
 
-        const res2 = await axios.post(
-          `${API_URL}/api/uploadIpfs`,
-          { ...body },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
         const response = await res2.data;
 
         const ipfsUrl = `ipfs://${response.IpfsHash}`;

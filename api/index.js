@@ -35,14 +35,6 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1800s' });
 }
 
-app.get('/test', (req, res) => {
-  res.status(200).send('Hello Get!');
-});
-
-app.post('/test', (req, res) => {
-  res.status(200).send('post Hello !');
-});
-
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
   res.status(200).json(token);
@@ -54,10 +46,6 @@ app.post('/api/fillPng', authenticateToken, (req, res) => {
 
 app.post('/api/uploadImages', authenticateToken, (req, res) => {
   services.uploadImages(req, res);
-});
-
-app.post('/api/uploadIpfs', authenticateToken, (req, res) => {
-  services.pinFileToIPFS(req, res);
 });
 
 app.listen(port, () => {

@@ -6,7 +6,6 @@ const publicPath = path.join(__dirname, 'public');
 const fontPath = path.join(publicPath, 'fonts', 'open-sans-16-black.fnt');
 const smallPath = path.join(publicPath, 'fonts', 'open-sans-12-black.fnt');
 const nft_template = path.join(publicPath, 'img', 'nft_template.png');
-const filled = path.join(publicPath, 'img', 'filled.png');
 
 module.exports = {
   uploadImages: async (req, res) => {
@@ -50,38 +49,57 @@ module.exports = {
       });
     }
   },
-  pinFileToIPFS: async (req, res) => {
+  fillPng: async (req, res) => {
     const key = process.env.PINATA_KEY;
     const secret = process.env.PINATA_SECRET;
     const pinata = new pinataSDK(key, secret);
-    const readableStreamForFile = fs.createReadStream(filled);
+
+    const options = {
+      pinataMetadata: {
+        name: 'CWT'
+      },
+      pinataOptions: {
+        cidVersion: 0
+      }
+    };
+
+    const {
+      brand,
+      model,
+      year,
+      gender,
+      serial,
+      watch_case,
+      bracelet,
+      movement,
+      color,
+      expert_addr,
+      expert_name,
+      images_url
+    } = req.body;
 
     try {
-      const options = {
-        pinataMetadata: {
-          name: 'CWT'
-        },
-        pinataOptions: {
-          cidVersion: 0
-        }
-      };
+      const font = await Jimp.loadFont(fontPath);
+      const smallfont = await Jimp.loadFont(smallPath);
+      const image = await Jimp.read(nft_template);
 
-      const {
-        brand,
-        model,
-        year,
-        gender,
-        serial,
-        watch_case,
-        bracelet,
-        movement,
-        color,
-        expert_addr,
-        expert_name,
-        images_url
-      } = req.body;
+      image.print(font, 220, 120, brand);
+      image.print(font, 220, 140, model);
+      image.print(font, 220, 160, watch_case);
+      image.print(font, 220, 180, bracelet);
+      image.print(font, 220, 200, movement);
+      image.print(font, 220, 220, color);
+      image.print(font, 220, 240, gender);
+      image.print(font, 220, 260, year);
+      image.print(font, 220, 280, serial);
+      image.print(smallfont, 220, 300, expert_addr);
+      image.print(font, 220, 320, expert_name);
 
+      let buff = await image.getBufferAsync('image/png');
+      fs.writeFileSync(`/tmp/filled.png`, buff);
+      const readableStreamForFile = fs.createReadStream('/tmp/filled.png');
       const result = await pinata.pinFileToIPFS(readableStreamForFile, options);
+
       const body = {
         description: 'Certificate of authenticity',
         image: `ipfs://${result.IpfsHash}`,
@@ -137,48 +155,8 @@ module.exports = {
           }
         ]
       };
-
       const response = await pinata.pinJSONToIPFS(body, options);
-      res.status(200).send(response);
-    } catch (err) {
-      res.status(400).send({
-        message: err.message
-      });
-    }
-  },
-  fillPng: async (req, res) => {
-    try {
-      const font = await Jimp.loadFont(fontPath);
-      const smallfont = await Jimp.loadFont(smallPath);
-
-      const image = await Jimp.read(nft_template);
-      const {
-        brand,
-        model,
-        year,
-        gender,
-        serial,
-        watch_case,
-        bracelet,
-        movement,
-        color,
-        expert_addr,
-        expert_name
-      } = req.body;
-      image.print(font, 220, 120, brand);
-      image.print(font, 220, 140, model);
-      image.print(font, 220, 160, watch_case);
-      image.print(font, 220, 180, bracelet);
-      image.print(font, 220, 200, movement);
-      image.print(font, 220, 220, color);
-      image.print(font, 220, 240, gender);
-      image.print(font, 220, 260, year);
-      image.print(font, 220, 280, serial);
-      image.print(smallfont, 220, 300, expert_addr);
-      image.print(font, 220, 320, expert_name);
-      await image.writeAsync(filled);
-
-      res.status(201).end();
+      res.status(201).send(response);
     } catch (err) {
       res.status(400).send({
         message: err.message
