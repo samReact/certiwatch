@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./NFTCollection.sol";
@@ -13,9 +12,12 @@ import "./NFTCollection.sol";
  */
 contract Factory is Ownable {
     // ::::::::::EVENTS:::::::::: //
-
     event CollectionAdded(string _name, string _symbol, address _addr);
 
+    /**
+     * @dev add initial collection
+     * @param _initialCollection initial collection to be added
+     */
     constructor(NFTCollection _initialCollection) {
         NFTCollectionArray.push(_initialCollection);
         emit CollectionAdded(
@@ -27,6 +29,10 @@ contract Factory is Ownable {
 
     NFTCollection[] public NFTCollectionArray;
 
+    /**
+     * @dev Create a new collection
+     * @param _name collection's name
+     */
     function createCollection(
         string calldata _name,
         string calldata _symbol
