@@ -124,3 +124,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+.watch-img {
+  width: 100%;
+  border-radius: 12px;
+}

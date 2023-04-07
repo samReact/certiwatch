@@ -1,8 +1,19 @@
-import { Button, Col, Image, List, Row, Space, Spin, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Image,
+  List,
+  Row,
+  Space,
+  Spin,
+  Typography,
+  Watermark
+} from 'antd';
 import React from 'react';
 import { formattedAddress, removeIpfs } from '../utils';
 import { useNavigate } from 'react-router-dom';
 import ProgressiveImage from 'react-progressive-graceful-image';
+import nft from '../assets/nft.png';
 
 const { Text } = Typography;
 
@@ -18,8 +29,8 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
         <Spin />
       ) : (
         <>
-          <Col xs={8}>
-            <Row gutter={16}>
+          <Col xs={10}>
+            <Row align={'middle'} gutter={32}>
               <Col xs={24}>
                 <ProgressiveImage
                   src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
@@ -31,8 +42,11 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                     return (
                       <img
                         src={src}
-                        alt=""
-                        style={{ opacity: loading ? 0.5 : 1, width: '100%' }}
+                        alt="watch main"
+                        style={{
+                          opacity: loading ? 0.5 : 1
+                        }}
+                        className="watch-img"
                       />
                     );
                   }}
@@ -44,7 +58,7 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                   grid={{ column: 2, gutter: 8 }}
                   dataSource={watch.images.filter((photo, i) => i !== 0)}
                   renderItem={(url, i) => (
-                    <List.Item>
+                    <List.Item style={{ margin: 0 }}>
                       <ProgressiveImage
                         src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
                           url
@@ -55,11 +69,11 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                           return (
                             <img
                               src={src}
-                              alt=""
+                              alt="watch"
                               style={{
-                                opacity: loading ? 0.5 : 1,
-                                width: '100%'
+                                opacity: loading ? 0.5 : 1
                               }}
+                              className="watch-img"
                             />
                           );
                         }}
@@ -67,16 +81,21 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                     </List.Item>
                   )}
                 />
-                <Image
-                  src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                    watch.certificateUrl
-                  )}`}
-                  placeholder={placeholder}
-                />
+              </Col>
+              <Col xs={12}>
+                <Watermark image={nft} gap={[10, 10]} height={30} width={30}>
+                  <Image
+                    src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                      watch.certificateUrl
+                    )}`}
+                    placeholder={placeholder}
+                    className="watch-img"
+                  />
+                </Watermark>
               </Col>
             </Row>
           </Col>
-          <Col xs={16} className="item-right">
+          <Col xs={14} className="item-right">
             <div>
               <Typography.Title level={2} style={{ marginTop: 0 }}>
                 {watch.brand} {watch.model}

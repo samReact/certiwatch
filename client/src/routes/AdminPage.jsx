@@ -69,19 +69,19 @@ export default function AdminPage() {
           </Space>
         </Col>
         <Col xs={24} md={12}>
+          <Typography.Title level={3}>Collections</Typography.Title>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <AdminCollectionForm />
+            <AdminCollectionTable collectionEvents={collectionEvents} />
+          </Space>
+        </Col>
+        <Col xs={24} md={12}>
           <Typography.Title level={3}>Ads</Typography.Title>
           <AdminItemsTable
             itemEvents={itemEvents}
             marketplace={marketplace}
             nftCollection={nftCollection}
           />
-        </Col>
-        <Col xs={24} md={12}>
-          <Typography.Title level={3}>Collections</Typography.Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <AdminCollectionForm />
-            <AdminCollectionTable collectionEvents={collectionEvents} />
-          </Space>
         </Col>
       </Row>
     </div>

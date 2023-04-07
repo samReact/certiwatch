@@ -133,7 +133,7 @@ export default function ShopPage() {
                       return (
                         <img
                           src={src}
-                          alt=""
+                          alt="watch"
                           style={{ opacity: loading ? 0.5 : 1 }}
                         />
                       );
