@@ -17,5 +17,6 @@
         "Access-Control-Allow-Headers": "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization"
       }
     }
-  ]
+  ],
+  "files": ["public/**/*"]
 }
