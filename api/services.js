@@ -142,9 +142,9 @@ module.exports = {
   },
   fillPng: async (req, res) => {
     try {
-      const font = await Jimp.loadFont('./public/font/open-sans-16-black.fnt');
+      const font = await Jimp.loadFont('./public/fonts/open-sans-16-black.fnt');
       const smallfont = await Jimp.loadFont(
-        './public/font/open-sans-12-black.fnt'
+        './public/fonts/open-sans-12-black.fnt'
       );
       const image = await Jimp.read('./nft_template.png');
       const {
