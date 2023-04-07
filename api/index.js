@@ -37,7 +37,7 @@ function generateAccessToken(user) {
 }
 
 app.get('/test', (req, res) => {
-  res.status(200).send('Hello !');
+  res.status(200).send('Hello Get!');
 });
 
 app.post('/test', (req, res) => {
@@ -46,7 +46,6 @@ app.post('/test', (req, res) => {
 
 app.post('/api/access', (req, res) => {
   const token = generateAccessToken({ user: req.body.user });
-
   res.status(200).json(token);
 });
 
