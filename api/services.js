@@ -1,17 +1,6 @@
 const pinataSDK = require('@pinata/sdk');
 const fs = require('fs');
 const Jimp = require('jimp');
-const path = require('path');
-
-const plugin = require.resolve('@jimp/plugin-print');
-const jimpFont = path.resolve(
-  plugin,
-  '../../fonts/open-sans/open-sans-16-black/open-sans-16-black.fnt'
-);
-const jimpFontSmall = path.resolve(
-  plugin,
-  '../../fonts/open-sans/open-sans-12-black/open-sans-12-black.fnt'
-);
 
 module.exports = {
   uploadImages: async (req, res) => {
@@ -153,8 +142,10 @@ module.exports = {
   },
   fillPng: async (req, res) => {
     try {
-      const font = await Jimp.loadFont(jimpFont);
-      const smallfont = await Jimp.loadFont(jimpFontSmall);
+      const font = await Jimp.loadFont('./public/font/open-sans-16-black.fnt');
+      const smallfont = await Jimp.loadFont(
+        './public/font/open-sans-12-black.fnt'
+      );
       const image = await Jimp.read('./nft_template.png');
       const {
         brand,

@@ -10,6 +10,7 @@ const port = 5000;
 
 app.use(express.json({ limit: '100000mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.use(cors());
 
