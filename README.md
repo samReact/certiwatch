@@ -55,21 +55,17 @@ npx hardhat node
 npx hardhat run scripts/deploy.js --network localhost
 ```
 
-3. In the api folder, start the API.
+3. In the api folder, start the API (port 5000).
 
 ```bash
 npm run dev
 ```
 
-api will run in port 5000.
-
-4. In the client folder, run the command below command to start the Web3 application.
+4. In the client folder, run the command below command to start the Web3 application (localhost:5173).
 
 ```bash
 npm run dev
 ```
-
-client will run in localhost:5173
 
 ## Tests
 
@@ -87,17 +83,17 @@ npx hardhat coverage
 
 ## Dapp movie
 
-Dapp demo movie is available [here:](https://www.loom.com/share/74ae321c69fe4255a993c46096f563b3)
+Dapp demo movie is available [here](https://www.loom.com/share/74ae321c69fe4255a993c46096f563b3)
 
 ## Public access
 
 Smart contracts are deployed on Sepolia testNet.
 
-- Factory: [0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD](https://sepolia.etherscan.io/0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD)
-- MarketPlace: [0xaa8eeBA35b64CeCb82E478265163f2c81cd05629](https://sepolia.etherscan.io/0xaa8eeBA35b64CeCb82E478265163f2c81cd05629)
-- NFTCollection: [0x63d90d53AF942984860d9e5f928fC9Db5c8C686A](https://sepolia.etherscan.io/0x63d90d53AF942984860d9e5f928fC9Db5c8C686A)
+- Factory: [0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD](https://sepolia.etherscan.io/address/0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD)
+- MarketPlace: [0xaa8eeBA35b64CeCb82E478265163f2c81cd05629](https://sepolia.etherscan.io/address/0xaa8eeBA35b64CeCb82E478265163f2c81cd05629)
+- NFTCollection: [0x63d90d53AF942984860d9e5f928fC9Db5c8C686A](https://sepolia.etherscan.io/address/0x63d90d53AF942984860d9e5f928fC9Db5c8C686A)
 
-Dapp is available here : https://certiwatch-psi.vercel.app/
+Dapp is available [here](https://certiwatch-psi.vercel.app/)
 
 ## License
 
