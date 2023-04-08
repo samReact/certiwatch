@@ -26,7 +26,11 @@ npm install
 
 In the api folder, create a .env file with the following environment variables:
 
-PORT=5000
+PINATA_KEY=<pinata_key>
+PINATA_SECRET=<pinata_secret>
+JWT_SECRET=<jwt_secret>
+
+Replace <pinata_key> and <pinata_secret> with your Pinata account credential, generate a jwt secret phrase for <jwt_secret>.
 
 ### Backend
 
@@ -54,14 +58,18 @@ npx hardhat run scripts/deploy.js --network localhost
 3. In the api folder, start the API.
 
 ```bash
-npm start
+npm run dev
 ```
+
+api will run in port 5000.
 
 4. In the client folder, run the command below command to start the Web3 application.
 
 ```bash
 npm run dev
 ```
+
+client will run in localhost:5173
 
 ## Tests
 
@@ -71,14 +79,26 @@ npm run dev
 npx hardhat test
 ```
 
+or this below command to have your test running with coverage report
+
+```bash
+npx hardhat coverage
+```
+
+## Dapp movie
+
+Dapp demo movie is available [here:](https://www.loom.com/share/74ae321c69fe4255a993c46096f563b3)
+
+## Public access
+
+Smart contracts are deployed on Sepolia testNet.
+
+- Factory: [0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD](https://sepolia.etherscan.io/0x47C6eC6cc612fc2f4eA63d5522928aE102B23eaD)
+- MarketPlace: [0xaa8eeBA35b64CeCb82E478265163f2c81cd05629](https://sepolia.etherscan.io/0xaa8eeBA35b64CeCb82E478265163f2c81cd05629)
+- NFTCollection: [0x63d90d53AF942984860d9e5f928fC9Db5c8C686A](https://sepolia.etherscan.io/0x63d90d53AF942984860d9e5f928fC9Db5c8C686A)
+
+Dapp is available here : https://certiwatch-psi.vercel.app/
+
 ## License
 
 This project is licensed under the MIT License. Please see the LICENSE file for more information.
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```

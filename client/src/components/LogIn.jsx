@@ -5,17 +5,14 @@ import { ConnectedButton } from './ConnectedButton';
 
 export function LogIn() {
   const { connect, connectors, isLoading } = useConnect();
-  const { isConnecting, isDisconnected } = useAccount();
-
-  if (isLoading || isConnecting) {
-    return;
-  }
+  const { isDisconnected } = useAccount();
 
   return (
     <>
-      {isDisconnected ? (
+      {isDisconnected || isLoading ? (
         connectors.map((connector) => (
           <Button
+            loading={isLoading}
             type="primary"
             value={'small'}
             disabled={!connector.ready}
