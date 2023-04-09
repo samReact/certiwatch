@@ -1,4 +1,3 @@
-import { useAccount, useContractRead } from 'wagmi';
 import { Row } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -7,34 +6,12 @@ import logo from '../assets/logo-main.png';
 import { useSelector } from 'react-redux';
 
 export default function ResponsiveAppBar() {
-  const { address } = useAccount();
-  const { marketplaceAbi, marketplaceAddress } = useSelector(
-    (state) => state.eth
-  );
+  const { isOwner, isExpert } = useSelector((state) => state.eth);
 
-  const { data } = useContractRead({
-    address: marketplaceAddress,
-    abi: marketplaceAbi,
-    functionName: 'owner',
-    watch: true,
-    enabled: Boolean(address && marketplaceAddress)
-  });
-
-  const expert = useContractRead({
-    address: marketplaceAddress,
-    abi: marketplaceAbi,
-    functionName: 'experts',
-    watch: true,
-    enabled: Boolean(address && marketplaceAddress),
-    args: [address]
-  });
-
-  const isOwner = data && address && data === address;
-  const isExpert = expert && expert.data && expert.data.authorized;
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
-
+  console.log('appBar', isOwner);
   return (
     <Row align="middle" className="menu" justify={'space-between'}>
       <Row align="middle">

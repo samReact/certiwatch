@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Col, Row, Space, Typography } from 'antd';
-import { useAccount, useContract, useContractRead, useSigner } from 'wagmi';
+import { useContract, useSigner } from 'wagmi';
 
 import AdminFee from '../components/AdminFee';
 import AdminExpertForm from '../components/AdminExpertForm';
@@ -19,21 +19,13 @@ export default function AdminPage() {
     marketplaceAddress,
     marketplaceAbi,
     nftCollectionAddress,
-    nftCollectionAbi
+    nftCollectionAbi,
+    isOwner
   } = useSelector((state) => state.eth);
 
   const { data: signer } = useSigner();
 
-  const { address, isDisconnected } = useAccount();
   const navigate = useNavigate();
-
-  const { data } = useContractRead({
-    address: marketplaceAddress,
-    abi: marketplaceAbi,
-    functionName: 'owner',
-    watch: true,
-    enabled: Boolean(address)
-  });
 
   const marketplace = useContract({
     address: marketplaceAddress,
@@ -47,13 +39,11 @@ export default function AdminPage() {
     signerOrProvider: signer
   });
 
-  const isOwner = data && address && data === address;
-
   useEffect(() => {
-    if (isDisconnected || !isOwner) {
+    if (!isOwner) {
       navigate('/');
     }
-  }, [isDisconnected, isOwner, navigate]);
+  }, [isOwner, navigate]);
 
   return (
     <div className="container">

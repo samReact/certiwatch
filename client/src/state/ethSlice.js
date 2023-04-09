@@ -15,7 +15,9 @@ const initialState = {
   nftCollectionAbi,
   nftCollectionAddress,
   factoryAddress,
-  factoryAbi
+  factoryAbi,
+  isOwner: false,
+  isExpert: false
 };
 
 export const formSlice = createSlice({
@@ -33,11 +35,17 @@ export const formSlice = createSlice({
           ...action.payload.value
         ]
       };
+    },
+    updateOwner: (state, action) => {
+      state.isOwner = action.payload;
+    },
+    updateExpert: (state, action) => {
+      state.isExpert = action.payload;
     }
   }
 });
 
-// Action creators are generated for each case reducer function
-export const { init, updateEvents } = formSlice.actions;
+export const { init, updateEvents, updateOwner, updateExpert } =
+  formSlice.actions;
 
 export default formSlice.reducer;
