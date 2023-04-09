@@ -1,8 +1,6 @@
 import { ConfigProvider } from 'antd';
 import { purple } from '@ant-design/colors';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { persistStore } from 'redux-persist';
 import { WagmiConfig, createClient, configureChains, goerli } from 'wagmi';
 import { hardhat, sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -36,18 +34,15 @@ const theme = {
     }
   }
 };
-let persistor = persistStore(store);
 
 function App() {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <WagmiConfig client={client}>
-          <ConfigProvider theme={theme}>
-            <Root />
-          </ConfigProvider>
-        </WagmiConfig>
-      </PersistGate>
+      <WagmiConfig client={client}>
+        <ConfigProvider theme={theme}>
+          <Root />
+        </ConfigProvider>
+      </WagmiConfig>
     </Provider>
   );
 }

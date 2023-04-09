@@ -78,7 +78,6 @@ export default function ShopPage() {
               brand: item.brand
             });
           }
-          setItems([...items]);
         }
       } catch (error) {
         dispatch(

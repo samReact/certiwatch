@@ -19,7 +19,6 @@ import axios from 'axios';
 import { SmileOutlined } from '@ant-design/icons';
 
 import ImageUploader from '../components/ImageUploader';
-import { decrement, increment, resetStep } from '../state/stepperSlice';
 import Stepper from '../components/Stepper';
 import {
   BRACELET_MATERIAL,
@@ -38,11 +37,11 @@ export default function ExpertFormPage() {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState();
+  const [step, setStep] = useState(0);
   const { address, isDisconnected } = useAccount();
   const { id } = useParams();
   const { data: signer } = useSigner();
 
-  const step = useSelector((state) => state.stepper.value);
   const savedForm = useSelector((state) => state.app.form);
   const { marketplaceAbi, marketplaceAddress } = useSelector(
     (state) => state.eth
@@ -78,7 +77,7 @@ export default function ExpertFormPage() {
 
   function handlePrevious() {
     if (step !== 0) {
-      dispatch(decrement());
+      setStep(step - 1);
     }
   }
 
@@ -95,7 +94,7 @@ export default function ExpertFormPage() {
             .replace(/-/g, '');
           values.year = formattedYear;
           dispatch(updateForm({ ...values, id: parseInt(id) }));
-          dispatch(increment());
+          setStep(step + 1);
         }
       } catch (error) {
         dispatch(
@@ -169,7 +168,7 @@ export default function ExpertFormPage() {
             type: 'success'
           })
         );
-        dispatch(increment());
+        setStep(step + 1);
         setLoading(false);
       } catch (error) {
         dispatch(
@@ -198,10 +197,6 @@ export default function ExpertFormPage() {
       loadJwt();
     }
   }, [loadJwt, address, token]);
-
-  useEffect(() => {
-    return () => dispatch(resetStep());
-  }, [dispatch]);
 
   const layout = {
     wrapperCol: {
@@ -400,7 +395,6 @@ export default function ExpertFormPage() {
                         <Button
                           type="primary"
                           onClick={() => {
-                            dispatch(resetStep());
                             navigate('/expert');
                           }}
                         >

@@ -25,7 +25,6 @@
     "react-progressive-graceful-image": "^0.7.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
-    "redux-persist": "^6.0.0",
     "wagmi": "^0.12.2"
   },
   "devDependencies": {
