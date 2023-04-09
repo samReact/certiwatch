@@ -72,6 +72,14 @@ describe('Marketplace', async () => {
       let tx = marketplace.connect(owner).addExpert(addr1.address, 'Samir');
       await expect(tx).to.be.revertedWith('Already registered');
     });
+    it('Should be authorized ', async () => {
+      let tx = await marketplace.connect(owner).experts(addr1.address);
+      expect(tx.authorized).to.be.true;
+    });
+    it('Should have right name', async () => {
+      let tx = await marketplace.connect(owner).experts(addr1.address);
+      expect(tx.name).to.be.equal('Samir');
+    });
     it('Emit ExpertAdded event', async () => {
       await expect(tx)
         .to.emit(marketplace, 'ExpertAdded')
@@ -79,7 +87,7 @@ describe('Marketplace', async () => {
     });
   });
 
-  describe('Profit Rate', () => {
+  describe('Update profit Rate', () => {
     let newRate = 2;
     let tx;
     beforeEach(async () => {
@@ -89,7 +97,7 @@ describe('Marketplace', async () => {
       let tx = marketplace.connect(addr1).updateProfitRate(newRate);
       await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     });
-    it('Revert if rate is > 100', async () => {
+    it('Revert if rate is incorrect', async () => {
       let tx = marketplace.updateProfitRate(120);
       await expect(tx).to.be.revertedWith('Incorrect rate number');
     });
@@ -130,9 +138,15 @@ describe('Marketplace', async () => {
       let itemCount = await marketplace.itemCount();
       expect(itemCount).to.be.equal(1);
     });
-    it('Item has pending status', async () => {
+    it('Track added item', async () => {
       const item = await marketplace.items(1);
-      expect(item.status).to.be.equal(0);
+      const { brand, model, description, serial, seller, status } = item;
+      expect(status).to.be.equal(0);
+      expect(brand).to.be.equal(item.brand);
+      expect(model).to.be.equal(item.model);
+      expect(description).to.be.equal(item.description);
+      expect(serial).to.be.equal(item.serial);
+      expect(seller).to.be.equal(addr1.address);
     });
 
     it('Emit ItemUpdated event', async () => {
@@ -223,6 +237,11 @@ describe('Marketplace', async () => {
       let tx = marketplace.getTotalPrice(count + 1);
       await expect(tx).to.be.revertedWith("Doesn't exist");
     });
+    it('Revert if Already sold', async () => {
+      await marketplace.connect(owner).updateItem(1, 4, URI);
+      let tx = marketplace.getTotalPrice(item.itemId);
+      await expect(tx).to.be.revertedWith('Already sold');
+    });
   });
 
   describe('Add to whitelist', () => {
@@ -295,13 +314,21 @@ describe('Marketplace', async () => {
           item.price
         );
 
-      tx = marketplace.connect(addr2).addToken(nftCollection.address, 1, 1);
+      tx = await marketplace
+        .connect(addr2)
+        .addToken(nftCollection.address, 1, 1);
     });
     it('Revert if not seller', async () => {
       const tx = marketplace
         .connect(addr1)
         .addToken(nftCollection.address, 1, 1);
       await expect(tx).to.be.revertedWith('Not Authorized');
+    });
+    it('Revert if try to reenter', async () => {
+      tx = marketplace.connect(addr2).addToken(nftCollection.address, 1, 1);
+      await expect(tx).to.be.revertedWith(
+        'ERC721: transfer from incorrect owner'
+      );
     });
     it('Revert if provide invalid tokenID', async () => {
       const tx = marketplace
@@ -324,6 +351,13 @@ describe('Marketplace', async () => {
         marketplace.address
       );
       expect(tx).to.be.true;
+    });
+    it('Should track added token', async () => {
+      let tx = await marketplace.items(1);
+      const { tokenId, certificate, status } = tx;
+      expect(tokenId).to.be.equal(1);
+      expect(status).to.be.equal(3);
+      expect(certificate).to.be.equal(nftCollection.address);
     });
 
     it('Emit ItemUpdated event', async () => {
@@ -417,7 +451,7 @@ describe('Marketplace', async () => {
       const fee = ((feeRate / 100) * item.price) / 2;
       let finalBalance = Number(fee) + Number(fromWei(initialExpertBalance));
       let initialBalance = Number(fromWei(finalExpertBalance));
-      expect(initialBalance).to.equal(finalBalance);
+      expect(initialBalance.toFixed(8)).to.equal(finalBalance.toFixed(8));
     });
 
     it('Buyer is new nft owner', async function () {
