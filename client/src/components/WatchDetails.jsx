@@ -30,59 +30,55 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
       ) : (
         <>
           <Col xs={10}>
-            <Row align={'middle'} gutter={32}>
-              <Col xs={24}>
-                <ProgressiveImage
-                  src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                    watch.images[0]
-                  )}`}
-                  placeholder={placeholder}
-                >
-                  {(src, loading) => {
-                    return (
-                      <img
-                        src={src}
-                        alt="watch main"
-                        style={{
-                          opacity: loading ? 0.5 : 1
-                        }}
-                        className="watch-img"
-                      />
-                    );
-                  }}
-                </ProgressiveImage>
-              </Col>
-              <Col xs={24}>
-                <List
-                  loading={!watch}
-                  grid={{ column: 2, gutter: 8 }}
-                  dataSource={watch.images.filter((photo, i) => i !== 0)}
-                  renderItem={(url, i) => (
-                    <List.Item style={{ margin: 0 }}>
-                      <ProgressiveImage
-                        src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                          url
-                        )}`}
-                        placeholder={placeholder}
-                      >
-                        {(src, loading) => {
-                          return (
-                            <img
-                              src={src}
-                              alt="watch"
-                              style={{
-                                opacity: loading ? 0.5 : 1
-                              }}
-                              className="watch-img"
-                            />
-                          );
-                        }}
-                      </ProgressiveImage>
-                    </List.Item>
-                  )}
-                />
-              </Col>
-              <Col xs={12}>
+            <Space direction="vertical">
+              <ProgressiveImage
+                src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                  watch.images[0]
+                )}`}
+                placeholder={placeholder}
+              >
+                {(src, loading) => {
+                  return (
+                    <img
+                      src={src}
+                      alt="watch main"
+                      style={{
+                        opacity: loading ? 0.5 : 1
+                      }}
+                      className="watch-img"
+                    />
+                  );
+                }}
+              </ProgressiveImage>
+              <List
+                loading={!watch}
+                grid={{ column: 2, gutter: 8 }}
+                dataSource={watch.images.filter((photo, i) => i !== 0)}
+                renderItem={(url, i) => (
+                  <List.Item style={{ margin: 0 }}>
+                    <ProgressiveImage
+                      src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                        url
+                      )}`}
+                      placeholder={placeholder}
+                    >
+                      {(src, loading) => {
+                        return (
+                          <img
+                            src={src}
+                            alt="watch"
+                            style={{
+                              opacity: loading ? 0.5 : 1
+                            }}
+                            className="watch-img"
+                          />
+                        );
+                      }}
+                    </ProgressiveImage>
+                  </List.Item>
+                )}
+              />
+              <div style={{ width: '50%' }}>
                 <Watermark image={nft} gap={[10, 10]} height={30} width={30}>
                   <Image
                     src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
@@ -92,8 +88,8 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                     className="watch-img"
                   />
                 </Watermark>
-              </Col>
-            </Row>
+              </div>
+            </Space>
           </Col>
           <Col xs={14} className="item-right">
             <div>
