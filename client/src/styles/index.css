@@ -128,3 +128,9 @@ body {
   width: 100%;
   border-radius: 12px;
 }
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 40px;
+  }
+}
