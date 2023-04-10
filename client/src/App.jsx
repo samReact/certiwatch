@@ -22,7 +22,6 @@ const { chains, provider } = configureChains(
 );
 
 const client = createClient({
-  autoConnect: true,
   connectors: [new InjectedConnector({ chains })],
   provider
 });
