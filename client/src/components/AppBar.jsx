@@ -11,7 +11,6 @@ export default function ResponsiveAppBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
-  console.log('appBar', isOwner);
   return (
     <Row align="middle" className="menu" justify={'space-between'}>
       <Row align="middle">

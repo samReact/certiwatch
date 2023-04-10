@@ -31,7 +31,7 @@ export default function Root() {
         {chain.name !== VALID_NETWORK ? (
           <Result
             status="warning"
-            title={`We do not support ${chain.name} network yet, Please switch to Sepolia to enjoy our services`}
+            title={`We do not support ${chain.name} network yet, Please switch to ${VALID_NETWORK} to enjoy our services`}
           />
         ) : (
           <EthProvider>

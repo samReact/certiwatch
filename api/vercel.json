@@ -9,8 +9,9 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/[^.]+",
       "dest": "/",
+      "status": 200,
       "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
       "headers": {
         "Access-Control-Allow-Origin": "*",

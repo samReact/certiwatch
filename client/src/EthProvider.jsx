@@ -143,7 +143,6 @@ export default function EthProvider({ children }) {
   useEffect(() => {
     if (data && address) {
       const isOwner = data === address;
-      console.log(isOwner);
       dispatch(updateOwner(isOwner));
     }
   }, [data, address, dispatch]);
