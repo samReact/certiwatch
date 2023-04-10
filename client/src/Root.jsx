@@ -4,7 +4,7 @@ import { Layout, Result } from 'antd';
 
 import ResponsiveAppBar from './components/AppBar';
 import FooterComponent from './components/FooterComponent';
-import { useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import HomePage from './routes/HomePage';
 import SellPage from './routes/SellPage';
 import ShopPage from './routes/ShopPage';
@@ -21,6 +21,7 @@ const { Header, Content } = Layout;
 
 export default function Root() {
   const { chain } = useNetwork();
+  const { isDisconnected } = useAccount();
 
   return (
     <Layout hasSider={false}>
@@ -28,7 +29,12 @@ export default function Root() {
         <ResponsiveAppBar />
       </Header>
       <Content>
-        {chain.name !== VALID_NETWORK ? (
+        {isDisconnected ? (
+          <Result
+            status="warning"
+            title={'You must be connected to enjoy our services !'}
+          />
+        ) : chain && chain.name !== VALID_NETWORK ? (
           <Result
             status="warning"
             title={`We do not support ${chain.name} network yet, Please switch to ${VALID_NETWORK} to enjoy our services`}

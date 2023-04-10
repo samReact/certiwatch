@@ -10,7 +10,9 @@ import {
   InputNumber,
   Typography,
   Steps,
-  Result
+  Result,
+  Card,
+  Space
 } from 'antd';
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import {
@@ -90,7 +92,7 @@ export default function SellPage() {
 
   const layout = {
     wrapperCol: {
-      span: 18
+      span: 24
     }
   };
 
@@ -130,94 +132,107 @@ export default function SellPage() {
                 }
               />
             ) : (
-              <Row style={{ height: '50vh' }}>
-                <Col xs={24}>
-                  <Form
-                    name="form_item_path"
-                    layout="vertical"
-                    form={form}
-                    {...layout}
-                  >
-                    <Row>
-                      <Col xs={24} md={12}>
-                        <Item
-                          name="brand"
-                          label="Brand"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch brand !'
-                            }
-                          ]}
-                        >
-                          <Select>
-                            {WATCH_BRANDS.map((brand) => (
-                              <Select.Option key={brand} value={brand}>
-                                {brand}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Item>
-                        <Item
-                          name="model"
-                          label="Model"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill watch model !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                        <Item
-                          name="description"
-                          label="Description"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill description !'
-                            }
-                          ]}
-                        >
-                          <Input.TextArea maxLength={80} showCount />
-                        </Item>
-                        <Item
-                          name="serial"
-                          label="Serial number"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill serial number !'
-                            }
-                          ]}
-                        >
-                          <Input />
-                        </Item>
-                        <Item
-                          name="price"
-                          label="Selling price"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Please fill selling price !'
-                            }
-                          ]}
-                        >
-                          <InputNumber addonAfter="ETH" min={0} />
-                        </Item>
-                        <Button
-                          type="primary"
-                          onClick={() => handleNext()}
-                          disabled={!write}
-                        >
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                </Col>
-              </Row>
+              <>
+                <Row gutter={[58, 24]}>
+                  <Col sm={24} md={12}>
+                    <Form
+                      name="form_item_path"
+                      layout="vertical"
+                      form={form}
+                      {...layout}
+                    >
+                      <Item
+                        name="brand"
+                        label="Brand"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch brand !'
+                          }
+                        ]}
+                      >
+                        <Select>
+                          {WATCH_BRANDS.map((brand) => (
+                            <Select.Option key={brand} value={brand}>
+                              {brand}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Item>
+                      <Item
+                        name="model"
+                        label="Model"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill watch model !'
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Item>
+                      <Item
+                        name="description"
+                        label="Description"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill description !'
+                          }
+                        ]}
+                      >
+                        <Input.TextArea maxLength={80} showCount />
+                      </Item>
+                      <Item
+                        name="serial"
+                        label="Serial number"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill serial number !'
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Item>
+                      <Item
+                        name="price"
+                        label="Selling price"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please fill selling price !'
+                          }
+                        ]}
+                      >
+                        <InputNumber addonAfter="ETH" min={0} />
+                      </Item>
+                      <Button
+                        type="primary"
+                        onClick={() => handleNext()}
+                        disabled={!write}
+                      >
+                        Submit
+                      </Button>
+                    </Form>
+                  </Col>
+                  <Col sm={24} md={12}>
+                    <Card className="info-card">
+                      <Space direction="vertical">
+                        <Typography.Title level={3} italic>
+                          Hi Certilovers !
+                        </Typography.Title>
+                        <Typography.Text italic type="secondary">
+                          Please here indicate your watch details, once approved
+                          by us our logistic team will collect your watch at
+                          home for expertise, once done you will be able to mint
+                          your certificate and publish your add !
+                        </Typography.Text>
+                      </Space>
+                    </Card>
+                  </Col>
+                </Row>
+              </>
             )}
           </div>
         </>
