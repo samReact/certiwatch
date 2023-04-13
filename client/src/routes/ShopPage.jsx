@@ -123,9 +123,7 @@ export default function ShopPage() {
                 style={{ width: 300 }}
                 cover={
                   <ProgressiveImage
-                    src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                      item.images[0]
-                    )}`}
+                    src={`https://ipfs.io/ipfs/${removeIpfs(item.images[0])}`}
                     placeholder={placeholder}
                   >
                     {(src, loading) => {

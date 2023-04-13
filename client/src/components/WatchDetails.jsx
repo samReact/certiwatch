@@ -32,9 +32,7 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
           <Col xs={10}>
             <Space direction="vertical">
               <ProgressiveImage
-                src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                  watch.images[0]
-                )}`}
+                src={`https://ipfs.io/ipfs/${removeIpfs(watch.images[0])}`}
                 placeholder={placeholder}
               >
                 {(src, loading) => {
@@ -57,9 +55,7 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
                 renderItem={(url, i) => (
                   <List.Item style={{ margin: 0 }}>
                     <ProgressiveImage
-                      src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
-                        url
-                      )}`}
+                      src={`https://ipfs.io/ipfs/${removeIpfs(url)}`}
                       placeholder={placeholder}
                     >
                       {(src, loading) => {
@@ -81,7 +77,7 @@ export default function WatchDetails({ watch, isSeller, write, isLoading }) {
               <div style={{ width: '50%' }}>
                 <Watermark image={nft} gap={[10, 10]} height={30} width={30}>
                   <Image
-                    src={`https://gateway.pinata.cloud/ipfs/${removeIpfs(
+                    src={`https://ipfs.io/ipfs/${removeIpfs(
                       watch.certificateUrl
                     )}`}
                     placeholder={placeholder}
